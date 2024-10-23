@@ -1,25 +1,37 @@
 using System.Collections;
-using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] bool randomWander = false;
-    [SerializeField] float speed = 0.8f;
-    [SerializeField] float range = 0.01f;
+    // Serialize fields
+    [SerializeField] GameObject walkableArea;
+    [SerializeField] float speed = 2f;
     [SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
-    [SerializeField] GameObject walkableArea;
-    [SerializeField] bool followPlayer = false;
+    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] int targetRestriction = 0;
+    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] int attackType = 0;
+    [SerializeField] float stopDistanceFromPlayer = 5;
+    [SerializeField, Tooltip("Wander around before becomign agressive.")] bool randomWander = false;
+    //[SerializeField] bool followPlayer = false;
+    [SerializeField, Tooltip("If it's able to attack players.")] bool canAttackPlayers = true; // Should be private later
 
-    float precision = 1f;
-    bool canMove = true;
+    // Private variables 
+    float randomWanderPrecision = 1f; // How close it has to be to its random wander target before walking somewhere else.
+    bool canMove = true; // Needed for random wander
     bool isNearPlayer = false;
-    [SerializeField] bool isAgressive = true;
+    bool isNearObjective;
+
+    //Stuck stuff
+    float timer = 0f;
+    Vector2[] savedPositions;
+    int arrayCount = 0;
+
+    // Positions
+    GameObject nearestPlayer;
+    GameObject nearestObjective;
     Vector3 randomDestination;
     Vector2 target;
     NavMeshAgent agent;
@@ -36,6 +48,20 @@ public class EnemyMovement : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        agent.speed = speed;
+        savedPositions = new Vector2[10];
+
+        // If it's a melee enemy it should go all the way to the player
+        if (attackType == 0)
+        {
+            stopDistanceFromPlayer = 0;
+        }
+
+        // To avoid problems
+        if (targetRestriction == 2)
+        {
+            canAttackPlayers = false;
+        }
 
         if (randomWander && canMove)
         {
@@ -48,80 +74,193 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate() // FixedUpdate because there's no need to update any quicker than the framerate
     {
-        if (isNearPlayer && isAgressive)
+        nearestPlayer = FindNearestObject("Player");
+        nearestObjective = FindNearestObject("Objective");
+
+        CheckIfStuck();
+
+        if (BehaviourChecks()) { return; };
+
+        RandomWanderCheck();
+    }
+
+    bool BehaviourChecks() // Returns true if the update function should return to skip code below
+    {
+        // If it's not resticted to players, it should prioritize the objective over the player if both are in range.
+        if (isNearObjective && targetRestriction != 1)
         {
-            MoveToDestination(FindNearestPlayerPosition()); // FindNearestlayerPosition returns a Vector2, which the enemy moves to.
-            return; // Return so it doesn't access the code below when a player is nearby.
+            if (nearestObjective == null) { return true; }
+
+            Temporary script = nearestObjective.GetComponent<Temporary>();
+
+            if (DistanceTo(nearestObjective) <= 2.5f)
+            {
+                agent.isStopped = true;
+                //print("Stopped");
+                // Do fire extinguish stuff
+            }
+            return true; // Return so it doesn't access the code below.
         }
 
-        WanderCheck();
+        // Go to objective if it's not near a player and not restricted to players, or if it's restricted to objectves. Only works if the objective is under attack
+        if ((!isNearPlayer && targetRestriction != 1) || (targetRestriction == 2))
+        {
+            if (nearestObjective != null)
+            {
+                MoveToDestination(nearestObjective.transform.position);
+            }
+        }
+
+        if (canAttackPlayers && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
+        {
+            agent.isStopped = true;
+            return true;
+        }
+        else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
+        {
+            MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            return true;
+        }
+
+        return false;
+    }
+
+    void CheckIfStuck()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= 1f) // 1 second delay
+        {
+            // Save the current position in the array
+            savedPositions[arrayCount] = gameObject.transform.position;
+            arrayCount++;
+            timer = 0f;
+
+            if (arrayCount < 10) // 0 to 9 (10 elements)
+            {
+                return; // Return if 10 positions haven't been saved yet
+            }
+
+            // Calculate the average position after saving 10 positions
+            Vector2 averagePosition = Vector2.zero;
+
+            // Add all saved positions together
+            for (int i = 0; i < savedPositions.Length; i++)
+            {
+                averagePosition += savedPositions[i];
+            }
+
+            // Divide by the array length to get the average
+            averagePosition /= savedPositions.Length;
+
+            // Compare the average position with the current position
+            if (Vector2.Distance(averagePosition, gameObject.transform.position) < 0.1f)
+            {
+                print("Enemy is stuck! Setting a new destination.");
+                SetNewRandomDestination();
+                MoveToDestination(randomDestination);
+            }
+
+            arrayCount = 0; // Reset the position tracking
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D trigger)
     {
         if (trigger.CompareTag("Player")) { isNearPlayer = true; }
+        if (trigger.CompareTag("Objective")) { isNearObjective = true; }
     }
 
     private void OnTriggerExit2D(Collider2D trigger)
     {
-        if (trigger.CompareTag("Player")) 
+        if (trigger.CompareTag("Player"))
         {
             isNearPlayer = false;
-            if (isAgressive)
+            if (targetRestriction != 1) // Find objective if not restricted to only players.
             {
-                MoveToDestination(gameObject.transform.position);
-            }
-        }
-    }
-
-    void WanderCheck()
-    {
-        if (randomWander)
-        {
-            // If it's close enough to its target, it will set a new target. 
-            if (!agent.pathPending && agent.remainingDistance <= precision)
-            {
-                if (canMove)
+                GameObject objective = nearestObjective;
+                if (objective != null)
                 {
-                    canMove = false;
-                    float waitTime = Random.Range(movePauseMin, movePauseMax);
-                    print($"Should move in {waitTime} seconds");
-                    StartCoroutine(WaitThenMove(waitTime));
-                    return;
+                    MoveToDestination(objective.transform.position);
                 }
             }
         }
-        else
+
+        if (trigger.CompareTag("Objective"))
         {
-            //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
-            //target = new Vector2(worldPosition.x, worldPosition.y);
-            ////print(target); // Test if it finds the mouse position
-            //MoveToDestination(target);
+            isNearObjective = false;
         }
     }
 
-    Vector2 FindNearestPlayerPosition()
+    void RandomWanderCheck()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player"); // Have to do this check every time in case a player disconnects.
-
-        GameObject nearestPlayer = null; // Need to set it to null so it has a value, otherwise it doesn't want to return it.
-        float smallestDistance = Mathf.Infinity;
-        Vector2 currentPosition = transform.position;  // The position of this object (enemy).
-
-        foreach (GameObject player in players) // Iterate over the list of players.
+        if (!randomWander)
         {
-            float distanceToPlayer = Vector2.Distance(currentPosition, player.transform.position); // Get distance away from this player.
+            // Follow mouse stuff for testing
+            //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
+            //target = new Vector2(worldPosition.x, worldPosition.y);
+            //MoveToDestination(target);
+            return;
+        }
+
+        // If it's close enough to its target, it will set a new target. 
+        if (agent.remainingDistance <= randomWanderPrecision && canMove)
+        {
+            canMove = false;
+            float waitTime = Random.Range(movePauseMin, movePauseMax);
+            print($"Should move in {waitTime} seconds");
+            StartCoroutine(WaitThenMove(waitTime));
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Takes a string of a tag and finds the nearest object with that tag and returns it.
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public GameObject FindNearestObject(string tag)
+    {
+        List<GameObject> objects = new List<GameObject>(GameObject.FindGameObjectsWithTag(tag)); // Have to do this check every time in case a player disconnects.
+
+        if (tag == "Objective") // Check each objective if it's under attack or not. If it's not under attack, the enemy should not go there.
+        {
+            for (int i = objects.Count - 1; i >= 0; i--) // Can't use foreach here, might cause errors when removing objects from the list.
+            {
+                GameObject _object = objects[i];
+                Temporary script = _object.GetComponent<Temporary>(); // Change to objective class later
+
+                if (!script.underAttack)
+                {
+                    objects.Remove(_object);
+                }
+            }
+
+            if (objects.Count <= 0)
+            {
+                randomWander = true;
+                return null;
+            }
+        }
+
+        GameObject nearestGameObject = null; // Need to set it to null so it has a value, otherwise it doesn't want to return it.
+        float smallestDistance = Mathf.Infinity;
+        Vector2 currentPosition = transform.position; // The position of this object (enemy).
+
+        foreach (GameObject _object in objects) // Iterate over the list of players.
+        {
+            float distanceToPlayer = Vector2.Distance(currentPosition, _object.transform.position); // Get distance away from this player.
 
             if (distanceToPlayer < smallestDistance)
             {
                 smallestDistance = distanceToPlayer; // Update the closest distance to keep track of which was closest.
-                nearestPlayer = player; // If it is closest, save it.
+                nearestGameObject = _object; // If it is closest, save it.
             }
         }
 
-        return nearestPlayer.transform.position;
+        return nearestGameObject;
     }
 
     void SetNewRandomDestination()
@@ -144,7 +283,11 @@ public class EnemyMovement : MonoBehaviour
 
     void MoveToDestination(Vector2 destination)
     {
-        agent.SetDestination(destination);
+        if (destination != null)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(destination);
+        }
     }
 
     IEnumerator WaitThenMove(float waitTime)
@@ -154,5 +297,10 @@ public class EnemyMovement : MonoBehaviour
         SetNewRandomDestination();
         MoveToDestination(randomDestination);
         canMove = true;
+    }
+
+    public float DistanceTo(GameObject _object)
+    {
+        return Vector2.Distance(gameObject.transform.position, _object.transform.position);
     }
 }
