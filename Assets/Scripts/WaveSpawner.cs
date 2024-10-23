@@ -7,7 +7,7 @@ using UnityEngine;
 public class WaveSpawner : MonoBehaviour
 {
 
-    [SerializeField] GameObject normalEnemy, speedEnemy, slowEnemy, rangeEnemy, bossEnemy;
+    [SerializeField] GameObject normalEnemy, speedEnemy, slowEnemy, rangeEnemy;
     [SerializeField] Collider2D[] colliders; // save all colliders in the are that enemy should not spawn on
     [SerializeField] LayerMask notSpawnLayer; // de layer that it does not have selekten enemys can spawn on
 
@@ -36,12 +36,14 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] float waveTime = 30f;
     [SerializeField] float waveDelay = 10f;
 
+    Objective objective;
+
     bool canSpawn;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        StartCoroutine(Waves());
+
     }
 
     GameObject RandomizeEnemyToSpawn()
@@ -150,7 +152,7 @@ public class WaveSpawner : MonoBehaviour
         enemyCount--;
     }
 
-    IEnumerator Waves()
+    public IEnumerator Waves()
     {
         while (enemyCountPerWave < maxEnemyCountPerWave && enemyCount < maxEnemyCount)
         {

@@ -11,9 +11,13 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         GameObject hitEffect = Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
+        if (other.gameObject.tag == "Enemy")
+        {
+            Destroy(other.gameObject);
+        }
         Destroy(hitEffect, hitEffectTime);
         Destroy(gameObject);
     }   

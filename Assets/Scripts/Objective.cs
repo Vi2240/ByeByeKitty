@@ -23,31 +23,35 @@ public class Objective : MonoBehaviour
     bool isHealing;
     bool isBurning;
 
+    WaveSpawner waveSpawner;
+
     void Start()
     {
         currentHp = maxHp;
+        waveSpawner = GetComponent<WaveSpawner>();
     }
 
     void Update()
     {
         if(playersInZone)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && !isBurning)
             {
                 isBurning = true;
+                StartCoroutine(waveSpawner.Waves());
             }
         }
     }
 
     void FixedUpdate()
     {
-        if(!isTakingBurningDmg)
-        {
-            StartCoroutine(BurningTickDmg());
-        }
         if(!isBurning && currentHp < maxHp && !isHealing)
         {
             StartCoroutine(HealingHealth());
+        }
+        if(isBurning && !isTakingBurningDmg)
+        {
+            StartCoroutine(BurningTickDmg());
         }
     }
 
@@ -60,6 +64,7 @@ public class Objective : MonoBehaviour
         if (other.tag == "Enemy")
         {
             isBurning = false;
+            StopCoroutine(waveSpawner.Waves());
         }
     }
 
@@ -97,4 +102,8 @@ public class Objective : MonoBehaviour
         healingEffect.SetActive(false);
     }
 
+    public bool GetIsBurning()
+    { 
+        return isBurning;
+    }
 }

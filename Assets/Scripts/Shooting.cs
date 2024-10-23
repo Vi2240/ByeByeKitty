@@ -21,4 +21,4 @@ public class Shooting : MonoBehaviour
         Rigidbody2D rigidbody = bullet.GetComponent<Rigidbody2D>();
         rigidbody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
     }
-}
+}   

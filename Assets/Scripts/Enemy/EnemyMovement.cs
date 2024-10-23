@@ -230,9 +230,9 @@ public class EnemyMovement : MonoBehaviour
             for (int i = objects.Count - 1; i >= 0; i--) // Can't use foreach here, might cause errors when removing objects from the list.
             {
                 GameObject _object = objects[i];
-                Temporary script = _object.GetComponent<Temporary>(); // Change to objective class later
+                Objective script = _object.GetComponent<Objective>(); // Change to objective class later
 
-                if (!script.underAttack)
+                if (!script.GetIsBurning())
                 {
                     objects.Remove(_object);
                 }
