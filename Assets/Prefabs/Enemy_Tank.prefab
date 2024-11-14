@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5769148959559600023}
   - component: {fileID: 1176848081503158514}
   - component: {fileID: 6463348538245249428}
+  - component: {fileID: 7977417221057066794}
   m_Layer: 0
   m_Name: Enemy_Tank
   m_TagString: Enemy
@@ -162,7 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0539f86e988000d4e986ea285f861fa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkableArea: {fileID: 0}
   speed: 1.8
   maxDistance: 3
   movePauseMin: 2
@@ -185,7 +185,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.0001
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_GravityScale: 0
@@ -200,3 +200,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &7977417221057066794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031087129276300984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c1d283d7cdd4d4a800b8a96185e1fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  timeToHeal: 3
+  healPerTick: 2
+  timeBetweenHealingTicks: 0.5

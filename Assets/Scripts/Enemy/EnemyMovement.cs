@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class EnemyMovement : MonoBehaviour
 {
     // Serialize fields
-    [SerializeField] GameObject walkableArea;
     [SerializeField] float speed = 2f;
     [SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
@@ -22,6 +21,7 @@ public class EnemyMovement : MonoBehaviour
     // Private variables 
     float randomWanderPrecision = 1f; // How close it has to be to its random wander target before walking somewhere else.
     bool canMove = true; // Needed for random wander
+    bool objectiveIsBurning = false;
     bool isNearPlayer = false;
     bool isNearObjective;
 
@@ -36,6 +36,7 @@ public class EnemyMovement : MonoBehaviour
     Vector3 randomDestination;
     Vector2 target;
     NavMeshAgent agent;
+    GameObject walkableArea;
 
     // Constructor
     public EnemyMovement(bool wander)
@@ -51,6 +52,7 @@ public class EnemyMovement : MonoBehaviour
         agent.updateUpAxis = false;
         agent.speed = speed;
         savedPositions = new Vector2[10];
+        walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
         // If it's a melee enemy it should go all the way to the player
         if (attackType == 0)
@@ -58,7 +60,7 @@ public class EnemyMovement : MonoBehaviour
             stopDistanceFromPlayer = 0;
         }
 
-        // To avoid problems
+        // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
             canAttackPlayers = false;
@@ -85,7 +87,7 @@ public class EnemyMovement : MonoBehaviour
         CheckIfStuck();
 
         if (BehaviourChecks()) { return; };
-
+        
         RandomWanderCheck();
     }
 
@@ -98,13 +100,13 @@ public class EnemyMovement : MonoBehaviour
 
             Temporary script = nearestObjective.GetComponent<Temporary>();
 
-            if (DistanceTo(nearestObjective) <= 2.5f)
+            if (DistanceTo(nearestObjective) <= 5f)
             {
                 agent.isStopped = true;
-                //print("Stopped");
+                print("Stopped");
                 // Do fire extinguish stuff
             }
-            return true; // Return so it doesn't access the code below.
+            return true; // Return true so it doesn't access the code below.
         }
 
         // Go to objective if it's not near a player and not restricted to players, or if it's restricted to objectves. Only works if the objective is under attack
@@ -186,16 +188,19 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        if (DistanceTo(nearestObjective) <= nearObjectCheckRadius) { isNearObjective = true; }
-        else
+        if (nearestObjective != null)
         {
-            isNearObjective = false;
+            if (DistanceTo(nearestObjective) <= nearObjectCheckRadius) { isNearObjective = true; }
+            else
+            {
+                isNearObjective = false;
+            }
         }
     }
 
     void RandomWanderCheck()
     {
-        if (!randomWander)
+        if (!randomWander) // For testing when you want it to follow the mouse
         {
             // Follow mouse stuff for testing
             //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
@@ -237,10 +242,19 @@ public class EnemyMovement : MonoBehaviour
                 }
             }
 
-            if (objects.Count <= 0)
+            if (objects.Count <= 0) // If there are no burning bjectives
             {
-                randomWander = true;
+                if (randomWander && objectiveIsBurning && canMove)
+                {
+                    objectiveIsBurning = false;
+                    StartCoroutine(WaitThenMove(0));
+                    canMove = false;
+                }
                 return null;
+            }
+            else
+            {
+                objectiveIsBurning = true;
             }
         }
 

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3741568069578609231}
   - component: {fileID: 4016028760416130111}
   - component: {fileID: 516137382164276736}
+  - component: {fileID: -8511696398815059612}
   m_Layer: 0
   m_Name: Enemy_Standard
   m_TagString: Enemy
@@ -163,7 +164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0539f86e988000d4e986ea285f861fa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkableArea: {fileID: 0}
   speed: 2.5
   maxDistance: 3
   movePauseMin: 2
@@ -219,3 +219,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &-8511696398815059612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6661881046318929437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c1d283d7cdd4d4a800b8a96185e1fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  timeToHeal: 3
+  healPerTick: 2
+  timeBetweenHealingTicks: 0.5
