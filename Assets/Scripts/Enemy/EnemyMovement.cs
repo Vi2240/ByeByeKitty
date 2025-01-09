@@ -92,6 +92,8 @@ public class EnemyMovement : MonoBehaviour
         nearestPlayer = FindNearestObject("Player");
         nearestObjective = FindNearestObject("Objective");
 
+        NearObjectChecks();
+
         CheckIfStuck();
 
         if (BehaviourChecks()) { return; };
@@ -180,15 +182,10 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D trigger)
+    void NearObjectChecks()
     {
-        if (trigger.CompareTag("Player")) { isNearPlayer = true; }
-        if (trigger.CompareTag("Objective")) { isNearObjective = true; }
-    }
-
-    private void OnTriggerExit2D(Collider2D trigger)
-    {
-        if (trigger.CompareTag("Player"))
+        if (DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
+        else
         {
             isNearPlayer = false;
             if (targetRestriction != 1) // Find objective if not restricted to only players.
@@ -325,7 +322,7 @@ public class EnemyMovement : MonoBehaviour
         canMove = true;
     }
 
-    public float DistanceTo(GameObject _object)
+    public float DistanceTo(GameObject _object) // Public so it can be used in other scripts
     {
         return Vector2.Distance(gameObject.transform.position, _object.transform.position);
     }
