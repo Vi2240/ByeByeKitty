@@ -10,18 +10,28 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
-    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] int targetRestriction = 0;
-    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] int attackType = 0;
     [SerializeField] float stopDistanceFromPlayer = 5;
-    [SerializeField, Tooltip("Radius around to check if near objective or player.")] float nearObjectCheckRadius = 5;
-    [SerializeField, Tooltip("Wander around before becomign agressive.")] bool randomWander = false;
+
+    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
+    int targetRestriction = 0;
+
+    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] 
+    int attackType = 0;
+
+    [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
+    float nearObjectCheckRadius = 5;
+
+    [SerializeField, Tooltip("Wander around before becomign agressive.")] 
+    bool randomWander = false;
+
     //[SerializeField] bool followPlayer = false;
-    [SerializeField, Tooltip("If it's able to attack players.")] bool canAttackPlayers = true; // Should be private later
+    [SerializeField, Tooltip("If it's able to attack players.")] 
+    bool canAttackPlayers = true; // Should be private later
 
     // Private variables 
     float randomWanderPrecision = 1f; // How close it has to be to its random wander target before walking somewhere else.
     bool canMove = true; // Needed for random wander
-    bool objectiveIsBurning = false;
+    bool objectiveIsBurning = false; // Used to make enemies instantly move after extinguising an objective
     bool isNearPlayer = false;
     bool isNearObjective;
 
@@ -246,8 +256,8 @@ public class EnemyMovement : MonoBehaviour
             {
                 if (randomWander && objectiveIsBurning && canMove)
                 {
+                    StartCoroutine(WaitThenMove(1));
                     objectiveIsBurning = false;
-                    StartCoroutine(WaitThenMove(0));
                     canMove = false;
                 }
                 return null;

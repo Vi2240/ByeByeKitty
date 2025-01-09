@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Objective
   - WalkableArea
+  - UI_AmmoCount
   layers:
   - Default
   - TransparentFX

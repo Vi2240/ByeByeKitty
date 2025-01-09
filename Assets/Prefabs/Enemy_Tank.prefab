@@ -167,9 +167,9 @@ MonoBehaviour:
   maxDistance: 3
   movePauseMin: 2
   movePauseMax: 5
+  stopDistanceFromPlayer: 0
   targetRestriction: 2
   attackType: 0
-  stopDistanceFromPlayer: 0
   nearObjectCheckRadius: 0
   randomWander: 1
   canAttackPlayers: 0
