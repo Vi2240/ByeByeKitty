@@ -47,7 +47,7 @@ public class LvlAndXpVault : SingeltonPersistent<LvlAndXpVault>
 
     void WeaponToLvlUp()
     {
-        //CurrentWeapon(Activ)
+        //CurrentWeapon(Active)
     }
     #endregion
 }
