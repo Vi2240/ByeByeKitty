@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Menu utan knappar_0: 6632502367902725334
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
