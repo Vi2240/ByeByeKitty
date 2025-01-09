@@ -51,6 +51,13 @@ public class ShootingProjectile : MonoBehaviour
         magCapacityText.SetText(magazine + " / " + Inventory.ammo);
     }
 
+    // Switch the text in UI to match this weapon when it is enabled in different scripts
+    private void OnEnable()
+    {
+        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+    }
+
     void Update()
     {
         WeaponRotation();

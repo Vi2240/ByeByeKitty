@@ -8,19 +8,15 @@ using UnityEngine;
 public class ShootingBeam : MonoBehaviour
 {
     // Serialize fields
-    [SerializeField] GameObject laser;
     [SerializeField] Transform beamSpawnLocation;
     [SerializeField] Transform weaponSpriteTransform;
     [SerializeField] AudioSource gunshotFX;
     [SerializeField] AudioSource reloadFX;
 
-    [SerializeField, Tooltip("Wether the player can or cannot hold down left click to continue firing.")]
-    bool automaticShooting = false;
-
-    [SerializeField] float fireCooldown;
-    [SerializeField] int splitAmount = 0;
+    [SerializeField] float fireCooldown = 0.1f;
+    //[SerializeField] int splitAmount = 0;
     [SerializeField] float reloadTime = 1f;
-    [SerializeField] float bulletDamage = 5f;
+    [SerializeField] float damagePerTick = 15f;
     [SerializeField] float beamLength = 5f;
 
     [SerializeField] int magazineSize;
@@ -48,12 +44,18 @@ public class ShootingBeam : MonoBehaviour
         savedBeamLength = beamLength;
         lineRenderer = GetComponentInChildren<LineRenderer>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        magazine = magazineSize;
         //shootRange = GameObject.FindGameObjectWithTag("ShootRange").GetComponent<CircleCollider2D>();
         //weaponRotation = GetComponentInChildren<SpriteRenderer>();
         //movementScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+        magCapacityText.SetText(Inventory.laserEnergy.ToString());
+    }
+
+    // Switch the text in UI to match this weapon when it is enabled in different scripts
+    private void OnEnable()
+    {
+        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        magCapacityText.SetText(Inventory.laserEnergy.ToString());
     }
 
     void Update()
@@ -66,7 +68,7 @@ public class ShootingBeam : MonoBehaviour
             DrawBeam();
         }
 
-        if (Input.GetMouseButtonDown(0) && magazine > 0 && MouseFarEnoughFromPlayer() == true && !isRealoding)
+        if (Input.GetMouseButtonDown(0) && MouseFarEnoughFromPlayer() == true)
         {
             lineRenderer.enabled = true;
             beamActive = true;
@@ -75,11 +77,6 @@ public class ShootingBeam : MonoBehaviour
         {
             lineRenderer.enabled = false;
             beamActive = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload();
         }
     }
 
@@ -113,98 +110,82 @@ public class ShootingBeam : MonoBehaviour
 
     void BeamLogic()
     {
-        hit = Physics2D.Raycast(beamSpawnLocation.position, transform.right, beamLength);
+        hit = Physics2D.Raycast(beamSpawnLocation.position, transform.right, beamLength); // Raycast used to know how long the beam length should be
 
         if (hit.collider == null)
         {
             beamLength = savedBeamLength;
         }
-        else if (hit.collider.CompareTag("Enemy"))
+        else if (hit.collider)
         {
-            beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
-
-            if (canFire)
+            if (hit.collider.CompareTag("Enemy"))
             {
-                Fire();
+                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
+                if (canFire)
+                {
+                    // Handle fire cooldown so enemy doesn't take damage too fast
+                    HitEnemy();
+                }
+                return;
+            }
+
+            if (hit.collider.isTrigger == false)
+            {
+                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
             }
         }
     }
 
-    void Fire()
+    void HitEnemy()
     {
-        canFire = false;
-        StartCoroutine(ShootDelay());
+        if (Inventory.laserEnergy > 0)
+        {
+            print("shot enemy");
+            canFire = false;
+            StartCoroutine(ShootDelay());
 
-        print("Hit enemy");
+            // Deal damage to the enemy hit
+            hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
+            print(Time.deltaTime + ": Dealt " + damagePerTick + " damage to enemy hit.");
 
-        // Remove later, debugging
-        Debug.DrawRay(beamSpawnLocation.position, transform.right*beamLength, UnityEngine.Color.red, 5f);
+            Inventory.laserEnergy--;
+            magCapacityText.SetText(Inventory.laserEnergy.ToString());
+            // Remove later (debugging)
+            //Debug.DrawRay(beamSpawnLocation.position, transform.right*beamLength, UnityEngine.Color.red, 5f);
 
-        SplitTotargets(splitAmount);
+            //SplitTotargets(splitAmount);
+        }
     }
 
-    void SplitTotargets(int amount)
-    {
-        if (amount <= 0)
-        {
-            return;
-        }
+    // Work on more later if there's time
+    //void SplitTotargets(int amount)
+    //{
+    //    if (amount <= 0)
+    //    {
+    //        return;
+    //    }
 
-        // Find all GameObjects with the tag "Enemy" and sort the list based on distance to get the splitAmount closest enemies.
-        List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-        enemies.Sort((a, b) =>
-            UnityEngine.Vector2.Distance(transform.position, a.transform.position)
-            .CompareTo(UnityEngine.Vector2.Distance(transform.position, b.transform.position)));
+    //    // Find all GameObjects with the tag "Enemy" and sort the list based on distance to get the splitAmount closest enemies.
+    //    List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+    //    enemies.Sort((a, b) =>
+    //        UnityEngine.Vector2.Distance(transform.position, a.transform.position)
+    //        .CompareTo(UnityEngine.Vector2.Distance(transform.position, b.transform.position)));
 
-        for (int i = 0; i < splitAmount; i++)
-        {
-            if (enemies[i] != null)
-            {
-                enemies[i].SetActive(false);
-            }
-            print("Set to false");
-        }
+    //    for (int i = 0; i < splitAmount; i++)
+    //    {
+    //        if (enemies[i] != null)
+    //        {
+    //            enemies[i].SetActive(false);
+    //        }
+    //        print("Set to false");
+    //    }
 
-    }
+    //}
+
     void DrawBeam()
     {
         lineRenderer.SetPosition(0, beamSpawnLocation.position);
         lineRenderer.SetPosition(1, beamSpawnLocation.position + beamSpawnLocation.right * beamLength);
-    }
-
-    void Reload()
-    {
-        if (Inventory.ammo > 0)
-        {
-            if (magazine < magazineSize && canReload)
-            {
-                isRealoding = true;
-                canReload = false;
-                StartCoroutine(ReloadDelay());
-            }
-        }
-    }
-
-    IEnumerator ReloadDelay()
-    {
-        yield return new WaitForSeconds(reloadTime);
-        int bulletsToRemoveFromMag = 0;
-        int bulletsToTake = magazineSize - magazine;
-
-        Inventory.ammo -= bulletsToTake;
-        if (Inventory.ammo < 0)
-        {
-            bulletsToRemoveFromMag = Mathf.Abs(Inventory.ammo);
-            Inventory.ammo = 0;
-        }
-
-        magazine = magazineSize - bulletsToRemoveFromMag;
-
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
-
-        canReload = true;
-        isRealoding = false;
-        //reload.Play();
     }
 
     IEnumerator ShootDelay()

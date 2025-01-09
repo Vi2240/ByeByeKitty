@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 64ae5115151fdc940b924193bdd5c918
+guid: deda84c6f884d324abbbc42d7153c302
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 766666334838689380
-    second: vapen1_0
+      213: -6436376011385607893
+    second: Pistol1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 128
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: vapen1_0
+      name: Pistol1_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 12
         y: 0
-        width: 104
-        height: 80
+        width: 92
+        height: 66
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 46e8f4538feb3aa00800000000000000
-      internalID: 766666334838689380
+      spriteID: b29e3887e166da6a0800000000000000
+      internalID: -6436376011385607893
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      vapen1_0: 766666334838689380
+      Pistol1_0: -6436376011385607893
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
