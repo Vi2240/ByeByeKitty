@@ -309,7 +309,15 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      knapp5_0: -1496112602754090840
+      knapp5_1: 3242076326007269503
+      knapp5_2: -1602545203237727577
+      knapp5_3: -922324249905584516
+      knapp5_4: 9201634230615370844
+      knapp5_5: 4394046176455422090
+      knapp5_6: 7314958940423041356
+      knapp5_7: 652076602685593475
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
