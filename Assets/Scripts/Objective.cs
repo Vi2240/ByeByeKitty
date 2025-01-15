@@ -11,8 +11,12 @@ public class Objective : MonoBehaviour
     [SerializeField] float healSpeed;
     [SerializeField] float burnSpeed;
 
+    [SerializeField] bool enemyKillzone;
+
     [SerializeField] GameObject burnEffect;
     [SerializeField] GameObject healingEffect;
+
+    [SerializeField] GameObject winCanvas;
 
     public bool CanSpawn => isBurning;
 
@@ -29,6 +33,8 @@ public class Objective : MonoBehaviour
 
     void Start()
     {
+        winCanvas.SetActive(false);
+
         currentHp = maxHp;
         waveSpawner = GetComponent<WaveSpawner>();
     }
@@ -62,9 +68,13 @@ public class Objective : MonoBehaviour
         {
             playersInZone = true;
         }
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy" && enemyKillzone == false)
         {
             isBurning = false;
+        }
+        if(other.tag == "Enemy" && enemyKillzone == true) 
+        {
+            Destroy(other.gameObject);
         }
     }
 
@@ -88,7 +98,7 @@ public class Objective : MonoBehaviour
         else
         {
             Debug.Log("Died");
-            //Died spaw scene
+            //StartCoroutine(WinGame());
         }
 
         yield return new WaitForSeconds(burnSpeed);
@@ -113,5 +123,12 @@ public class Objective : MonoBehaviour
     public bool GetIsBurning()
     { 
         return isBurning;
+    }
+
+    IEnumerator WinGame()
+    {
+        winCanvas.SetActive(true);
+        yield return new WaitForSeconds(1);
+        Loader.LoadNetwork(Loader.Scene.MenuScene);
     }
 }
