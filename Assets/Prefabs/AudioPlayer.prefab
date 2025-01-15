@@ -46,6 +46,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20577a0a2c1b20a4f98d4ac29ee9fad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicSounds:
+  - {fileID: 8300000, guid: fe805b2510303ad4695f1026dfcab11b, type: 3}
+  sfxSounds:
+  - {fileID: 8300000, guid: c4ea13021f269be4e9cabfeec502db34, type: 3}
+  - {fileID: 8300000, guid: 9b6d5b385495472448f4a0764ce914bd, type: 3}
+  - {fileID: 8300000, guid: eaa7e112f228eaa48957492877de5caa, type: 3}
+  - {fileID: 8300000, guid: 6de992b536259d045a7bd404bf4d882b, type: 3}
+  - {fileID: 8300000, guid: 62b658801d6276c409532c060c912076, type: 3}
+  - {fileID: 8300000, guid: e9173a33b8bac724ea6088c1bfe517c4, type: 3}
+  - {fileID: 8300000, guid: f464e730151131243b3f17cd05e29b39, type: 3}
+  - {fileID: 8300000, guid: 73e13a03b45eb3a4a864c61912c3ecea, type: 3}
   musicSource: {fileID: 5313906713127107739}
   sfxSource: {fileID: 1500765786090383747}
 --- !u!1 &2265154256761699872
@@ -224,7 +235,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
