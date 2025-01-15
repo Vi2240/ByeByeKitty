@@ -86,7 +86,7 @@ MonoBehaviour:
   bulletForce: 25
   reloadTime: 1
   bulletDamage: 10
-  magazineSize: 10
+  maxMagazine: 0
 --- !u!1 &1482005934677955576
 GameObject:
   m_ObjectHideFlags: 0

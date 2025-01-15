@@ -7,9 +7,10 @@ public class EnemyMovement : MonoBehaviour
 {
     // Serialize fields
     [SerializeField] float speed = 2f;
-    [SerializeField] float maxDistance = 3;
+    //[SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
+    [SerializeField] int checkIfStuckFrequency = 5;
     [SerializeField] float stopDistanceFromPlayer = 5;
 
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
@@ -61,7 +62,7 @@ public class EnemyMovement : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         agent.speed = speed;
-        savedPositions = new Vector2[10];
+        savedPositions = new Vector2[checkIfStuckFrequency];
         walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
         // If it's a melee enemy it should go all the way to the player
@@ -87,7 +88,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate() // FixedUpdate because there's no need to update any quicker than the framerate
+    void Update()
     {
         nearestPlayer = FindNearestObject("Player");
         nearestObjective = FindNearestObject("Objective");
@@ -113,7 +114,7 @@ public class EnemyMovement : MonoBehaviour
             if (DistanceTo(nearestObjective) <= 5f)
             {
                 agent.isStopped = true;
-                print("Stopped");
+                //print("Stopped");
                 // Do fire extinguish stuff
             }
             return true; // Return true so it doesn't access the code below.
@@ -154,7 +155,7 @@ public class EnemyMovement : MonoBehaviour
             arrayCount++;
             timer = 0f;
 
-            if (arrayCount < 10) // 0 to 9 (10 elements)
+            if (arrayCount < checkIfStuckFrequency) // 0 to 9 (10 elements)
             {
                 return; // Return if 10 positions haven't been saved yet
             }
@@ -225,7 +226,7 @@ public class EnemyMovement : MonoBehaviour
         {
             canMove = false;
             float waitTime = Random.Range(movePauseMin, movePauseMax);
-            print($"Should move in {waitTime} seconds");
+            //print($"Should move in {waitTime} seconds");
             StartCoroutine(WaitThenMove(waitTime));
             return;
         }

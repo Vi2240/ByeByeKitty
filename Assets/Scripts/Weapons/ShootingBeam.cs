@@ -10,9 +10,6 @@ public class ShootingBeam : MonoBehaviour
     // Serialize fields
     [SerializeField] Transform beamSpawnLocation;
     [SerializeField] Transform weaponSpriteTransform;
-    [SerializeField] AudioSource gunshotFX;
-    [SerializeField] AudioSource reloadFX;
-
     [SerializeField] float fireCooldown = 0.1f;
     //[SerializeField] int splitAmount = 0;
     [SerializeField] float reloadTime = 1f;
@@ -25,7 +22,7 @@ public class ShootingBeam : MonoBehaviour
     Camera mainCam;
     LineRenderer lineRenderer;
     TextMeshProUGUI magCapacityText;
-    CircleCollider2D shootRange;
+    TextMeshProUGUI inventoryAmmo;
     RaycastHit2D hit;
     //private PlayerMovement movementScript;
 
@@ -48,6 +45,8 @@ public class ShootingBeam : MonoBehaviour
         //weaponRotation = GetComponentInChildren<SpriteRenderer>();
         //movementScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmo.SetText("");
         magCapacityText.SetText(Inventory.laserEnergy.ToString());
     }
 
@@ -55,6 +54,8 @@ public class ShootingBeam : MonoBehaviour
     private void OnEnable()
     {
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmo.SetText("");
         magCapacityText.SetText(Inventory.laserEnergy.ToString());
     }
 

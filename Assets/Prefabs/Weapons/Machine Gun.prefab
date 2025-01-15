@@ -171,7 +171,7 @@ MonoBehaviour:
   reloadFX: {fileID: 0}
   automaticShooting: 1
   fireCooldown: 0.1
-  bulletForce: 25
+  bulletForce: 50
   reloadTime: 2
   bulletDamage: 19
-  magazineSize: 50
+  maxMagazine: 0

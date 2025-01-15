@@ -9,6 +9,7 @@ public class DroppedItem : MonoBehaviour
     private void Awake()
     {
         Collider2D collider = GetComponent<Collider2D>();
+        if (!collider) { return; }
         collider.enabled = false;
         StartCoroutine(Timer(collider));
     }
