@@ -11,8 +11,6 @@ public class ShootingProjectile : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] Transform bulletSpawnLocation;
     [SerializeField] Transform weaponSpriteTransform;
-    [SerializeField] AudioSource gunshotFX;
-    [SerializeField] AudioSource reloadFX;
 
     [SerializeField, Tooltip("Wether the player can or cannot hold down left click to continue firing.")] 
     bool automaticShooting = false;
@@ -22,17 +20,16 @@ public class ShootingProjectile : MonoBehaviour
     [SerializeField] float reloadTime = 1f;
     [SerializeField] float bulletDamage = 5f;
 
-    [SerializeField] int magazineSize;
+    [SerializeField] int maxMagazine;
 
     Vector3 mousePos;
     Camera mainCam;
-    float defaultYscale;
+    //float defaultYscale;
     TextMeshProUGUI magCapacityText;
-    CircleCollider2D shootRange;
+    TextMeshProUGUI inventoryAmmo;
     //private PlayerMovement movementScript;
 
-    int magazine;
-    float timer;
+    int currentMagazine;
     float requiredMouseDistanceFromPlayer = 1.5f;
 
     bool canFire = true;
@@ -41,21 +38,31 @@ public class ShootingProjectile : MonoBehaviour
 
     void Start()
     {
-        defaultYscale = weaponSpriteTransform.localScale.y;
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        magazine = magazineSize;
-        //shootRange = GameObject.FindGameObjectWithTag("ShootRange").GetComponent<CircleCollider2D>();
-        //weaponRotation = GetComponentInChildren<SpriteRenderer>();
-        //movementScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+
+        currentMagazine = maxMagazine;
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmo.SetText(Inventory.ammo.ToString());
+        magCapacityText.SetText(currentMagazine + " / " + maxMagazine);
     }
 
-    // Switch the text in UI to match this weapon when it is enabled in different scripts
     private void OnEnable()
     {
+        // Fixed null error that made zero sense. Look more into this later.
+        if (magCapacityText == null || inventoryAmmo == null) { return; }
+
+
+        // Update the UI to match the ammo type and capacity when this object gets enabled again.
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+        magCapacityText.SetText(currentMagazine + " / " + maxMagazine);
+        inventoryAmmo.SetText(Inventory.ammo.ToString());
+
+        // Code below fixes a bug where you couldn't shoot or reload if you switched weapon during a reload.
+        StopCoroutine(ReloadDelay());
+        isRealoding = false;
+        canReload = true;
+        canFire = true;
     }
 
     void Update()
@@ -64,14 +71,14 @@ public class ShootingProjectile : MonoBehaviour
 
         if (automaticShooting)
         {
-            if (Input.GetMouseButton(0) && canFire && magazine > 0 && MouseFarEnoughFromPlayer() == true && !isRealoding)
+            if (Input.GetMouseButton(0) && canFire && currentMagazine > 0 && MouseFarEnoughFromPlayer() == true && !isRealoding)
             {
                 Fire();
             }
         }
         else
         {
-            if (Input.GetMouseButtonDown(0) && canFire && magazine > 0 && MouseFarEnoughFromPlayer() == true && !isRealoding)
+            if (Input.GetMouseButtonDown(0) && canFire && currentMagazine > 0 && MouseFarEnoughFromPlayer() == true && !isRealoding)
             {
                 Fire();
             }
@@ -118,17 +125,15 @@ public class ShootingProjectile : MonoBehaviour
         GameObject bullet_ = Instantiate(bullet, bulletSpawnLocation.position, gameObject.transform.rotation * new Quaternion(0f, 0f, 90, -90));
         bullet_.GetComponent<Rigidbody2D>().AddForce(bullet_.transform.up * bulletForce, ForceMode2D.Impulse);
         bullet_.GetComponent<Bullet>().damage = bulletDamage;
-        magazine -= 1;
-        //gunshot.Play();
-        print("Shot");
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+        currentMagazine -= 1;
+        magCapacityText.SetText(currentMagazine + " / " + maxMagazine);
     }
 
     void Reload()
     {
         if (Inventory.ammo > 0)
         {
-            if (magazine < magazineSize && canReload)
+            if (currentMagazine < maxMagazine && canReload)
             {
                 isRealoding = true;
                 canReload = false;
@@ -141,7 +146,7 @@ public class ShootingProjectile : MonoBehaviour
     {
         yield return new WaitForSeconds(reloadTime);
         int bulletsToRemoveFromMag = 0;
-        int bulletsToTake = magazineSize - magazine;
+        int bulletsToTake = maxMagazine - currentMagazine;
 
         Inventory.ammo -= bulletsToTake;
         if (Inventory.ammo < 0)
@@ -150,9 +155,10 @@ public class ShootingProjectile : MonoBehaviour
             Inventory.ammo = 0;
         }
 
-        magazine = magazineSize - bulletsToRemoveFromMag;
+        currentMagazine = maxMagazine - bulletsToRemoveFromMag;
 
-        magCapacityText.SetText(magazine + " / " + Inventory.ammo);
+        magCapacityText.SetText(currentMagazine + " / " + maxMagazine);
+        inventoryAmmo.SetText(Inventory.ammo.ToString());
 
         canReload = true;
         isRealoding = false;

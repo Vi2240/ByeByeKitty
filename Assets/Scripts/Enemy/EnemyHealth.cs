@@ -7,14 +7,17 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField, Tooltip("Healing starts after X seconds out of combat.")] float timeToHeal = 3;
     [SerializeField] int healPerTick = 2;
     [SerializeField] float timeBetweenHealingTicks = 0.5f;
+    [SerializeField] HealthBar healthBar;
 
     float timer = 0;
     float timer2 = 0;
     bool outOfCombat = false;
 
+
     void Start()
     {
         currentHealth = maxHealth;
+        healthBar.SetHealth(currentHealth, maxHealth);
     }
 
     void FixedUpdate()
@@ -40,7 +43,8 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         currentHealth -= damageAmount;
-        print("Took " + damageAmount + " damage");
+        healthBar.SetHealth(currentHealth, maxHealth);
+        //print("Took " + damageAmount + " damage");
         timer = 0;
         outOfCombat = false;
     }
@@ -52,7 +56,8 @@ public class EnemyHealth : MonoBehaviour
         {
             timer2 = 0;
             currentHealth += healPerTick;
-            print("Healed " + healPerTick + " hp");
+            healthBar.SetHealth(currentHealth, maxHealth);
+            //print("Healed " + healPerTick + " hp");
 
             if (currentHealth > maxHealth)
             {
