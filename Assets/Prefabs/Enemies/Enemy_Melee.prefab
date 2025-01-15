@@ -164,9 +164,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3.5
-  maxDistance: 3
   movePauseMin: 2
   movePauseMax: 5
+  checkIfStuckFrequency: 0
   stopDistanceFromPlayer: 1.8
   targetRestriction: 1
   attackType: 1
