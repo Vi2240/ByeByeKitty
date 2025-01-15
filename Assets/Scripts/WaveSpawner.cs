@@ -64,13 +64,24 @@ public class WaveSpawner : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(spawnRate);
 
-        while (objective.CanSpawn)
+        Debug.Log("CanSpawn" + objective.CanSpawn);
+
+        while (true)
         {
             yield return wait;
-            GameObject enemyToSpawn = RandomizeEnemyToSpawn();
-            int randomSpawnPoint = UnityEngine.Random.Range(0, spawnPoints.Length);
+            if(objective.CanSpawn)
+            {
+                GameObject enemyToSpawn = RandomizeEnemyToSpawn();
+                int randomSpawnPoint = UnityEngine.Random.Range(0, spawnPoints.Length);
 
-            Instantiate(enemyToSpawn, spawnPoints[randomSpawnPoint].transform.position, Quaternion.identity);
+                while(enemyToSpawn == null)
+                {
+                    enemyToSpawn = RandomizeEnemyToSpawn();
+                }
+
+                Debug.Log("Enemy " + enemyToSpawn + "spawnPoint " + spawnPoints[randomSpawnPoint]);
+                Instantiate(enemyToSpawn, spawnPoints[randomSpawnPoint].transform.position, Quaternion.identity);
+            }
         }
     }
 }

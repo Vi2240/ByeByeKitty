@@ -8,6 +8,7 @@ TagManager:
   - Objective
   - WalkableArea
   - UI_AmmoCount
+  - AudioManager
   layers:
   - Default
   - TransparentFX
