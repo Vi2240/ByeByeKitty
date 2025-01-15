@@ -41,9 +41,15 @@ public class TempLootDropper : MonoBehaviour
         }
 
         // Select a random item
-        int randomIndex = Random.Range(0, totalWeight); // Random.Range is inclusive-exclusive
-        print(itemsToDrop[randomIndex].name);
-        return itemsToDrop[randomIndex];
+        if (itemsToDrop.Length > 0)
+        {
+            int randomIndex = Random.Range(0, totalWeight); // Random.Range is inclusive-exclusive
+            return itemsToDrop[randomIndex];
+        }
+        else
+        {
+            return null;
+        }
     }
 
     IEnumerator Cooldown()

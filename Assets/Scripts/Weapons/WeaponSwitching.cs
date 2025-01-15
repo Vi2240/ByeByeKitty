@@ -51,6 +51,8 @@ public class WeaponSwitching : MonoBehaviour
     void SwitchTo(int number)
     {
         foreach (var weapon in weapons) { weapon.SetActive(false); }
+        if (weapons.Length < number)
+            return;
         if (weapons[number - 1])
         {
             weapons[number - 1].SetActive(true);
