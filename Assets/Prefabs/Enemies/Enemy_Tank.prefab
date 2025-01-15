@@ -498,7 +498,6 @@ GameObject:
   - component: {fileID: 5355505248571059637}
   - component: {fileID: 7181665819436394816}
   - component: {fileID: 3481119880570512927}
-  - component: {fileID: -2921794130836257963}
   - component: {fileID: 8457724314121361512}
   m_Layer: 6
   m_Name: Enemy_Tank
@@ -632,24 +631,6 @@ MonoBehaviour:
   nearObjectCheckRadius: 0.3
   randomWander: 1
   canAttackPlayers: 0
---- !u!114 &-2921794130836257963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9205428136142299004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61c1d283d7cdd4d4a800b8a96185e1fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  timeToHeal: 3
-  healPerTick: 2
-  timeBetweenHealingTicks: 0.25
-  healthBar: {fileID: 235728362966786466}
 --- !u!114 &8457724314121361512
 MonoBehaviour:
   m_ObjectHideFlags: 0
