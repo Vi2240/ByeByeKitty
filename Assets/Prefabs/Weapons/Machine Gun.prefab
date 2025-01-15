@@ -167,11 +167,9 @@ MonoBehaviour:
   bullet: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
   bulletSpawnLocation: {fileID: 4269039318502225995}
   weaponSpriteTransform: {fileID: 1395401081620193373}
-  gunshotFX: {fileID: 0}
-  reloadFX: {fileID: 0}
   automaticShooting: 1
   fireCooldown: 0.1
   bulletForce: 50
   reloadTime: 2
-  bulletDamage: 19
-  maxMagazine: 0
+  bulletDamage: 14
+  maxMagazine: 50

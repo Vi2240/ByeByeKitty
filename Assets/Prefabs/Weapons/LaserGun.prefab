@@ -283,10 +283,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   beamSpawnLocation: {fileID: 4269039318502225995}
   weaponSpriteTransform: {fileID: 1395401081620193373}
-  gunshotFX: {fileID: 0}
-  reloadFX: {fileID: 0}
   fireCooldown: 0.1
   reloadTime: 1
-  damagePerTick: 15
+  damagePerTick: 12
   beamLength: 25
   magazineSize: 10
