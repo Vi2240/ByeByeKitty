@@ -14,6 +14,8 @@ public class Objective : MonoBehaviour
     [SerializeField] GameObject burnEffect;
     [SerializeField] GameObject healingEffect;
 
+    public bool CanSpawn => isBurning;
+
     float currentHp;
 
     bool playersInZone;
@@ -38,7 +40,6 @@ public class Objective : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E) && !isBurning)
             {
                 isBurning = true;
-                StartCoroutine(waveSpawner.Waves());
             }
         }
     }
@@ -64,7 +65,6 @@ public class Objective : MonoBehaviour
         if (other.tag == "Enemy")
         {
             isBurning = false;
-            StopCoroutine(waveSpawner.Waves());
         }
     }
 
@@ -81,7 +81,15 @@ public class Objective : MonoBehaviour
         isTakingBurningDmg = true;
         burnEffect.SetActive(true);
 
-        currentHp -= burningDmg;
+        if(currentHp > 0)
+        {
+            currentHp -= burningDmg;
+        }
+        else
+        {
+            Debug.Log("Died");
+            //Died spaw scene
+        }
 
         yield return new WaitForSeconds(burnSpeed);
 
