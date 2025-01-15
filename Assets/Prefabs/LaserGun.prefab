@@ -281,12 +281,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5d9024d09c3dd48bcf272f35eac449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  laser: {fileID: 5624741403977969551, guid: 512167d7f0b87dc4b83de92e42092f92, type: 3}
   beamSpawnLocation: {fileID: 4269039318502225995}
   weaponSpriteTransform: {fileID: 1395401081620193373}
   gunshotFX: {fileID: 0}
   reloadFX: {fileID: 0}
-  automaticShooting: 0
   fireCooldown: 0.1
   reloadTime: 1
   damagePerTick: 15

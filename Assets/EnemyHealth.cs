@@ -63,7 +63,9 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-        // Other death stuff
+        // Add other death stuff here later
+        GameObject drop = GetComponent<TempLootDropper>().GetRandomDrop();
+        if (drop != null) { Instantiate(drop, transform.position, Quaternion.identity); }
         Destroy(gameObject);
     }
 }
