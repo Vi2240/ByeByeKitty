@@ -11,7 +11,7 @@ public static class Loader
     public enum Scene
     {
         MenuScene,
-        GameScene,
+        GamePlay,
         LoadingScene,
         LobbyScene,
         CharacterSelectScene,   //figure out how to remove this option!?

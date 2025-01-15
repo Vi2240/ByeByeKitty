@@ -52,7 +52,7 @@ public class MyGameMultiplayer : NetworkBehaviour
         {
             // Singleplayer
             StartHost();
-            Loader.LoadNetwork(Loader.Scene.GameScene);
+            Loader.LoadNetwork(Loader.Scene.GamePlay);
         }
     }
 

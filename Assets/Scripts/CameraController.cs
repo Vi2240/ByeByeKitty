@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] GameObject target;
+    [SerializeField] private GameObject target;
+    [SerializeField] private float smoothSpeed = 0.125f;
 
-    
+    private Vector3 offset = new Vector3(0, 0, -10);
 
-    void Update()
-    { 
-        if(target != null)
+    public void SetTarget(GameObject target)
+    {
+        this.target = target;
+    }
+
+    void LateUpdate()
+    {
+        if (target != null)
         {
-            this.gameObject.transform.position = new Vector3(target.transform.position.x, target.transform.position.y, -10);
+            Vector3 desiredPosition = target.transform.position + offset;
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+            transform.position = smoothedPosition;
         }
     }
 }

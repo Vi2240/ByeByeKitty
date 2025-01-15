@@ -15,6 +15,11 @@ public class PlayerVisual : MonoBehaviour
 
     public void SetPlayerColor(Color color) // or SetPlayerSprite: the options from CharecterOptionSelectUI
     {
+        if (material == null)
+        {
+            Debug.Log("no material set");
+            return;
+        }
         material.color = color;
     }
 
