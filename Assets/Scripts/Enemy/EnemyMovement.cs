@@ -67,9 +67,9 @@ public class EnemyMovement : MonoBehaviour
         // If it's a melee enemy it should go all the way to the player
         if (attackType == 0)
         {
-            stopDistanceFromPlayer = 0;
+            stopDistanceFromPlayer = 0.2f;
         }
-
+        
         // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
@@ -131,6 +131,7 @@ public class EnemyMovement : MonoBehaviour
         if (canAttackPlayers && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
         {
             agent.isStopped = true;
+            // Attack logic here
             return true;
         }
         else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
