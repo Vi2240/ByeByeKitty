@@ -27,6 +27,8 @@ public class ShootingProjectile : MonoBehaviour
     //float defaultYscale;
     TextMeshProUGUI magCapacityText;
     TextMeshProUGUI inventoryAmmo;
+    AudioPlayer audioPlayer;
+
     //private PlayerMovement movementScript;
 
     int currentMagazine;
@@ -38,6 +40,7 @@ public class ShootingProjectile : MonoBehaviour
 
     void Start()
     {
+        //audioPlayer.SfxPlayer("PumpReload_Sound");
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
         currentMagazine = maxMagazine;
@@ -49,6 +52,7 @@ public class ShootingProjectile : MonoBehaviour
 
     private void OnEnable()
     {
+        //audioPlayer.SfxPlayer("PumpReload_Sound");
         // Fixed null error that made zero sense. Look more into this later.
         if (magCapacityText == null || inventoryAmmo == null) { return; }
 

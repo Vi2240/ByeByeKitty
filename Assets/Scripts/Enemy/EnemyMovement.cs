@@ -186,7 +186,7 @@ public class EnemyMovement : MonoBehaviour
 
     void NearObjectChecks()
     {
-        if (DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
+        if (nearestPlayer && DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
         else
         {
             isNearPlayer = false;

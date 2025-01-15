@@ -328,11 +328,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5651324927108048545, guid: 661731661c917f04d9521133254e7987, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.65
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5651324927108048545, guid: 661731661c917f04d9521133254e7987, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.65
+      value: 0.085
       objectReference: {fileID: 0}
     - target: {fileID: 8805440411186290870, guid: 661731661c917f04d9521133254e7987, type: 3}
       propertyPath: m_FlipX
@@ -345,7 +345,7 @@ PrefabInstance:
     - target: {fileID: 8805440411186290870, guid: 661731661c917f04d9521133254e7987, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 6994710871084181383, guid: 1cbfc18d620d699d6ac36a1263bcdb20, type: 3}
+      objectReference: {fileID: 8121290900878290512, guid: 8f1bec67d3bae7ed6a96096356241085, type: 3}
     - target: {fileID: 8805440411186290870, guid: 661731661c917f04d9521133254e7987, type: 3}
       propertyPath: m_Enabled
       value: 1

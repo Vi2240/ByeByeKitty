@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Walter-Networking/Scenes/MenueScene.unity
+    path: Assets/Walter-Networking/Scenes/MenuScene.unity
     guid: d0c6bb878f8d3b44d83f084041dc01f5
   - enabled: 1
     path: Assets/Walter-Networking/Scenes/LobbyScene.unity

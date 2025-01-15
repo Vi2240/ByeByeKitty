@@ -12,39 +12,39 @@ public class WeaponSwitching : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SwitchTo(1);
+            SwitchTo(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SwitchTo(2);
+            SwitchTo(1);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            SwitchTo(3);
+            SwitchTo(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            SwitchTo(4);
+            SwitchTo(3);
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            SwitchTo(5);
+            SwitchTo(4);
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
-            SwitchTo(6);
+            SwitchTo(5);
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            SwitchTo(7);
+            SwitchTo(6);
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            SwitchTo(8);
+            SwitchTo(7);
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            SwitchTo(9);
+            SwitchTo(8);
         }
     }
 
@@ -53,9 +53,9 @@ public class WeaponSwitching : MonoBehaviour
         foreach (var weapon in weapons) { weapon.SetActive(false); }
         if (weapons.Length < number) { return; }
             
-        if (weapons[number - 1])
+        if (weapons[number] != null)
         {
-            weapons[number - 1].SetActive(true);
+            weapons[number].SetActive(true);
         }
     }
 }

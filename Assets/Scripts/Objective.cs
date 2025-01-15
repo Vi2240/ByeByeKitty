@@ -61,7 +61,7 @@ public class Objective : MonoBehaviour
         if(isBurning && !isTakingBurningDmg)
         {
             StartCoroutine(BurningTickDmg());
-            audioPlayer.SfxPlayer("Fire_Sound");
+            //audioPlayer.SfxPlayer("Fire_Sound");
         }
     }
 
@@ -100,8 +100,8 @@ public class Objective : MonoBehaviour
         }
         else
         {
-            Debug.Log("Died");
-            //StartCoroutine(WinGame());
+            //Debug.Log("Died");
+            StartCoroutine(WinGame());
         }
 
         yield return new WaitForSeconds(burnSpeed);

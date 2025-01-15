@@ -10224,10 +10224,10 @@ MonoBehaviour:
   burningDmg: 5
   healSpeed: 1
   burnSpeed: 1
-  enemyKillzone: 1
+  enemyKillzone: 0
   burnEffect: {fileID: 6456118637973538027}
   healingEffect: {fileID: 6141978003280216783}
-  winCanvas: {fileID: 0}
+  winCanvas: {fileID: 1997299088719311101, guid: cf80395c7bf9e5e4e8af93575cacd541, type: 3}
 --- !u!114 &3126341213566847188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10240,9 +10240,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d8bad9153554a46b8f65dae98e46f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalEnemy: {fileID: 6661881046318929437, guid: edb65fc28a5d1824faa64829b09424a8, type: 3}
+  normalEnemy: {fileID: 9205428136142299004, guid: 7ffa109d000a87b0886ba5e675a438d0, type: 3}
   speedEnemy: {fileID: 1139616339930356274, guid: fdd67cd49407b56419b07ca115dc0292, type: 3}
-  slowEnemy: {fileID: 1031087129276300984, guid: bab3d290ff2de6249b7f35933fbc5b53, type: 3}
+  slowEnemy: {fileID: 9205428136142299004, guid: a9c3b3de85c865ab9ad37e7f10cebe47, type: 3}
   rangeEnemy: {fileID: 4887576066616181327, guid: aa52d814a4bea5c4a83c50585dc75e3e, type: 3}
   spawnPoints:
   - {fileID: 1514919122782463665}
@@ -10251,11 +10251,11 @@ MonoBehaviour:
   - {fileID: 8664479002206683309}
   - {fileID: 7614984300224886608}
   - {fileID: 2897206711841877574}
-  NormalEnemy_ChanceToSpawn: 95
-  SpeedEnemy_ChanceToSpawn: 2.5
-  SlowEnemy_ChanceToSpawn: 1
-  RangeEnemy_ChanceToSpawn: 0.5
-  spawnRate: 1
+  NormalEnemy_ChanceToSpawn: 55
+  SpeedEnemy_ChanceToSpawn: 0
+  SlowEnemy_ChanceToSpawn: 45
+  RangeEnemy_ChanceToSpawn: 0
+  spawnRate: 2
 --- !u!1 &7614984300224886608
 GameObject:
   m_ObjectHideFlags: 0

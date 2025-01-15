@@ -24,6 +24,7 @@ public class ShootingBeam : MonoBehaviour
     TextMeshProUGUI magCapacityText;
     TextMeshProUGUI inventoryAmmo;
     RaycastHit2D hit;
+    AudioPlayer audioPlayer;
     //private PlayerMovement movementScript;
 
     int magazine;
@@ -38,6 +39,7 @@ public class ShootingBeam : MonoBehaviour
 
     void Start()
     {
+        //audioPlayer.SfxPlayer("RevolverReload_Sound");
         savedBeamLength = beamLength;
         lineRenderer = GetComponentInChildren<LineRenderer>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -53,6 +55,7 @@ public class ShootingBeam : MonoBehaviour
     // Switch the text in UI to match this weapon when it is enabled in different scripts
     private void OnEnable()
     {
+        //audioPlayer.SfxPlayer("RevolverReload_Sound");
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         inventoryAmmo.SetText("");
@@ -141,13 +144,12 @@ public class ShootingBeam : MonoBehaviour
     {
         if (Inventory.laserEnergy > 0)
         {
-            print("shot enemy");
+            //print("shot enemy");
             canFire = false;
             StartCoroutine(ShootDelay());
 
             // Deal damage to the enemy hit
             hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
-            print(Time.deltaTime + ": Dealt " + damagePerTick + " damage to enemy hit.");
 
             Inventory.laserEnergy--;
             magCapacityText.SetText(Inventory.laserEnergy.ToString());
