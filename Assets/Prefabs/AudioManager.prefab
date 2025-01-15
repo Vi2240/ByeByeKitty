@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3765778774519199295
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5921764208962729853}
+  - component: {fileID: 8639560441501347711}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5921764208962729853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765778774519199295}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8639560441501347711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765778774519199295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4664e0d7c49cbc9488fcd22488e05b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSounds:
+  - {fileID: 8300000, guid: fe805b2510303ad4695f1026dfcab11b, type: 3}
+  - {fileID: 8300000, guid: 9b6d5b385495472448f4a0764ce914bd, type: 3}
+  sfxSounds:
+  - {fileID: 8300000, guid: c789f2f5a5640b64382d1b0a918028a6, type: 3}
+  - {fileID: 8300000, guid: c4ea13021f269be4e9cabfeec502db34, type: 3}
+  - {fileID: 8300000, guid: eaa7e112f228eaa48957492877de5caa, type: 3}
+  - {fileID: 8300000, guid: 73e13a03b45eb3a4a864c61912c3ecea, type: 3}
+  - {fileID: 8300000, guid: 62b658801d6276c409532c060c912076, type: 3}
+  - {fileID: 8300000, guid: f464e730151131243b3f17cd05e29b39, type: 3}
+  - {fileID: 8300000, guid: e9173a33b8bac724ea6088c1bfe517c4, type: 3}

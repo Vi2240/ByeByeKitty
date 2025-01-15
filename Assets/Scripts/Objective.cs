@@ -30,6 +30,7 @@ public class Objective : MonoBehaviour
     bool isBurning;
 
     WaveSpawner waveSpawner;
+    AudioPlayer audioPlayer;
 
     void Start()
     {
@@ -37,6 +38,7 @@ public class Objective : MonoBehaviour
 
         currentHp = maxHp;
         waveSpawner = GetComponent<WaveSpawner>();
+        audioPlayer = FindAnyObjectByType<AudioPlayer>();
     }
 
     void Update()
@@ -59,6 +61,7 @@ public class Objective : MonoBehaviour
         if(isBurning && !isTakingBurningDmg)
         {
             StartCoroutine(BurningTickDmg());
+            audioPlayer.SfxPlayer("Fire_Sound");
         }
     }
 
