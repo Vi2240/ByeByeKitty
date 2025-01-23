@@ -50,12 +50,6 @@ public class EnemyMovement : MonoBehaviour
     NavMeshAgent agent;
     GameObject walkableArea;
 
-    // Constructor
-    public EnemyMovement(bool wander)
-    {
-        this.randomWander = wander;
-    }
-
     void Start()
     {
         canMove = true;
@@ -141,7 +135,7 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        if (canAttackPlayers && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
+        if (canAttackPlayers && nearestPlayer != null && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
         {
             agent.isStopped = true;
             // Attack logic here

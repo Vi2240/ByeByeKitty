@@ -750,6 +750,10 @@ MonoBehaviour:
   healPerTick: 2
   timeBetweenHealingTicks: 0.25
   healthBar: {fileID: 235728362966786466}
+  bloodExplosion: {fileID: 2779123398762705581, guid: 62adf3775c5aaffdf953623d5f8437d2, type: 3}
+  bloodPuddles:
+  - {fileID: 8868525059811836440, guid: 12028bc235d1f0b9b925a9b9550818ff, type: 3}
+  - {fileID: 7526131994675719849, guid: 0cd13087af916e6998402d61526d52b7, type: 3}
 --- !u!114 &7487913626327915529
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,11 +46,11 @@ Material:
     m_Ints: []
     m_Floats:
     - PixelSnap: 0
-    - _BlurSize: 0.043
+    - _BlurSize: 0.0032
     - _BumpAmt: 10
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
-    - _Intensity: 21.6
+    - _Intensity: 15
     - _Metallic: 0
     - _Size: 1
     - _ZWrite: 0

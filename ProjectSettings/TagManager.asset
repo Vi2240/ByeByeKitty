@@ -17,7 +17,7 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - Objectiv
+  - Objective
   - 
   - 
   - 
@@ -45,6 +45,12 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 1944526929
+    locked: 0
+  - name: Ground
+    uniqueID: 59655883
+    locked: 0
+  - name: BloodPuddles
+    uniqueID: 727785603
     locked: 0
   - name: Default
     uniqueID: 0

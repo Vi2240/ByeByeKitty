@@ -1,3 +1,5 @@
+using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
@@ -8,6 +10,8 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] int healPerTick = 2;
     [SerializeField] float timeBetweenHealingTicks = 0.5f;
     [SerializeField] HealthBar healthBar;
+    [SerializeField] GameObject bloodExplosion;
+    [SerializeField] GameObject[] bloodPuddles;
 
     float timer = 0;
     float timer2 = 0;
@@ -69,8 +73,14 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         // Add other death stuff here later
+        if (bloodExplosion) { Instantiate(bloodExplosion, transform.position, quaternion.identity); }; // Blood splatter
+        if (bloodPuddles.Length > 0) 
+        {
+            Instantiate(bloodPuddles[UnityEngine.Random.Range(0, bloodPuddles.Length)], transform.position, Quaternion.identity);
+        }
+
         GameObject drop = GetComponent<TempLootDropper>().GetRandomDrop();
-        if (drop != null) { Instantiate(drop, transform.position, Quaternion.identity); }
+        if (drop) { Instantiate(drop, transform.position, Quaternion.identity); }
         Destroy(gameObject);
     }
 }
