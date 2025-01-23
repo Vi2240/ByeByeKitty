@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyAttack : MonoBehaviour
 {
     // Serialize fields
+    public bool disableAttacking = false;
     [SerializeField, Tooltip("0 = melee, 1 = ranged")] int attackType = 0;
     [SerializeField] float attackRange = 0;
     [SerializeField] float bulletForce = 20;
@@ -20,8 +21,10 @@ public class EnemyAttack : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
+        if (disableAttacking) { return; }
+
         timer += Time.deltaTime;
         nearestPlayer = movementScript.FindNearestObject("Player");
         if (movementScript.DistanceTo(nearestPlayer) > attackRange) { return; } // Return if it's too far away to skip code below
@@ -56,7 +59,6 @@ public class EnemyAttack : MonoBehaviour
         Rigidbody2D rigidbody = bullet.GetComponent<Rigidbody2D>();
         rigidbody.AddForce(direction * bulletForce, ForceMode2D.Impulse);
     }
-
 
     void MeleeAttack()
     {

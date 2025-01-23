@@ -5,7 +5,8 @@ using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    // Serialize fields
+    // Accessable variables. The public ones are needed for the spawn script. 
+    public bool disableMovement = false;
     [SerializeField] float speed = 2f;
     //[SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
@@ -77,7 +78,7 @@ public class EnemyMovement : MonoBehaviour
             canAttackPlayers = false;
         }
 
-        if (randomWander && canMove)
+        if (randomWander && canMove && !disableMovement)
         {
             SetNewRandomDestination();
             MoveToDestination(randomDestination);
@@ -90,6 +91,17 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
+        // Makes all code below temporarily unreachable
+        if (disableMovement) 
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
         nearestPlayer = FindNearestObject("Player");
         nearestObjective = FindNearestObject("Objective");
 
