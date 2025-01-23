@@ -6,19 +6,19 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Walter-Networking/Scenes/MenuScene.unity
+    path: Assets/Scenes/Networking Scenes/MenuScene.unity
     guid: d0c6bb878f8d3b44d83f084041dc01f5
   - enabled: 1
-    path: Assets/Walter-Networking/Scenes/LobbyScene.unity
+    path: Assets/Scenes/Networking Scenes/LobbyScene.unity
     guid: 1e67b096a893e754caabec32b11d0a4f
   - enabled: 1
     path: Assets/Scenes/GamePlay.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Walter-Networking/Scenes/LoadingScene.unity
+    path: Assets/Scenes/Networking Scenes/LoadingScene.unity
     guid: 77db1d5660b7b04448c371a0ae8b157b
   - enabled: 1
-    path: Assets/Walter-Networking/Scenes/CharacterSelectScene.unity
+    path: Assets/Scenes/Networking Scenes/CharacterSelectScene.unity
     guid: 90356ad36aef2d6459e6956958c17bc2
   - enabled: 1
     path: Assets/Scenes/Manager.unity
