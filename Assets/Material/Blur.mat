@@ -46,7 +46,7 @@ Material:
     m_Ints: []
     m_Floats:
     - PixelSnap: 0
-    - _BlurSize: 0.0032
+    - _BlurSize: 0.002
     - _BumpAmt: 10
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
