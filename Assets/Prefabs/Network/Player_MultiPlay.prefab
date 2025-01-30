@@ -127,6 +127,7 @@ MonoBehaviour:
   moveSpeed: 5
   rigidbody: {fileID: 198804766164798760}
   cameraPrefab: {fileID: 6977224127194796244, guid: 265331b4266d6e64ba647009621939eb, type: 3}
+  followCameraPrefab: {fileID: 5800095459205560812, guid: b84c9b13516384f4cbd52fe7d8a76b6a, type: 3}
   weaponObject: {fileID: 1701921337560124805}
   playerVisual: {fileID: 7522041729695949698}
 --- !u!114 &1088832818248008299
