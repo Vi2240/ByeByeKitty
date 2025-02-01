@@ -169,7 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifeTime: 1
   hitEffectTime: 1
-  hitEffectPrefab: {fileID: 2125153447339585996, guid: ebd5fc43b23924558aabc4f5e967cf3a, type: 3}
+  hitEffectPrefab: {fileID: 7173512307656067921, guid: ebd5fc43b23924558aabc4f5e967cf3a, type: 3}
   ignoredLayers:
     serializedVersion: 2
     m_Bits: 128

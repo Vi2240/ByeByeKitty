@@ -42,7 +42,8 @@ public class Bullet : MonoBehaviour
 
         // Get rotation from bullet direction
         float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-        Quaternion effectRotation = Quaternion.Euler(0, 0, angle);
+        Quaternion effectRotation = Quaternion.Euler(-90, 0, angle);
+        print(angle.ToString());
         GameObject effect = Instantiate(hitEffectPrefab, transform.position, effectRotation);
 
         Destroy(effect, hitEffectTime);

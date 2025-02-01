@@ -578,6 +578,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8523370411644743543}
   - component: {fileID: 6161132320044084763}
+  - component: {fileID: 5071894057939872928}
   - component: {fileID: 5355505248571059637}
   - component: {fileID: 7181665819436394816}
   - component: {fileID: 3481119880570512927}
@@ -643,8 +644,45 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.049603462, y: -0.08335626}
-  m_Size: {x: 0.7130356, y: 1.2561932}
+  m_Offset: {x: 0.027479243, y: -0.43695712}
+  m_Size: {x: 0.6923358, y: 0.41629165}
+  m_Direction: 1
+--- !u!70 &5071894057939872928
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9205428136142299004}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.043560743, y: -0.08040637}
+  m_Size: {x: 0.70599234, y: 1.1608127}
   m_Direction: 0
 --- !u!50 &5355505248571059637
 Rigidbody2D:
@@ -754,6 +792,9 @@ MonoBehaviour:
   bloodPuddles:
   - {fileID: 8868525059811836440, guid: 12028bc235d1f0b9b925a9b9550818ff, type: 3}
   - {fileID: 7526131994675719849, guid: 0cd13087af916e6998402d61526d52b7, type: 3}
+  - {fileID: 7526131994675719849, guid: 17919f0245cbd09408d4f6c463c7d765, type: 3}
+  - {fileID: 7526131994675719849, guid: 8dc408fdac5c79b4eb77de857a704908, type: 3}
+  - {fileID: 7526131994675719849, guid: dfcebe1e4144d154babfe0f82cdb9095, type: 3}
 --- !u!114 &7487913626327915529
 MonoBehaviour:
   m_ObjectHideFlags: 0

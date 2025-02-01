@@ -62,7 +62,7 @@ public class EnemyAttack : MonoBehaviour
     void MeleeAttack()
     {
         print("Enemy used melee attack");
-        //var playerHpSCriptOrSomething = nearestPlayer.GetComponent<TheClassName>();
-        //playerHpSCriptOrSomething.TakeDamage(damageAmount);
+        //var playerHealthScriptOrSomething = nearestPlayer.GetComponent<TheClassName>();
+        //playerHealthScriptOrSomething.TakeDamage(damageAmount);
     }
 }
