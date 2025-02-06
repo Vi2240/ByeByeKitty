@@ -76,6 +76,7 @@ public class ShootingBeam : MonoBehaviour
         {
             lineRenderer.enabled = true;
             beamActive = true;
+            DrawBeam();
         }
         else if (Input.GetMouseButtonUp(0))
         {
