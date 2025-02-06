@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections;
 
 public class Movement : MonoBehaviour
 {
@@ -14,6 +15,19 @@ public class Movement : MonoBehaviour
 
     Vector2 movement;
     Vector2 mousePos;
+
+    [Header("Dash Variables")]
+    [SerializeField] private bool   allowDashInput   = true;
+    /*not implimented*/ //[SerializeField] private bool enemyCollition = false;
+    /*not implimented*/ //[SerializeField] private bool playerCollition = false;
+    /*not implimented*/ //[SerializeField] private bool wallCollition = true; 
+    /*not implimented*/ //[SerializeField] private bool invincible = true; 
+    [SerializeField] private float  dashSpeed        = 10f;
+    [SerializeField] private float  dashTime         = 0.1f;
+    [SerializeField] private float  dashChargupTime  = 1f;
+    [SerializeField] private float  dashCooldownTime = 5f;
+    [SerializeField] private bool   dashOnCooldown   = false;
+    private Vector2 dashDirection;
 
     private void Start()
     {
@@ -42,6 +56,14 @@ public class Movement : MonoBehaviour
             playerVisual.localScale = new Vector3(1, 1, 1); // Normal scale (facing right)
         else
             playerVisual.localScale = new Vector3(-1, 1, 1); // Flipped scale (facing left)
+
+        // Dash input
+        if (allowDashInput && Input.GetKeyDown(KeyCode.Space) && !dashOnCooldown)
+        {
+            dashDirection = (mousePos - (Vector2)transform.position).normalized;                        
+            GeneralizedDash2D.Dash2D(dashSpeed, dashTime, dashChargupTime, dashDirection, gameObject);
+            StartCoroutine(DashCooldown());
+        }
     }
 
     private void FixedUpdate()
@@ -53,5 +75,12 @@ public class Movement : MonoBehaviour
         Vector2 lookDirection = mousePos - (Vector2)weaponObject.position;
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
         weaponObject.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    private IEnumerator DashCooldown()
+    {
+        dashOnCooldown = true;
+        yield return new WaitForSeconds(dashCooldownTime);
+        dashOnCooldown = false;
     }
 }
