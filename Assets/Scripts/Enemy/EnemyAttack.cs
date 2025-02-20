@@ -20,14 +20,13 @@ public class EnemyAttack : MonoBehaviour
         movementScript = gameObject.GetComponent<EnemyMovement>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (disableAttacking) { return; }
 
         timer += Time.deltaTime;
         nearestPlayer = movementScript.FindNearestObject("Player");
-        if (movementScript.DistanceTo(nearestPlayer) > attackRange) { return; } // Return if it's too far away to skip code below
+        if (nearestPlayer && movementScript.DistanceTo(nearestPlayer) > attackRange) { return; } // Return if it's too far away to skip code below
 
         if (timer >= attackCooldown)
         {
@@ -63,7 +62,7 @@ public class EnemyAttack : MonoBehaviour
     void MeleeAttack()
     {
         print("Enemy used melee attack");
-        //var playerHpSCriptOrSomething = nearestPlayer.GetComponent<TheClassName>();
-        //playerHpSCriptOrSomething.TakeDamage(damageAmount);
+        //var playerHealthScriptOrSomething = nearestPlayer.GetComponent<TheClassName>();
+        //playerHealthScriptOrSomething.TakeDamage(damageAmount);
     }
 }

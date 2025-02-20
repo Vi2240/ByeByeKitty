@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6384507538573537337}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9028324024951299070}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit (5)
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7550683743983887492}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit (1)
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6532299391372236359}
   - component: {fileID: 2862106569229929229}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Grafik
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 2719547517925061684}
   - component: {fileID: 4303297304717696539}
   - component: {fileID: 134585691630499490}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5024,7 +5024,7 @@ GameObject:
   - component: {fileID: 1916698913526644924}
   - component: {fileID: 2759395390308026626}
   - component: {fileID: 269413014869959326}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BurnEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10030,7 +10030,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2608038037075248819}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10072,7 +10072,7 @@ GameObject:
   - component: {fileID: 6868240381655303118}
   - component: {fileID: 4868506519002121604}
   - component: {fileID: 3126341213566847188}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Objective
   m_TagString: Objective
   m_Icon: {fileID: 0}
@@ -10265,7 +10265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7274350150422712036}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit (4)
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
@@ -10296,7 +10296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1339105489293995594}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit (2)
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
@@ -10327,7 +10327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4312981743403873668}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoit (3)
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}

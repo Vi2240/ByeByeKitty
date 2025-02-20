@@ -128,6 +128,7 @@ public class ShootingProjectile : MonoBehaviour
         StartCoroutine(ShootDelay());
         GameObject bullet_ = Instantiate(bullet, bulletSpawnLocation.position, gameObject.transform.rotation * new Quaternion(0f, 0f, 90, -90));
         bullet_.GetComponent<Rigidbody2D>().AddForce(bullet_.transform.up * bulletForce, ForceMode2D.Impulse);
+        bullet_.GetComponent<Bullet>().SetDirection(transform.right);
         bullet_.GetComponent<Bullet>().damage = bulletDamage;
         currentMagazine -= 1;
         magCapacityText.SetText(currentMagazine + " / " + maxMagazine);
