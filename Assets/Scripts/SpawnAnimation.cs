@@ -6,14 +6,19 @@ public class SpawnAnimation : MonoBehaviour
     [SerializeField] float spawnDelay = 1.5f;
     [SerializeField] GameObject spawnSprite;
     [SerializeField] GameObject enemySprite;
+    [SerializeField] Collider2D[] colliders;
 
     float savedSpeed;
     EnemyMovement movementScript;
     EnemyAttack attackScript;
+    EnemyHealth healthScript;
 
     void Awake()
     {
         movementScript = GetComponent<EnemyMovement>();
+        healthScript = GetComponent<EnemyHealth>();
+
+        // Try catch needed because not all enemies have an attack script. 
         try
         {
             attackScript = GetComponent<EnemyAttack>();
@@ -21,6 +26,16 @@ public class SpawnAnimation : MonoBehaviour
         catch
         {
             print("No attack script found");
+        }
+
+        SpawnLogic();
+    }
+
+    void SpawnLogic()
+    {
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = false;
         }
 
         spawnSprite.SetActive(true);
@@ -32,6 +47,7 @@ public class SpawnAnimation : MonoBehaviour
         {
             attackScript.disableAttacking = true;
         }
+        StartCoroutine(healthScript.TemporaryImmunity(spawnDelay));
 
         StartCoroutine(countdown(spawnDelay));
     }
@@ -41,13 +57,17 @@ public class SpawnAnimation : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         Destroy(spawnSprite);
-        print("Activated");
         enemySprite.SetActive(true);
         movementScript.disableMovement = false;
 
         if (attackScript != null)
         {
             attackScript.disableAttacking = false;
+        }
+
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = true;
         }
     }
 }

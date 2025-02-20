@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+public class Enemy_HealthBar : MonoBehaviour
 {
     [SerializeField] Slider slider;
     [SerializeField] Color low;
@@ -11,8 +11,8 @@ public class HealthBar : MonoBehaviour
     public void SetHealth(float health, float maxHealth)
     {
         slider.gameObject.SetActive(health < maxHealth);
-        slider.value = health;
         slider.maxValue = maxHealth;
+        slider.value = health;
         slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(low, high, slider.normalizedValue);
     }
 

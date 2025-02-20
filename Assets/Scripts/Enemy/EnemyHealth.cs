@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,14 +10,14 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField, Tooltip("Healing starts after X seconds out of combat.")] float timeToHeal = 3;
     [SerializeField] int healPerTick = 2;
     [SerializeField] float timeBetweenHealingTicks = 0.5f;
-    [SerializeField] HealthBar healthBar;
+    [SerializeField] Enemy_HealthBar healthBar;
     [SerializeField] GameObject bloodExplosion;
     [SerializeField] GameObject[] bloodPuddles;
 
     float timer = 0;
     float timer2 = 0;
     bool outOfCombat = false;
-
+    bool immune = false;
 
     void Start()
     {
@@ -44,13 +45,24 @@ public class EnemyHealth : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damageAmount)
+    /// <summary>
+    /// Returns true if enemy took damage, false if not.
+    /// </summary>
+    /// <param name="damageAmount"></param>
+    /// <returns></returns>
+    public bool TakeDamage(float damageAmount)
     {
+        if (immune)
+        {
+            return false;
+        }
+
         currentHealth -= damageAmount;
         healthBar.SetHealth(currentHealth, maxHealth);
         //print("Took " + damageAmount + " damage");
         timer = 0;
         outOfCombat = false;
+        return true;
     }
 
     void Heal()
@@ -82,5 +94,12 @@ public class EnemyHealth : MonoBehaviour
         GameObject drop = GetComponent<TempLootDropper>().GetRandomDrop();
         if (drop) { Instantiate(drop, transform.position, Quaternion.identity); }
         Destroy(gameObject);
+    }
+
+    public IEnumerator TemporaryImmunity(float seconds)
+    {
+        immune = true;
+        yield return new WaitForSeconds(seconds);
+        immune = false;
     }
 }

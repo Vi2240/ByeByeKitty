@@ -169,7 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifeTime: 1
   hitEffectTime: 1
-  hitEffectPrefab: {fileID: 7173512307656067921, guid: ebd5fc43b23924558aabc4f5e967cf3a, type: 3}
+  bloodHitEffect: {fileID: 3429003930983919446, guid: b58752065c93b56449ae9127f34b598a, type: 3}
+  regularHitEffect: {fileID: 3429003930983919446, guid: 391949acb693a5e4c86a9c47beb5207e, type: 3}
   ignoredLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -185,7 +186,7 @@ GameObject:
   - component: {fileID: 8408941711514144726}
   - component: {fileID: 4572895111350375901}
   m_Layer: 0
-  m_Name: Triangle
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

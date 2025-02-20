@@ -9,6 +9,7 @@ TagManager:
   - WalkableArea
   - UI_AmmoCount
   - AudioManager
+  - UI_HealthBar
   layers:
   - Default
   - TransparentFX

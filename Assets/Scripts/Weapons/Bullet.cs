@@ -4,7 +4,8 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] float lifeTime = 2f;
     [SerializeField] float hitEffectTime = 1;
-    [SerializeField] GameObject hitEffectPrefab;
+    [SerializeField] GameObject bloodHitEffect;
+    [SerializeField] GameObject sparksHitEffect;
     [SerializeField] LayerMask ignoredLayers; 
 
     public float damage = 0; // Changing this does nothing. Accessed by shooting script.
@@ -23,9 +24,22 @@ public class Bullet : MonoBehaviour
 
         if (other.CompareTag("Enemy"))
         {
-            other.GetComponent<EnemyHealth>().TakeDamage(damage);
+            if (other.GetComponent<EnemyHealth>().TakeDamage(damage))
+            {
+                CreateHitEffect(bloodHitEffect);
+                return;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
-        CreateHitEffect();
+        else
+        {
+            CreateHitEffect(sparksHitEffect);
+        }
+
+        //CreateHitEffect(regularHitEffect);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -33,20 +47,36 @@ public class Bullet : MonoBehaviour
         // Skip ignored layers
         if (ignoredLayers.Contains(collision.gameObject.layer)) { return; }
 
-        CreateHitEffect();
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (collision.gameObject.GetComponent<EnemyHealth>().TakeDamage(damage))
+            {
+                CreateHitEffect(bloodHitEffect);
+                return;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            CreateHitEffect(sparksHitEffect);
+        }
+
+        CreateHitEffect(sparksHitEffect);
     }
 
-    void CreateHitEffect()
+    void CreateHitEffect(GameObject hitEffect)
     {
-        if (hitEffectPrefab == null) { return; }
+        if (bloodHitEffect == null) { return; }
 
         // Get rotation from bullet direction
         float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
         Quaternion effectRotation = Quaternion.Euler(-90, 0, angle);
         print(angle.ToString());
-        GameObject effect = Instantiate(hitEffectPrefab, transform.position, effectRotation);
+        GameObject effect = Instantiate(hitEffect, transform.position, effectRotation, null);
 
-        Destroy(effect, hitEffectTime);
         Destroy(gameObject);
     }
 
