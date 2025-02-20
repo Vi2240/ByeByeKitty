@@ -170,7 +170,7 @@ MonoBehaviour:
   lifeTime: 1
   hitEffectTime: 1
   bloodHitEffect: {fileID: 3429003930983919446, guid: b58752065c93b56449ae9127f34b598a, type: 3}
-  regularHitEffect: {fileID: 3429003930983919446, guid: 391949acb693a5e4c86a9c47beb5207e, type: 3}
+  sparksHitEffect: {fileID: 0}
   ignoredLayers:
     serializedVersion: 2
     m_Bits: 128
