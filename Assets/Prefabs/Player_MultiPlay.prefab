@@ -105,7 +105,7 @@ MonoBehaviour:
   weaponObject: {fileID: 1701921337560124805}
   playerVisual: {fileID: 7522041729695949698}
   allowDashInput: 1
-  dashDistance: 5
+  dashDistance: 3
   dashTime: 0.2
   dashChargeUpTime: 0
   dashCooldownTime: 1
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2247140033
+  GlobalObjectIdHash: 4173981671
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
