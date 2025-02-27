@@ -1,82 +1,65 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
     [SerializeField] float lifeTime = 2f;
-    [SerializeField] float hitEffectTime = 1;
+    [SerializeField] float hitEffectTime = 1f;
     [SerializeField] GameObject bloodHitEffect;
     [SerializeField] GameObject sparksHitEffect;
-    [SerializeField] LayerMask ignoredLayers; 
+    [SerializeField] LayerMask ignoredLayers;
 
-    public float damage = 0; // Changing this does nothing. Accessed by shooting script.
+    public float damage = 0;
     private Vector2 _direction;
 
     void Start()
     {
-        _direction = GetComponent<Rigidbody2D>().linearVelocity.normalized;
         Destroy(gameObject, lifeTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Skip ignored layers (like objectives)
         if (ignoredLayers.Contains(other.gameObject.layer)) return;
 
         if (other.CompareTag("Enemy"))
         {
             if (other.GetComponent<EnemyHealth>().TakeDamage(damage))
             {
-                CreateHitEffect(bloodHitEffect);
+                CreateHitEffect(bloodHitEffect, false);
                 return;
             }
-            else
-            {
-                Destroy(gameObject);
-            }
+            else { Destroy(gameObject); }
         }
-        else
-        {
-            CreateHitEffect(sparksHitEffect);
-        }
-
-        //CreateHitEffect(regularHitEffect);
+        else { CreateHitEffect(sparksHitEffect, true); }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        // Skip ignored layers
-        if (ignoredLayers.Contains(collision.gameObject.layer)) { return; }
+        if (ignoredLayers.Contains(collision.gameObject.layer)) return;
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
             if (collision.gameObject.GetComponent<EnemyHealth>().TakeDamage(damage))
             {
-                CreateHitEffect(bloodHitEffect);
+                CreateHitEffect(bloodHitEffect, false);
                 return;
             }
-            else
-            {
-                Destroy(gameObject);
-            }
+            else { Destroy(gameObject); }
         }
-        else
-        {
-            CreateHitEffect(sparksHitEffect);
-        }
-
-        CreateHitEffect(sparksHitEffect);
+        else { CreateHitEffect(sparksHitEffect, true); }
     }
 
-    void CreateHitEffect(GameObject hitEffect)
+    void CreateHitEffect(GameObject hitEffect, bool reverseParticleDirection)
     {
-        if (bloodHitEffect == null) { return; }
-
-        // Get rotation from bullet direction
-        float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-        Quaternion effectRotation = Quaternion.Euler(-90, 0, angle);
-        print(angle.ToString());
-        GameObject effect = Instantiate(hitEffect, transform.position, effectRotation, null);
-
+        // If effect should face the shooter or opposite direciton
+        short angleCorrection = 270;
+        if (reverseParticleDirection) { angleCorrection = 90; }
+        if (hitEffect == null) { print("Missing particle effect"); return; }
+        
+        // Spawn particle effect
+        float angle = Mathf.Atan2(-_direction.y, -_direction.x) * Mathf.Rad2Deg;
+        Quaternion effectRotation = Quaternion.Euler(0, 0, angle - angleCorrection);
+        Instantiate(hitEffect, transform.position, effectRotation, null);
         Destroy(gameObject);
     }
 
@@ -86,8 +69,6 @@ public class Bullet : MonoBehaviour
     }
 }
 
-
-// Layer mask checks
 public static class LayerMaskExtensions
 {
     public static bool Contains(this LayerMask mask, int layer)

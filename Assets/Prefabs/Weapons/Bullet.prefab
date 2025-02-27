@@ -61,7 +61,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!61 &2873120058175273841
 BoxCollider2D:
@@ -170,7 +170,7 @@ MonoBehaviour:
   lifeTime: 1
   hitEffectTime: 1
   bloodHitEffect: {fileID: 3429003930983919446, guid: b58752065c93b56449ae9127f34b598a, type: 3}
-  sparksHitEffect: {fileID: 0}
+  sparksHitEffect: {fileID: 3429003930983919446, guid: 391949acb693a5e4c86a9c47beb5207e, type: 3}
   ignoredLayers:
     serializedVersion: 2
     m_Bits: 128
