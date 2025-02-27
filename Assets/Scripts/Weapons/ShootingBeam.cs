@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Numerics;
 using TMPro;
 using UnityEngine;
 
@@ -115,28 +112,39 @@ public class ShootingBeam : MonoBehaviour
 
     void BeamLogic()
     {
-        hit = Physics2D.Raycast(beamSpawnLocation.position, transform.right, beamLength); // Raycast used to know how long the beam length should be
+        // Use RaycastAll to get all hits along the beam
+        RaycastHit2D[] hits = Physics2D.RaycastAll(beamSpawnLocation.position, transform.right, beamLength);
+        RaycastHit2D validHit = new RaycastHit2D();
+        float closest = beamLength;
 
-        if (hit.collider == null)
+        foreach (RaycastHit2D hit in hits)
+        {
+            // Ignore objects with the "Objective" tag
+            if (hit.collider != null && !hit.collider.CompareTag("Objective"))
+            {
+                if (hit.distance < closest)
+                {
+                    validHit = hit;
+                    closest = hit.distance;
+                }
+            }
+        }
+
+        if (validHit.collider == null)
         {
             beamLength = savedBeamLength;
+            hit = new RaycastHit2D();
         }
-        else if (hit.collider)
+        else
         {
+            beamLength = closest;
+            hit = validHit;
             if (hit.collider.CompareTag("Enemy"))
             {
-                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
                 if (canFire)
                 {
-                    // Handle fire cooldown so enemy doesn't take damage too fast
                     HitEnemy();
                 }
-                return;
-            }
-
-            if (hit.collider.isTrigger == false)
-            {
-                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
             }
         }
     }
@@ -154,8 +162,6 @@ public class ShootingBeam : MonoBehaviour
 
             Inventory.laserEnergy--;
             magCapacityText.SetText(Inventory.laserEnergy.ToString());
-            // Remove later (debugging)
-            //Debug.DrawRay(beamSpawnLocation.position, transform.right*beamLength, UnityEngine.Color.red, 5f);
 
             //SplitTotargets(splitAmount);
         }

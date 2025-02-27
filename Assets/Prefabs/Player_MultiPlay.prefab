@@ -180,7 +180,7 @@ MonoBehaviour:
   weaponObject: {fileID: 1701921337560124805}
   playerVisual: {fileID: 7522041729695949698}
   allowDashInput: 1
-  dashDistance: 5
+  dashDistance: 3
   dashTime: 0.2
   dashChargeUpTime: 0
   dashCooldownTime: 1

@@ -10255,7 +10255,7 @@ MonoBehaviour:
   SpeedEnemy_ChanceToSpawn: 0
   SlowEnemy_ChanceToSpawn: 45
   RangeEnemy_ChanceToSpawn: 0
-  spawnRate: 2
+  spawnRate: 20
 --- !u!1 &7614984300224886608
 GameObject:
   m_ObjectHideFlags: 0
