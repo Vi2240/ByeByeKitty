@@ -35,8 +35,6 @@ public class Bullet : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (ignoredLayers.Contains(collision.gameObject.layer)) return;
-
         if (collision.gameObject.CompareTag("Enemy"))
         {
             if (collision.gameObject.GetComponent<EnemyHealth>().TakeDamage(damage))
