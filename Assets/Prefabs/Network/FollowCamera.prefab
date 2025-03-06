@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3460687710521801895}
   - component: {fileID: 20347677755703590}
   - component: {fileID: 7929571054409331902}
+  - component: {fileID: 2497738310657896383}
   m_Layer: 0
   m_Name: FollowCamera
   m_TagString: Untagged
@@ -57,7 +58,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 60
+    FieldOfView: 4.5
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -90,8 +91,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 5, y: 2.5, z: 1}
+    PositionDamping: {x: 2, y: 1, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   FollowOffset: {x: 0, y: 0, z: -10}
+--- !u!114 &2497738310657896383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800095459205560812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7d3149a45965951a5424f41511c1aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

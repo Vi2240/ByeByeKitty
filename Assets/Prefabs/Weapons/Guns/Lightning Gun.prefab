@@ -76,6 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab1f53d76a53e1118a12f2f2b990980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponSpriteTransform: {fileID: 731755398564547471}
   fireCooldown: 1
   damagePerHit: 10
   chainingRange: 5

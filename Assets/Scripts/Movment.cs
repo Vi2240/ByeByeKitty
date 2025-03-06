@@ -6,12 +6,9 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Rigidbody2D rigidbody;
-    [SerializeField] private GameObject cameraPrefab;
-    [SerializeField] private GameObject followCameraPrefab;
     [SerializeField] private Transform weaponObject;
     [SerializeField] private Transform playerVisual;
     private Camera playerCamera;
-    private CinemachineCamera followCamera;
 
     Vector2 movement;
     Vector2 mousePos;
@@ -32,15 +29,7 @@ public class Movement : MonoBehaviour
 
     private void Start()
     {
-        GameObject cameraInstance = Instantiate(cameraPrefab, transform.position, Quaternion.identity);
-        GameObject followCameraInstance = Instantiate(followCameraPrefab, transform.position, Quaternion.identity);
-        playerCamera = cameraInstance.GetComponent<Camera>();
-        followCamera = followCameraInstance.GetComponent<CinemachineCamera>();
-        if (followCamera != null)
-            followCamera.Follow = this.transform;
-
-        playerCamera.enabled = true;
-        followCamera.enabled = true;
+        playerCamera = Camera.main;
     }
 
     void Update()
