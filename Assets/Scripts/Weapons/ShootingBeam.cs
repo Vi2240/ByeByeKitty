@@ -7,6 +7,7 @@ public class ShootingBeam : MonoBehaviour
     // Serialize fields
     [SerializeField] Transform beamSpawnLocation;
     [SerializeField] Transform weaponSpriteTransform;
+    [SerializeField] GameObject damageNumber;
     [SerializeField] float fireCooldown = 0.1f;
     //[SerializeField] int splitAmount = 0;
     [SerializeField] float reloadTime = 1f;
@@ -159,6 +160,8 @@ public class ShootingBeam : MonoBehaviour
 
             // Deal damage to the enemy hit
             hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
+            var spawn = Instantiate(damageNumber, hit.transform.position, Quaternion.identity);
+            spawn.GetComponent<FloatingHealthNumber>().SetText(damagePerTick.ToString());
 
             Inventory.laserEnergy--;
             magCapacityText.SetText(Inventory.laserEnergy.ToString());
