@@ -11,10 +11,10 @@ public static class GeneralizedDash2D
     /// <param name="dashDistance">Distance of how far to dash.</param>
     /// <param name="dashTime">Duration of the dash in seconds.</param>
     /// <param name="dashChargeUpTime">Delay before the dash starts in seconds.</param>
-    /// <param name="dashTarget">The world position the entity should dash toward.</param>
+    /// <param name="dashDirection">The direction the entity should dash toward.</param>
     /// <param name="entity">The GameObject that is dashing.</param>
     /// <param name="dashingFlag">A wrapped boolean flag that is set to true while dashing.</param>
-    public static IEnumerator Dash2D(float dashDistance, float dashTime, float dashChargeUpTime, Vector2 dashTarget, GameObject entity, Wrapper<bool> dashingFlag)
+    public static IEnumerator Dash2D(float dashDistance, float dashTime, float dashChargeUpTime, Vector2 dashDirection, GameObject entity, Wrapper<bool> dashingFlag)
     {
         // Try to get the Rigidbody2D component.
         Rigidbody2D rb = entity.GetComponent<Rigidbody2D>();
@@ -29,9 +29,6 @@ public static class GeneralizedDash2D
 
         // Wait for the dash charge-up time.
         yield return new WaitForSeconds(dashChargeUpTime);
-
-        // Calculate the dash direction as a **normalized vector** (ensuring constant speed).
-        Vector2 dashDirection = (dashTarget - rb.position).normalized;
 
         // Calculate the required speed to travel the full distance in the given time.
         float dashSpeed = dashDistance / dashTime;

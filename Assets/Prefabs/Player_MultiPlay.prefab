@@ -117,6 +117,9 @@ MonoBehaviour:
   timeBeforeHeal: 3
   healPerTick: 0.5
   ticksPerSecond: 8
+  blood: {fileID: 2779123398762705581, guid: 62adf3775c5aaffdf953623d5f8437d2, type: 3}
+  NumOfEffectOnDeath: 5
+  EffectDiversion: 45
 --- !u!114 &6313789098168517357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4173981671
+  GlobalObjectIdHash: 2247140033
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
