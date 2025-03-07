@@ -7,9 +7,10 @@ public class Bullet : MonoBehaviour
     [SerializeField] float hitEffectTime = 1f;
     [SerializeField] GameObject bloodHitEffect;
     [SerializeField] GameObject sparksHitEffect;
+    [SerializeField] GameObject damageNumber;
     [SerializeField] LayerMask ignoredLayers;
 
-    public float damage = 0;
+    public float damage = 5f;
     private Vector2 _direction;
 
     void Start()
@@ -25,6 +26,7 @@ public class Bullet : MonoBehaviour
         {
             if (other.GetComponent<EnemyHealth>().TakeDamage(damage))
             {
+                CreateDamageNumber(other.gameObject);
                 CreateHitEffect(bloodHitEffect, false);
                 return;
             }
@@ -39,6 +41,7 @@ public class Bullet : MonoBehaviour
         {
             if (collision.gameObject.GetComponent<EnemyHealth>().TakeDamage(damage))
             {
+                CreateDamageNumber(collision.gameObject);
                 CreateHitEffect(bloodHitEffect, false);
                 return;
             }
@@ -59,6 +62,12 @@ public class Bullet : MonoBehaviour
         Quaternion effectRotation = Quaternion.Euler(0, 0, angle - angleCorrection);
         Instantiate(hitEffect, transform.position, effectRotation, null);
         Destroy(gameObject);
+    }
+
+    void CreateDamageNumber(GameObject enemy)
+    {
+        var spawned = Instantiate(damageNumber, enemy.transform.position, Quaternion.identity);
+        spawned.GetComponent<FloatingHealthNumber>().SetText(damage.ToString());
     }
 
     public void SetDirection(Vector2 dir)

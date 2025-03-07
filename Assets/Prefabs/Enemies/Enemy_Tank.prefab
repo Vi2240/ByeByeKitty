@@ -810,3 +810,4 @@ MonoBehaviour:
   spawnDelay: 2
   spawnSprite: {fileID: 3020085272333549557}
   enemySprite: {fileID: 835958432512703684}
+  colliders: []

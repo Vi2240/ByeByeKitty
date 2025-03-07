@@ -160,6 +160,8 @@ MonoBehaviour:
   - {fileID: 2558146594349086605}
   - {fileID: 3495672725555809388}
   - {fileID: 3817111896344598929}
+  weaponNames: []
+  weaponItems: []
 --- !u!114 &7342326090686955952
 MonoBehaviour:
   m_ObjectHideFlags: 0
