@@ -36,9 +36,10 @@ public class Movement : MonoBehaviour
         GameObject followCameraInstance = Instantiate(followCameraPrefab, transform.position, Quaternion.identity);
         playerCamera = cameraInstance.GetComponent<Camera>();
         followCamera = followCameraInstance.GetComponent<CinemachineCamera>();
-        if (followCamera != null)
+        if (followCamera != null) {
             followCamera.Follow = this.transform;
-
+            followCamera.Lens.OrthographicSize = 4.5f;
+        }
         playerCamera.enabled = true;
         followCamera.enabled = true;
     }
@@ -65,8 +66,12 @@ public class Movement : MonoBehaviour
         {
             // Update mouse position in case it moved
             mousePos = (Vector2)playerCamera.ScreenToWorldPoint(Input.mousePosition);
-                        
-            StartCoroutine(GeneralizedDash2D.Dash2D(dashDistance, dashTime, dashChargeUpTime, mousePos, gameObject, dashing));
+
+            /*// Calculate the dash direction as a **normalized vector** (ensuring constant speed).
+            Vector2 dashDirection = (dashTarget - rb.position).normalized;
+            */
+
+            StartCoroutine(GeneralizedDash2D.Dash2D(dashDistance, dashTime, dashChargeUpTime, movement, gameObject, dashing));
             if (dashing.value) { StartCoroutine(DashCooldown()); }
             // hide gun logic here if needed
         }

@@ -9,6 +9,12 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField, Tooltip("Healing starts after X seconds out of combat.")] float timeBeforeHeal = 3;
     [SerializeField] float healPerTick = 0.5f;
     [SerializeField] float ticksPerSecond = 8;
+
+    [Header("Death")]
+    [SerializeField] GameObject blood;
+    [SerializeField] int NumOfEffectOnDeath;
+    [SerializeField] float EffectDiversion;
+
     float timeBetweenHealingTicks = 0;
     bool inCombat = false;
 
@@ -84,5 +90,17 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         // Death stuff
+        this.gameObject.SetActive(false);
+                        
+        if (blood == null) { print("Missing particle effect"); return; }
+        
+        int EffectAngle = 180;
+
+        // Spawn particle effect        
+        for (int i = 0; i < NumOfEffectOnDeath; i++) {
+            Quaternion effectRotation = Quaternion.Euler(0, 0, EffectAngle + Random.Range(-EffectDiversion, EffectDiversion));
+            Instantiate(blood, transform.position, effectRotation, null);
+        }
+        //Destroy(gameObject);
     }
 }
