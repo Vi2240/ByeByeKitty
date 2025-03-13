@@ -190,7 +190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6458645619014162597
 Transform:
   m_ObjectHideFlags: 0
@@ -221,3 +221,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TTL_Seconds: 0.1
+  lightningStrikePrefab: {fileID: 2581554429160013614, guid: 006807d5460e75c4eb3c827b9bfa5e78, type: 3}

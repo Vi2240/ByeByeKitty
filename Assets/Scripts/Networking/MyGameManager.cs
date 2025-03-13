@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class MyGameManager : NetworkBehaviour
 {
@@ -30,6 +31,7 @@ public class MyGameManager : NetworkBehaviour
 
 
     [SerializeField] private Transform playerPrefab;
+    [SerializeField] CinemachineCamera followCamera;
 
 
     private NetworkVariable<State> state = new NetworkVariable<State>(State.WaitingToStart);
@@ -76,6 +78,9 @@ public class MyGameManager : NetworkBehaviour
         {
             Transform playerTransform = Instantiate(playerPrefab);
             playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+
+            if (playerTransform.GetComponent<NetworkObject>().IsLocalPlayer)
+                followCamera.Follow = playerTransform;       
         }
     }
 

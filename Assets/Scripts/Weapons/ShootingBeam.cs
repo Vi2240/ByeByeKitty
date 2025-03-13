@@ -2,53 +2,30 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class ShootingBeam : MonoBehaviour
+public class ShootingBeam : WeaponBase
 {
-    // Serialize fields
-    [SerializeField] Transform beamSpawnLocation;
-    [SerializeField] Transform weaponSpriteTransform;
+    TextMeshProUGUI magCapacityText;
+    TextMeshProUGUI inventoryAmmo;
     [SerializeField] GameObject damageNumber;
-    [SerializeField] float fireCooldown = 0.1f;
-    //[SerializeField] int splitAmount = 0;
-    [SerializeField] float reloadTime = 1f;
     [SerializeField] float damagePerTick = 15f;
     [SerializeField] float beamLength = 5f;
 
-    [SerializeField] int magazineSize;
+    private LineRenderer lineRenderer;
+    private bool beamActive = false;
+    private float savedBeamLength;
 
-    UnityEngine.Vector3 mousePos;
-    Camera mainCam;
-    LineRenderer lineRenderer;
-    TextMeshProUGUI magCapacityText;
-    TextMeshProUGUI inventoryAmmo;
-    RaycastHit2D hit;
-    AudioPlayer audioPlayer;
-    //private PlayerMovement movementScript;
-
-    int magazine;
-    float timer;
-    float requiredMouseDistanceFromPlayer = 1.5f;
-    float savedBeamLength;
-
-    bool canFire = true;
-    bool canReload = true;
-    bool isRealoding = false;
-    bool beamActive = false;
-
-    void Start()
+    protected override void Start()
     {
-        //audioPlayer.SfxPlayer("RevolverReload_Sound");
+        base.Start();
         savedBeamLength = beamLength;
         lineRenderer = GetComponentInChildren<LineRenderer>();
-        mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        //shootRange = GameObject.FindGameObjectWithTag("ShootRange").GetComponent<CircleCollider2D>();
-        //weaponRotation = GetComponentInChildren<SpriteRenderer>();
-        //movementScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         inventoryAmmo.SetText("");
         magCapacityText.SetText(Inventory.laserEnergy.ToString());
     }
+
 
     // Switch the text in UI to match this weapon when it is enabled in different scripts
     private void OnEnable()
@@ -60,115 +37,74 @@ public class ShootingBeam : MonoBehaviour
         magCapacityText.SetText(Inventory.laserEnergy.ToString());
     }
 
-    void Update()
-    {
-        WeaponRotation();
 
-        if (beamActive) 
+    protected override void Update()
+    {
+        base.Update();
+        if (beamActive)
         {
             BeamLogic();
             DrawBeam();
         }
 
-        if (Input.GetMouseButtonDown(0) && MouseFarEnoughFromPlayer() == true)
+        if (Input.GetMouseButtonDown(0))
         {
-            lineRenderer.enabled = true;
             beamActive = true;
+            lineRenderer.enabled = true;
             DrawBeam();
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            lineRenderer.enabled = false;
             beamActive = false;
+            lineRenderer.enabled = false;
         }
     }
 
-    void WeaponRotation()
-    {
-        // Converts mouse position to rotation and applies it to the gameObject.
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        UnityEngine.Vector3 rotation = mousePos - transform.position;
-        float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-        transform.rotation = UnityEngine.Quaternion.Euler(0, 0, rotZ);
+    protected override void Fire() { /* Not used in beam */ }
 
-        // Checks to tell if the sprite should be flipped when moving the weapon around the player.
-        UnityEngine.Vector3 saveScale = weaponSpriteTransform.localScale;
-        if (rotZ > 90 || rotZ < -90)
-        {
-            if (saveScale.y > 0)
-            {
-                saveScale.y *= -1;
-                weaponSpriteTransform.localScale = saveScale;
-            }
-        }
-        else
-        {
-            if (saveScale.y < 0)
-            {
-                saveScale.y *= -1;
-                weaponSpriteTransform.localScale = saveScale;
-            }
-        }
-    }
 
-    void BeamLogic()
+    private void BeamLogic()
     {
-        // Use RaycastAll to get all hits along the beam
-        RaycastHit2D[] hits = Physics2D.RaycastAll(beamSpawnLocation.position, transform.right, beamLength);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, beamLength);
         RaycastHit2D validHit = new RaycastHit2D();
         float closest = beamLength;
 
         foreach (RaycastHit2D hit in hits)
         {
-            // Ignore objects with the "Objective" tag
-            if (hit.collider != null && !hit.collider.CompareTag("Objective"))
+            if (hit.collider != null && !hit.collider.CompareTag("Objective") && hit.distance < closest)
             {
-                if (hit.distance < closest)
-                {
-                    validHit = hit;
-                    closest = hit.distance;
-                }
+                validHit = hit;
+                closest = hit.distance;
             }
         }
 
         if (validHit.collider == null)
         {
             beamLength = savedBeamLength;
-            hit = new RaycastHit2D();
         }
         else
         {
             beamLength = closest;
-            hit = validHit;
-            if (hit.collider.CompareTag("Enemy"))
+            if (validHit.collider.CompareTag("Enemy") && canFire)
             {
-                if (canFire)
-                {
-                    HitEnemy();
-                }
+                HitEnemy(validHit);
             }
         }
     }
 
-    void HitEnemy()
+    private void HitEnemy(RaycastHit2D hit)
     {
-        if (Inventory.laserEnergy > 0)
-        {
-            //print("shot enemy");
-            canFire = false;
-            StartCoroutine(ShootDelay());
-
-            // Deal damage to the enemy hit
-            hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
-            var spawn = Instantiate(damageNumber, hit.transform.position, Quaternion.identity);
-            spawn.GetComponent<FloatingHealthNumber>().SetText(damagePerTick.ToString());
-
-            Inventory.laserEnergy--;
-            magCapacityText.SetText(Inventory.laserEnergy.ToString());
-
-            //SplitTotargets(splitAmount);
-        }
+        StartCoroutine(ShootCooldown());
+        hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
+        Instantiate(damageNumber, hit.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(damagePerTick.ToString());
     }
+
+    private void DrawBeam()
+    {
+        lineRenderer.SetPosition(0, projectileSpawnLocation.position);
+        lineRenderer.SetPosition(1, projectileSpawnLocation.position + projectileSpawnLocation.right * beamLength);
+    }
+
 
     // Work on more later if there's time
     //void SplitTotargets(int amount)
@@ -195,28 +131,5 @@ public class ShootingBeam : MonoBehaviour
 
     //}
 
-    void DrawBeam()
-    {
-        lineRenderer.SetPosition(0, beamSpawnLocation.position);
-        lineRenderer.SetPosition(1, beamSpawnLocation.position + beamSpawnLocation.right * beamLength);
-    }
-
-    IEnumerator ShootDelay()
-    {
-        yield return new WaitForSeconds(fireCooldown);
-        canFire = true;
-    }
-
     //Checks that the cursor isn't inside the Shoot Range collider
-    bool MouseFarEnoughFromPlayer()
-    {
-        if (UnityEngine.Vector2.Distance(gameObject.transform.position, mousePos) > requiredMouseDistanceFromPlayer)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 }

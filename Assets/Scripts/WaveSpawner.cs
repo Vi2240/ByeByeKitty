@@ -15,7 +15,7 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] float SlowEnemy_ChanceToSpawn = 1f;
     [SerializeField] float RangeEnemy_ChanceToSpawn = 0.5f;
 
-    [Header("Timers")]
+    [Header("Timers, in second")]
     [SerializeField] float spawnRate;
 
     Objective objective;

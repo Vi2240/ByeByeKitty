@@ -164,12 +164,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04de54079b385f641995d072d68b8ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
-  bulletSpawnLocation: {fileID: 4269039318502225995}
+  projectileSpawnLocation: {fileID: 4269039318502225995}
   weaponSpriteTransform: {fileID: 1395401081620193373}
-  automaticShooting: 1
   fireCooldown: 0.1
-  bulletForce: 50
   reloadTime: 2
-  bulletDamage: 14
-  maxMagazine: 50
+  damagePerHit: 15
+  magazineSizeMax: 30
+  magazineReservesMax: 300
+  currentMagAmmoCount: 30
+  currentAmmoReservesCount: 150
+  requiredMouseDistanceFromPlayer: 1.5
+  bulletPrefab: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
+  automaticShooting: 1
+  bulletForce: 50

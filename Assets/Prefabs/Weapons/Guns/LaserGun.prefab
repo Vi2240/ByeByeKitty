@@ -281,11 +281,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f5d9024d09c3dd48bcf272f35eac449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beamSpawnLocation: {fileID: 4269039318502225995}
+  projectileSpawnLocation: {fileID: 4269039318502225995}
   weaponSpriteTransform: {fileID: 1395401081620193373}
-  damageNumber: {fileID: 6509593360542762755, guid: bd69952a302ffc8438699c617cb5cd6b, type: 3}
   fireCooldown: 0.1
   reloadTime: 1
+  damagePerHit: 12
+  magazineSizeMax: 10
+  magazineReservesMax: 50
+  currentMagAmmoCount: 10
+  currentAmmoReservesCount: 50
+  requiredMouseDistanceFromPlayer: 1.5
+  damageNumber: {fileID: 6509593360542762755, guid: bd69952a302ffc8438699c617cb5cd6b, type: 3}
   damagePerTick: 12
   beamLength: 25
-  magazineSize: 10
