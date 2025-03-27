@@ -80,11 +80,13 @@ public class PlayerHealth : MonoBehaviour
         print("Player took " + damageAmount + " damage");
     }
 
-    public void Heal(float healAmount)
+    public bool Heal(float healAmount)
     {
+        if (currentHealth >= maxHealth) { return false; }
         currentHealth += healAmount;
         if (currentHealth > maxHealth) { currentHealth = maxHealth; }
         healthBar.SetHealth(currentHealth, maxHealth);
+        return true;
     }
 
     void Die()
