@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 5848494940747098782}
   - component: {fileID: 1209576875654001844}
   - component: {fileID: 2120237492830943653}
-  - component: {fileID: 67686961330274548}
-  - component: {fileID: -3079127442660279821}
+  - component: {fileID: 8826423108527944563}
+  - component: {fileID: -1362393097213616483}
   m_Layer: 0
-  m_Name: LaserPistolItem
+  m_Name: AmmoPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.5}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: -840492425
   m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4319395737909131107, guid: 64e49cf9eef54cb49ba36fdd35e41c25, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b68fb8ba8ccfcd547bf6c816e209e43a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -124,19 +124,19 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0144405365, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.53, y: 1.82}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 0.16, y: 0.16}
+    newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.8707123, y: 1.84}
+  m_Size: {x: 0.16, y: 0.17}
   m_EdgeRadius: 0
---- !u!114 &67686961330274548
+--- !u!114 &8826423108527944563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,11 +145,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 8125233738006395700}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bd6c7fbb1f530041a1fc7a7659bf219, type: 3}
+  m_Script: {fileID: 11500000, guid: 52cc406ff421de64ea8f594241a4cc89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: LaserPistol
---- !u!114 &-3079127442660279821
+  ammo:
+    enabled: 1
+    amount: 50
+  laserEnergy:
+    enabled: 0
+    amount: 0
+  heal:
+    enabled: 0
+    amount: 0
+  experience:
+    enabled: 0
+    amount: 0
+--- !u!114 &-1362393097213616483
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

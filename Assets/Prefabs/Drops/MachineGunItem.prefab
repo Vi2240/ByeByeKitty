@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5848494940747098782}
   - component: {fileID: 1209576875654001844}
-  - component: {fileID: 67686961330274548}
   - component: {fileID: 2120237492830943653}
+  - component: {fileID: 67686961330274548}
+  - component: {fileID: 8068845593052725976}
   m_Layer: 0
   m_Name: MachineGunItem
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8125233738006395700}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.57, y: -2.04, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75,8 +76,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -840492425
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1734539700347168753, guid: c56b2e759406a4b44a0630a7bb0887c4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -89,19 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &67686961330274548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8125233738006395700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bd6c7fbb1f530041a1fc7a7659bf219, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponName: MachineGun
 --- !u!61 &2120237492830943653
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -148,3 +136,29 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 7.23, y: 1.84}
   m_EdgeRadius: 0
+--- !u!114 &67686961330274548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8125233738006395700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bd6c7fbb1f530041a1fc7a7659bf219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: MachineGun
+--- !u!114 &8068845593052725976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8125233738006395700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0e90157628ea1c42b1c1012fd01e08f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeToEnableCollider: 1

@@ -3,8 +3,10 @@ using UnityEngine;
 
 public static class Inventory
 {
-    public static int ammo = 1000;
-    public static int laserEnergy = 1000;
+    public static int ammo = 500;
+    public static int maxAmmo = 1000;
+    public static int laserEnergy = 500;
+    public static int maxLaserEnergy = 1000;
     public static Weapon[,] weapons = new Weapon[10, 2];
 }
 
