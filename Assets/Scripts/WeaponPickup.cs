@@ -11,7 +11,7 @@ public class WeaponPickup : MonoBehaviour
             WeaponSwitching ws = other.GetComponent<WeaponSwitching>();
             if (ws == null) { return; }
             
-            if (ws.CollectWeapon(weaponName)) { Destroy(gameObject); }
+            if (ws.CollectWeaponByName(weaponName)) { Destroy(gameObject); }
         }
     }
 }

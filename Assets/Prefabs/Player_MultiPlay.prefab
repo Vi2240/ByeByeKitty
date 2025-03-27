@@ -155,12 +155,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc43bce39649b741aa8fee52a18af4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 2558146594349086605}
-  - {fileID: 3495672725555809388}
-  - {fileID: 3817111896344598929}
-  weaponNames: []
-  weaponItems: []
+  allWeapons:
+  - Name: LaserGun
+    WeaponObject: {fileID: 2558146594349086605}
+    PickupPrefab: {fileID: 8125233738006395700, guid: 33d97976791e58642908626726d68b6a, type: 3}
+  - Name: MachineGun
+    WeaponObject: {fileID: 3495672725555809388}
+    PickupPrefab: {fileID: 8125233738006395700, guid: d2726d2af028fe443bffb976c6d5980c, type: 3}
+  - Name: LightningGun
+    WeaponObject: {fileID: 3817111896344598929}
+    PickupPrefab: {fileID: 0}
+  startWithFirstWeapon: 1
 --- !u!114 &7342326090686955952
 MonoBehaviour:
   m_ObjectHideFlags: 0
