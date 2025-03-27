@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
 
     public float damage = 5f;
     private Vector2 _direction;
+    private bool hasDamaged = false;
 
     void Start()
     {
@@ -22,32 +23,32 @@ public class Bullet : MonoBehaviour
     {
         if (ignoredLayers.Contains(other.gameObject.layer)) return;
 
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") && !hasDamaged)
         {
-            if (other.GetComponent<EnemyHealth>().TakeDamage(damage))
-            {
-                CreateDamageNumber(other.gameObject);
-                CreateHitEffect(bloodHitEffect, false);
-                return;
-            }
-            else { Destroy(gameObject); }
+            DamageEnemy(other.gameObject);
         }
         else { CreateHitEffect(sparksHitEffect, true); }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy") && !hasDamaged)
         {
-            if (collision.gameObject.GetComponent<EnemyHealth>().TakeDamage(damage))
-            {
-                CreateDamageNumber(collision.gameObject);
-                CreateHitEffect(bloodHitEffect, false);
-                return;
-            }
-            else { Destroy(gameObject); }
+            DamageEnemy(collision.gameObject);
         }
         else { CreateHitEffect(sparksHitEffect, true); }
+    }
+
+    void DamageEnemy(GameObject enemy)
+    {
+        if (enemy.GetComponent<EnemyHealth>().TakeDamage(damage))
+        {            
+            hasDamaged = true;
+            CreateDamageNumber(enemy);
+            CreateHitEffect(bloodHitEffect, false);
+            return;
+        }
+        else { Destroy(gameObject); }
     }
 
     void CreateHitEffect(GameObject hitEffect, bool reverseParticleDirection)
