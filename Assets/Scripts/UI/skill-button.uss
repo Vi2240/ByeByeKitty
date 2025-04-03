@@ -1,0 +1,20 @@
+.skill-button {
+    top: -2%;
+    left: -3%;
+    width: 100%;
+    height: 100%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.skill-button:hover{
+    border-width: 5px;
+    border-color: rgb(255, 245, 100);
+}
+
+.skill-button:disabled{
+    border-width: 0px;
+    color: rgba(255, 255, 255, 0.5);
+}
