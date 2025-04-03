@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class ShootingProjectile : WeaponBase
 {
@@ -10,8 +11,7 @@ public class ShootingProjectile : WeaponBase
     [SerializeField, Tooltip("Wether the player can or cannot hold down left click to continue firing.")]
     bool automaticShooting = false;
     [SerializeField] float bulletForce = 25f;
-
-
+    Coroutine saveReloadCoroutine;
     private void Start()
     {
         base.Start();
@@ -55,13 +55,14 @@ public class ShootingProjectile : WeaponBase
     protected override void Fire()
     {
         canFire = false;
+        // Add reload cancel here
         StartCoroutine(ShootCooldown());
         // Original code instantiation that fires away from the player
         GameObject bullet_ = Instantiate(bulletPrefab, projectileSpawnLocation.position, gameObject.transform.rotation * new Quaternion(0f, 0f, 90, -90));
         bullet_.GetComponent<Rigidbody2D>().AddForce(bullet_.transform.up * bulletForce, ForceMode2D.Impulse);
         bullet_.GetComponent<Bullet>().SetDirection(transform.right);
         bullet_.GetComponent<Bullet>().damage = damagePerHit;
-
+        
         currentMagAmmoCount--;
         magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
     }
@@ -81,6 +82,7 @@ public class ShootingProjectile : WeaponBase
         int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, currentAmmoReservesCount);
         currentMagAmmoCount += bulletsToReload;
         currentAmmoReservesCount -= bulletsToReload;
+        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
         isReloading = false;
     }
 }

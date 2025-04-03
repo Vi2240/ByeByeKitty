@@ -53,8 +53,8 @@ TagManager:
   - name: BloodPuddles
     uniqueID: 727785603
     locked: 0
-  - name: DroppedItems
-    uniqueID: 3454474871
+  - name: Items
+    uniqueID: 3074402289
     locked: 0
   - name: Default
     uniqueID: 0

@@ -94,6 +94,8 @@ public class ShootingBeam : WeaponBase
 
     private void HitEnemy(RaycastHit2D hit)
     {
+        Inventory.laserEnergy--;
+        magCapacityText.SetText(Inventory.laserEnergy.ToString());
         StartCoroutine(ShootCooldown());
         hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
         Instantiate(damageNumber, hit.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(damagePerTick.ToString());
