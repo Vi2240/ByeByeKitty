@@ -6,7 +6,7 @@ public class SpawnAnimation : MonoBehaviour
     [SerializeField] float spawnDelay = 1.5f;
     [SerializeField] GameObject spawnSprite;
     [SerializeField] GameObject enemySprite;
-    [SerializeField] Collider2D[] colliders;
+    Collider2D[] colliders;
 
     float savedSpeed;
     EnemyMovement movementScript;
@@ -15,6 +15,7 @@ public class SpawnAnimation : MonoBehaviour
 
     void Awake()
     {
+        colliders = GetComponents<Collider2D>();
         movementScript = GetComponent<EnemyMovement>();
         healthScript = GetComponent<EnemyHealth>();
 
