@@ -33,7 +33,6 @@ public class MyGameManager : NetworkBehaviour
     [SerializeField] private Transform playerPrefab;
     [SerializeField] CinemachineCamera followCamera;
 
-
     private NetworkVariable<State> state = new NetworkVariable<State>(State.WaitingToStart);
     private bool isLocalPlayerReady;
     private NetworkVariable<float> countdownToStartTimer = new NetworkVariable<float>(3f);
@@ -81,7 +80,7 @@ public class MyGameManager : NetworkBehaviour
 
             if (playerTransform.GetComponent<NetworkObject>().IsLocalPlayer)
                 followCamera.Follow = playerTransform;       
-        }
+        }        
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)

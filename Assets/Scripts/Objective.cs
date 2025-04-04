@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Objective : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class Objective : MonoBehaviour
 
     [SerializeField] GameObject winCanvas;
 
+    [SerializeField] GameObject waveManagerObject;
+
     public bool CanSpawn => isBurning;
 
     float currentHp;
@@ -29,15 +32,15 @@ public class Objective : MonoBehaviour
     bool isHealing;
     bool isBurning;
 
-    WaveSpawner waveSpawner;
     AudioPlayer audioPlayer;
+    WaveManager waveManager;
 
     void Start()
     {
         winCanvas.SetActive(false);
 
         currentHp = maxHp;
-        waveSpawner = GetComponent<WaveSpawner>();
+        waveManager = waveManagerObject.GetComponent<WaveManager>();
         audioPlayer = FindAnyObjectByType<AudioPlayer>();
     }
 
@@ -48,6 +51,7 @@ public class Objective : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E) && !isBurning)
             {
                 isBurning = true;
+                waveManager.StartWave(WaveType.WaveType0, SpawnType.AreaAroundPosition, gameObject.transform);
             }
         }
     }
