@@ -78,17 +78,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnLocation: {fileID: 5401358535718712645}
   weaponSpriteTransform: {fileID: 731755398564547471}
-  fireCooldown: 0.7
+  fireCooldown: 0.05
   reloadTime: 0
-  damagePerHit: 10
+  damagePerHit: 2
   magazineSizeMax: 10
   magazineReservesMax: 50
   currentMagAmmoCount: 10
   currentAmmoReservesCount: 50
   requiredMouseDistanceFromPlayer: 1.5
-  chainingRange: 5
-  maxChainDepth: 3
-  maxTargetsPerChain: 2
+  chainingRange: 3
+  maxChainDepth: 4
+  maxTargetsPerChain: 5
   lightningPrefab: {fileID: 8000453896257956698, guid: 86f59d09fb7479c688366767f6966873, type: 3}
   lightningSpawnLocation: {fileID: 5401358535718712645}
 --- !u!1 &7089222596692172611
