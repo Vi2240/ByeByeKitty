@@ -8,23 +8,21 @@ public class ShootingLightning : WeaponBase
     [SerializeField] int maxChainDepth = 3;
     [SerializeField] int maxTargetsPerChain = 2;
     [SerializeField] GameObject lightningPrefab;        // Prefab for the lightning travel visual
-
+    [SerializeField] Transform lightningSpawnLocation;
 
     private void Start()
     {
         base.Start();
     }
 
-
     protected override void Update()
     {
         base.Update();
-        if (Input.GetMouseButtonDown(0) && canFire)
+        if (Input.GetMouseButton(0) && canFire)
         {
             Fire();
         }
     }
-
 
     protected override void Fire()
     {
@@ -33,11 +31,10 @@ public class ShootingLightning : WeaponBase
         GameObject initialTarget = FindClosestEnemy(transform.position);
         if (initialTarget != null)
         {
-            ChainLightning(initialTarget, 0, new HashSet<GameObject>(), transform.position);
+            ChainLightning(initialTarget, 0, new HashSet<GameObject>(), lightningSpawnLocation.position);
         }
         else Debug.Log("No enemy close enough");
     }
-
 
     private GameObject FindClosestEnemy(Vector3 position)
     {
@@ -58,7 +55,6 @@ public class ShootingLightning : WeaponBase
         return closestEnemy;
     }
 
-
     private void ChainLightning(GameObject target, int depth, HashSet<GameObject> hitEnemies, Vector3 startPosition)
     {
         if (depth >= maxChainDepth || target == null || hitEnemies.Contains(target)) return;
@@ -74,7 +70,6 @@ public class ShootingLightning : WeaponBase
             ChainLightning(nextTarget, depth + 1, hitEnemies, target.transform.position);
         }
     }
-
 
     List<GameObject> FindClosestEnemies(Vector3 position, HashSet<GameObject> hitEnemies)
     {
@@ -92,7 +87,6 @@ public class ShootingLightning : WeaponBase
         closestEnemies.Sort((a, b) => Vector3.Distance(position, a.transform.position).CompareTo(Vector3.Distance(position, b.transform.position)));
         return closestEnemies.GetRange(0, Mathf.Min(maxTargetsPerChain, closestEnemies.Count));
     }
-
 
     void SpawnLightningVisual(Vector3 start, Vector3 end)
     {

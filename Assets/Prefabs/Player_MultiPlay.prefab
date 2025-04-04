@@ -164,7 +164,7 @@ MonoBehaviour:
     PickupPrefab: {fileID: 8125233738006395700, guid: d2726d2af028fe443bffb976c6d5980c, type: 3}
   - Name: LightningGun
     WeaponObject: {fileID: 3817111896344598929}
-    PickupPrefab: {fileID: 0}
+    PickupPrefab: {fileID: 8125233738006395700, guid: 1d9ad28aaa52eb8478aa08f04ae2b583, type: 3}
   startWithFirstWeapon: 1
 --- !u!114 &7342326090686955952
 MonoBehaviour:
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4173981671
+  GlobalObjectIdHash: 2247140033
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1

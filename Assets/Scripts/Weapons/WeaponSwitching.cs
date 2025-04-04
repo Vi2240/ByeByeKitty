@@ -49,7 +49,7 @@ public class WeaponSwitching : MonoBehaviour
 
         collectedWeapons.Clear(); // Start with no weapons collected.
 
-        // --- Add Starting Weapon(s) ---
+        // --- Add Starting Weapon ---
         if (startWithFirstWeapon && allWeapons.Count > 0)
         {
             TryToCollectWeapon(allWeapons[0]);
@@ -58,15 +58,16 @@ public class WeaponSwitching : MonoBehaviour
         }
 
         // ---- For testing ----
-        Debug.LogWarning("WeaponSwitching: Collecting all weapons for testing purposes.");
-        foreach (var weaponEntry in allWeapons)
-        {
-            TryToCollectWeapon(weaponEntry);
-        }
-        // Ensure the first weapon is active if multiple were added for testing.
-        if (collectedWeapons.Count > 0) {
-           SwitchToIndex(0);
-        }
+        //Debug.LogWarning("WeaponSwitching: Collecting all weapons for testing purposes.");
+        //foreach (var weaponEntry in allWeapons)
+        //{
+        //    TryToCollectWeapon(weaponEntry);
+        //}
+        //// Ensure the first weapon is active if multiple were added for testing.
+        //if (collectedWeapons.Count > 0) 
+        //{
+        //   SwitchToIndex(0);
+        //}
     }
 
     void Update()
@@ -142,7 +143,7 @@ public class WeaponSwitching : MonoBehaviour
 
     private bool TryToCollectWeapon(WeaponEntry weaponEntry)
     {
-        if (weaponEntry == null || weaponEntry.WeaponObject == null) return false; // Error handling
+        if (weaponEntry == null || weaponEntry.WeaponObject == null) { return false; } // Error handling
 
         // Check if this the weapon has already been collected.
         if (!collectedWeapons.Any(w => w.WeaponObject == weaponEntry.WeaponObject))
@@ -205,8 +206,9 @@ public class WeaponSwitching : MonoBehaviour
         }
 
         // Instantiate the pickup item slightly below the player.
-        float dropOffsetY = 0.5f; // How far below the player's to drop the item.
+        float dropOffsetY = 1f; // How far below the player's to drop the item.
         Vector3 dropPosition = transform.position - (Vector3.up * dropOffsetY);
+        Instantiate(currentWeapon.PickupPrefab, dropPosition, Quaternion.identity);
 
         // Deactivate the weapon object.
         if (currentWeapon.WeaponObject != null)
