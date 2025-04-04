@@ -73,7 +73,7 @@ public class WaveType0 : Wave
 				if (spawnNum >= maxNumber - rangeEnemyChance)
 				{
 					rangeEnemyChance--;
-					enemyToSpawn = rangeEnemy;
+					//enemyToSpawn = rangeEnemy;
 				}
 				else if (spawnNum >= normalEnemyChance + speedEnemyChance)
 				{
@@ -83,7 +83,7 @@ public class WaveType0 : Wave
 				else if (spawnNum >= normalEnemyChance)
 				{
 					speedEnemyChance--;
-					enemyToSpawn = speedEnemy;
+					//enemyToSpawn = speedEnemy;
 				}
 				else
 				{

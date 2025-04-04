@@ -31,9 +31,18 @@ public abstract class Wave : MonoBehaviour
     /// </summary>
     /// <param name="spawnType">The spawn mode to use.</param>
     /// <param name="referencePoints">An array of reference points (for Fixed or AreaAroundPosition).</param>
+    /// <param name="minDistanceFromPoint">Minimum distance from the reference point (for area spawning).</param>
     /// <returns>A valid spawn position.</returns>
-    protected Vector3 GetValidSpawnPosition(SpawnType spawnType, Transform[] referencePoints = null)
+    protected Vector3 GetValidSpawnPosition(SpawnType spawnType, Transform[] referencePoints = null, float minDistanceFromPoint = 0f)
     {
+        // If no reference points are provided, use the temporary positions.
+        if (referencePoints == null || referencePoints.Length == 0)
+            referencePoints = positions_tmp;
+
+        // If no reference points are still provided, return Vector3.zero.
+        if (referencePoints == null || referencePoints.Length == 0)
+            return Vector3.zero;
+    
         // For Fixed spawn type, directly return a random fixed position without validation.
         if (spawnType == SpawnType.Fixed && referencePoints != null && referencePoints.Length > 0)
         {
@@ -54,8 +63,8 @@ public abstract class Wave : MonoBehaviour
                         Transform refPoint = referencePoints[Random.Range(0, referencePoints.Length)];
                         Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
                         spawnPos = new Vector3(refPoint.position.x + randomOffset.x,
-                                               refPoint.position.y,
-                                               refPoint.position.z + randomOffset.y);
+                                               refPoint.position.y + randomOffset.y,
+                                               refPoint.position.z);
                     }
                     break;
 
@@ -66,8 +75,8 @@ public abstract class Wave : MonoBehaviour
                         Transform player = players[Random.Range(0, players.Length)];
                         Vector2 offset = Random.insideUnitCircle * spawnRadius;
                         spawnPos = new Vector3(player.position.x + offset.x,
-                                               player.position.y,
-                                               player.position.z + offset.y);
+                                               player.position.y + offset.y,
+                                               player.position.z);
                     }
                     break;
                 default:

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7773012713182796028}
   - component: {fileID: 2055859740341317499}
   - component: {fileID: 726185347820816639}
+  - component: {fileID: 4783790228550659424}
   m_Layer: 0
   m_Name: ElectricityEffect
   m_TagString: Untagged
@@ -4833,3 +4834,16 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &4783790228550659424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2581554429160013614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb411d971c716e160807b186c6167d95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyDelay: 0.5
