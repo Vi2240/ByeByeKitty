@@ -12,7 +12,6 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected int magazineSizeMax;
     [SerializeField] protected int magazineReservesMax;
     [SerializeField] protected int currentMagAmmoCount;
-    [SerializeField] protected int currentAmmoReservesCount;
     [SerializeField] float requiredMouseDistanceFromPlayer = 1.5f;
 
 

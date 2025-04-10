@@ -43,12 +43,12 @@ public class ItemPickup : MonoBehaviour
             }
 
             // Laser energy
-            if (laserEnergy.Enabled && Inventory.laserEnergy < Inventory.maxLaserEnergy)
+            if (laserEnergy.Enabled && Inventory.energyAmmo < Inventory.maxEnergyAmmo)
             {
                 int energyToAdd = laserEnergy.Amount;
-                int newEnergyTotal = Inventory.laserEnergy + energyToAdd;
-                Inventory.laserEnergy = Mathf.Clamp(newEnergyTotal, 0, Inventory.maxLaserEnergy); // Use Clamp
-                Debug.Log($"Picked up {energyToAdd} laser energy. Current energy: {Inventory.laserEnergy}");
+                int newEnergyTotal = Inventory.energyAmmo + energyToAdd;
+                Inventory.energyAmmo = Mathf.Clamp(newEnergyTotal, 0, Inventory.maxEnergyAmmo); // Use Clamp
+                Debug.Log($"Picked up {energyToAdd} laser energy. Current energy: {Inventory.energyAmmo}");
                 itemWasPickedUp = true;
             }
 

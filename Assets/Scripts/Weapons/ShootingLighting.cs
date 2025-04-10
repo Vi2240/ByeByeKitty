@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ShootingLightning : WeaponBase
 {
+    TextMeshProUGUI magCapacityText;
+    TextMeshProUGUI inventoryAmmoText;
     [SerializeField] float chainingRange = 5f;
     [SerializeField] int maxChainDepth = 3;
     [SerializeField] int maxTargetsPerChain = 2;
@@ -12,7 +15,19 @@ public class ShootingLightning : WeaponBase
 
     private void Start()
     {
+        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmoText.SetText("");
+        magCapacityText.SetText(Inventory.energyAmmo.ToString());
         base.Start();
+    }
+
+    private void OnEnable()
+    {
+        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
+        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmoText.SetText("");
+        magCapacityText.SetText(Inventory.energyAmmo.ToString());
     }
 
     protected override void Update()
@@ -29,11 +44,15 @@ public class ShootingLightning : WeaponBase
         StartCoroutine(ShootCooldown());
 
         GameObject initialTarget = FindClosestEnemy(transform.position);
-        if (initialTarget != null)
+        if (initialTarget == null || Inventory.energyAmmo <= 0)
         {
-            ChainLightning(initialTarget, 0, new HashSet<GameObject>(), lightningSpawnLocation.position);
+            //Debug.Log("No close enemies or no ammo.");
+            return;
         }
-        else Debug.Log("No enemy close enough");
+
+        Inventory.energyAmmo--;
+        magCapacityText.SetText(Inventory.energyAmmo.ToString());
+        ChainLightning(initialTarget, 0, new HashSet<GameObject>(), lightningSpawnLocation.position);      
     }
 
     private GameObject FindClosestEnemy(Vector3 position)
@@ -102,6 +121,5 @@ public class ShootingLightning : WeaponBase
 
         // initializes the object and passes the end position, where we'll be spawnsing the end sprite
         lightning.GetComponent<Lighting>().Initialize(end);
-
     }
 }

@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 public class ShootingProjectile : WeaponBase
 {
     TextMeshProUGUI magCapacityText;
-    TextMeshProUGUI inventoryAmmo;
+    TextMeshProUGUI inventoryAmmoText;
     [SerializeField] GameObject bulletPrefab;
     [SerializeField, Tooltip("Wether the player can or cannot hold down left click to continue firing.")]
     bool automaticShooting = false;
@@ -17,18 +17,16 @@ public class ShootingProjectile : WeaponBase
         base.Start();
         currentMagAmmoCount = magazineSizeMax;
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        inventoryAmmo.SetText(Inventory.ammo.ToString());
-        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
+        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        UpdateUI();
     }
 
 
     private void OnEnable()
     {
-        if (magCapacityText == null || inventoryAmmo == null) { return; }
+        if (magCapacityText == null || inventoryAmmoText == null) { return; }
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
-        inventoryAmmo.SetText(Inventory.ammo.ToString());
+        UpdateUI();
         StopCoroutine(ReloadDelay());
         isReloading = false;
         canReload = true;
@@ -69,7 +67,7 @@ public class ShootingProjectile : WeaponBase
 
     private void Reload()
     {
-        if (currentMagAmmoCount < magazineSizeMax && currentAmmoReservesCount > 0 && !isReloading)
+        if (currentMagAmmoCount < magazineSizeMax && Inventory.ammo > 0 && !isReloading)
         {
             StartCoroutine(ReloadDelay());
         }
@@ -79,10 +77,16 @@ public class ShootingProjectile : WeaponBase
     {
         isReloading = true;
         yield return new WaitForSeconds(reloadTime);
-        int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, currentAmmoReservesCount);
+        int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, Inventory.ammo);
         currentMagAmmoCount += bulletsToReload;
-        currentAmmoReservesCount -= bulletsToReload;
-        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
+        Inventory.ammo -= bulletsToReload;
+        UpdateUI();
         isReloading = false;
+    }
+
+    private void UpdateUI()
+    {
+        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
+        inventoryAmmoText.SetText(Inventory.ammo.ToString());
     }
 }

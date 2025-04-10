@@ -1,137 +1,169 @@
-using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class ShootingBeam : WeaponBase
 {
     TextMeshProUGUI magCapacityText;
-    TextMeshProUGUI inventoryAmmo;
+    TextMeshProUGUI inventoryAmmoText;
     [SerializeField] GameObject damageNumber;
-    [SerializeField] float damagePerTick = 15f;
-    [SerializeField] float beamLength = 5f;
+    [SerializeField] float maxBeamLength = 10f;
 
     private LineRenderer lineRenderer;
     private bool beamActive = false;
-    private float savedBeamLength;
+
+    private List<EnemyHealth> enemiesToDamageThisTick = new List<EnemyHealth>();
+
+    // Tags to ignore for beam collision.
+    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player" };
+
 
     protected override void Start()
     {
         base.Start();
-        savedBeamLength = beamLength;
         lineRenderer = GetComponentInChildren<LineRenderer>();
+        lineRenderer.enabled = false;
 
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        inventoryAmmo.SetText("");
-        magCapacityText.SetText(Inventory.laserEnergy.ToString());
+        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        inventoryAmmoText.SetText("");
+        magCapacityText.SetText(Inventory.energyAmmo.ToString());
+
+        UpdateAmmoUI();
     }
 
-
-    // Switch the text in UI to match this weapon when it is enabled in different scripts
     private void OnEnable()
     {
-        //audioPlayer.SfxPlayer("RevolverReload_Sound");
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        inventoryAmmo = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        inventoryAmmo.SetText("");
-        magCapacityText.SetText(Inventory.laserEnergy.ToString());
+        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        UpdateAmmoUI();
     }
 
-
-    protected override void Update()
+    private void OnDisable()
     {
-        base.Update();
         if (beamActive)
-        {
-            BeamLogic();
-            DrawBeam();
-        }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            beamActive = true;
-            lineRenderer.enabled = true;
-            DrawBeam();
-        }
-        else if (Input.GetMouseButtonUp(0))
         {
             beamActive = false;
             lineRenderer.enabled = false;
         }
     }
 
-    protected override void Fire() { /* Not used in beam */ }
-
-
-    private void BeamLogic()
+    protected override void Update()
     {
-        RaycastHit2D[] hits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, beamLength);
-        RaycastHit2D validHit = new RaycastHit2D();
-        float closest = beamLength;
+        base.Update();
 
-        foreach (RaycastHit2D hit in hits)
+        if (Input.GetMouseButtonDown(0) && Inventory.energyAmmo > 0)
         {
-            if (hit.collider != null && !hit.collider.CompareTag("Objective") && hit.distance < closest)
+            beamActive = true;
+            lineRenderer.enabled = true;
+        }
+        else if (Input.GetMouseButtonUp(0) || Inventory.energyAmmo <= 0)
+        {
+            if (Input.GetMouseButtonDown(0) && Inventory.energyAmmo <= 0) { /* Add out of ammo sound */ }
+
+            if (beamActive)
             {
-                validHit = hit;
-                closest = hit.distance;
+                beamActive = false;
+                lineRenderer.enabled = false;
             }
         }
 
-        if (validHit.collider == null)
+        if (beamActive)
         {
-            beamLength = savedBeamLength;
-        }
-        else
-        {
-            beamLength = closest;
-            if (validHit.collider.CompareTag("Enemy") && canFire)
+            ProcessBeamHits(out float effectiveBeamEndDistance, out enemiesToDamageThisTick);
+            DrawBeam(effectiveBeamEndDistance);
+
+            if (canFire)
             {
-                HitEnemy(validHit);
+                if (Inventory.energyAmmo > 0)
+                {
+                    Inventory.energyAmmo--;
+                    UpdateAmmoUI();
+                    StartCoroutine(ShootCooldown());
+
+                    foreach (EnemyHealth enemy in enemiesToDamageThisTick)
+                    {
+                        if (enemy != null)
+                        {
+                            HitEnemy(enemy);
+                        }
+                    }
+                }
+                else
+                {
+                    // Turns off beam if out of ammo.
+                    beamActive = false;
+                    lineRenderer.enabled = false;
+                }
             }
         }
     }
 
-    private void HitEnemy(RaycastHit2D hit)
+    // Finds the first hit that should stop the beam while ignoring tags in the ignoreTags list.
+    private void ProcessBeamHits(out float beamEndPointDistance, out List<EnemyHealth> enemiesFound)
     {
-        Inventory.laserEnergy--;
-        magCapacityText.SetText(Inventory.laserEnergy.ToString());
-        StartCoroutine(ShootCooldown());
-        hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
-        Instantiate(damageNumber, hit.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(damagePerTick.ToString());
+        // Clear the list from the previous frame.
+        enemiesToDamageThisTick.Clear();
+        enemiesFound = enemiesToDamageThisTick;
+
+        float firstObstructionDistance = maxBeamLength;
+        RaycastHit2D[] allHits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, maxBeamLength);
+
+        foreach (RaycastHit2D hit in allHits)
+        {
+            bool shouldIgnore = false;
+            foreach (string tag in ignoreTags)
+            {
+                if (hit.collider.CompareTag(tag))
+                {
+                    shouldIgnore = true;
+                    break;
+                }
+            }
+
+            if (!shouldIgnore)
+            {
+                firstObstructionDistance = Mathf.Min(firstObstructionDistance, hit.distance);
+            }
+        }
+
+        // This is the final distance the beam should visually travel to.
+        beamEndPointDistance = firstObstructionDistance;
+
+        foreach (RaycastHit2D hit in allHits)
+        {
+            if (hit.collider.CompareTag("Enemy") && hit.distance <= beamEndPointDistance)
+            {
+                EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+                if (enemyHealth != null && !enemiesFound.Contains(enemyHealth))
+                {
+                    enemiesFound.Add(enemyHealth);
+                }
+            }
+        }
     }
 
-    private void DrawBeam()
+
+    private void HitEnemy(EnemyHealth enemy)
+    {
+        enemy.TakeDamage(damagePerHit);
+        if (damageNumber != null)
+        {
+            Instantiate(damageNumber, enemy.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(damagePerHit.ToString());
+        }
+    }
+
+    private void DrawBeam(float currentLength)
     {
         lineRenderer.SetPosition(0, projectileSpawnLocation.position);
-        lineRenderer.SetPosition(1, projectileSpawnLocation.position + projectileSpawnLocation.right * beamLength);
+        lineRenderer.SetPosition(1, projectileSpawnLocation.position + (Vector3)transform.right * currentLength);
     }
 
+    private void UpdateAmmoUI()
+    {
+        inventoryAmmoText.SetText("");
+        magCapacityText.SetText(Inventory.energyAmmo.ToString());
+    }
 
-    // Work on more later if there's time
-    //void SplitTotargets(int amount)
-    //{
-    //    if (amount <= 0)
-    //    {
-    //        return;
-    //    }
-
-    //    // Find all GameObjects with the tag "Enemy" and sort the list based on distance to get the splitAmount closest enemies.
-    //    List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-    //    enemies.Sort((a, b) =>
-    //        UnityEngine.Vector2.Distance(transform.position, a.transform.position)
-    //        .CompareTo(UnityEngine.Vector2.Distance(transform.position, b.transform.position)));
-
-    //    for (int i = 0; i < splitAmount; i++)
-    //    {
-    //        if (enemies[i] != null)
-    //        {
-    //            enemies[i].SetActive(false);
-    //        }
-    //        print("Set to false");
-    //    }
-
-    //}
-
-    //Checks that the cursor isn't inside the Shoot Range collider
+    protected override void Fire() { /* Not used in beam */ }
 }
