@@ -61,7 +61,14 @@ public abstract class Wave : MonoBehaviour
                     if (referencePoints != null && referencePoints.Length > 0)
                     {
                         Transform refPoint = referencePoints[Random.Range(0, referencePoints.Length)];
-                        Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
+
+                        if (minDistanceFromPoint >= spawnRadius) Debug.LogError("minDistanceFromPoint is larger than spawnRadius!"); break;
+                        minDistanceFromPoint *= (minDistanceFromPoint < 0) ? -1 : 1; // abs of minDistanceFromPoint
+
+                        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+                        float randomDistance = Random.Range(minDistanceFromPoint, spawnRadius);
+                        Vector2 randomOffset = randomDirection * randomDistance;
+
                         spawnPos = new Vector3(refPoint.position.x + randomOffset.x,
                                                refPoint.position.y + randomOffset.y,
                                                refPoint.position.z);
