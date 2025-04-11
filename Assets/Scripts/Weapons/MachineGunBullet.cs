@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class MachineGunBullet : MonoBehaviour
 {
     [SerializeField] float lifeTime = 2f;
     [SerializeField] float hitEffectTime = 1f;

@@ -126,14 +126,4 @@ public class LootDropper : MonoBehaviour
         // Also ensure maxDrops isn't negative if minDrops is 0
         if (maxDrops < 0) maxDrops = 0;
     }
-
-    // --- Example Usage (Remove or adapt for your game) ---
-    // Example: Call DropItems with a key press for testing
-    // void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.L))
-    //     {
-    //         AttemptDropItems();
-    //     }
-    // }
 }

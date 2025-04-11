@@ -91,8 +91,7 @@ public class EnemyHealth : MonoBehaviour
             Instantiate(bloodPuddles[UnityEngine.Random.Range(0, bloodPuddles.Length)], transform.position, Quaternion.identity);
         }
 
-        //GameObject drop = GetComponent<LootDropper>().GetRandomDrop();
-        //if (drop) { Instantiate(drop, transform.position, Quaternion.identity); }
+        gameObject.GetComponent<LootDropper>().AttemptDropItems();
         Destroy(gameObject);
     }
 

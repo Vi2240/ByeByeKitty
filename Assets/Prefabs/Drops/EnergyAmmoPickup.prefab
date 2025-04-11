@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8826423108527944563}
   - component: {fileID: -1362393097213616483}
   m_Layer: 0
-  m_Name: AmmoPickup
+  m_Name: EnergyAmmoPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 727785603
   m_SortingLayer: -2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: d9736a74c4fd4da4a9a8c1dc5d4c8c5f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5253c37a94aa104438d8f18502e46f19, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,7 +124,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.107770205, y: -0.633441}
+  m_Offset: {x: 0.086765766, y: -0.02194786}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -134,7 +134,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 6.6273274, y: 7.5567293}
+  m_Size: {x: 7.5069914, y: 5.852005}
   m_EdgeRadius: 0
 --- !u!114 &8826423108527944563
 MonoBehaviour:
@@ -149,11 +149,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammo:
-    enabled: 1
-    amount: 50
-  laserEnergy:
     enabled: 0
     amount: 0
+  laserEnergy:
+    enabled: 1
+    amount: 50
   heal:
     enabled: 0
     amount: 0

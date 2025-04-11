@@ -170,10 +170,11 @@ MonoBehaviour:
   reloadTime: 2
   damagePerHit: 15
   magazineSizeMax: 30
-  magazineReservesMax: 300
   currentMagAmmoCount: 30
-  currentAmmoReservesCount: 150
   requiredMouseDistanceFromPlayer: 1.5
   bulletPrefab: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
   automaticShooting: 1
   bulletForce: 50
+  isMachineGun: 1
+  isSniper: 0
+  isPistol: 0

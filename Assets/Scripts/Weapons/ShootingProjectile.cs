@@ -11,7 +11,9 @@ public class ShootingProjectile : WeaponBase
     [SerializeField, Tooltip("Wether the player can or cannot hold down left click to continue firing.")]
     bool automaticShooting = false;
     [SerializeField] float bulletForce = 25f;
+    [SerializeField] bool isMachineGun, isSniper, isPistol;
     Coroutine saveReloadCoroutine;
+    
     private void Start()
     {
         base.Start();
@@ -58,8 +60,21 @@ public class ShootingProjectile : WeaponBase
         // Original code instantiation that fires away from the player
         GameObject bullet_ = Instantiate(bulletPrefab, projectileSpawnLocation.position, gameObject.transform.rotation * new Quaternion(0f, 0f, 90, -90));
         bullet_.GetComponent<Rigidbody2D>().AddForce(bullet_.transform.up * bulletForce, ForceMode2D.Impulse);
-        bullet_.GetComponent<Bullet>().SetDirection(transform.right);
-        bullet_.GetComponent<Bullet>().damage = damagePerHit;
+        if (isMachineGun)
+        {
+            bullet_.GetComponent<MachineGunBullet>().SetDirection(transform.right);
+            bullet_.GetComponent<MachineGunBullet>().damage = damagePerHit;
+        }
+        else if (isSniper)
+        {
+            bullet_.GetComponent<SniperBullet>().SetDirection(transform.right);
+            bullet_.GetComponent<SniperBullet>().damage = damagePerHit;
+        }
+        else if (isPistol)
+        {
+            //bullet_.GetComponent<PistolBullet>().SetDirection(transform.right);
+            //bullet_.GetComponent<PistolBullet>().damage = damagePerHit;
+        }
         
         currentMagAmmoCount--;
         magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
