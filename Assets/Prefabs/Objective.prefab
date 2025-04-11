@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6532299391372236359}
   - component: {fileID: 2862106569229929229}
-  m_Layer: 0
-  m_Name: Box
+  m_Layer: 7
+  m_Name: Grafik
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 5280301671666105709}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1.25, y: 0.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -76,8 +76,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.5924529, g: 0.25474727, b: 0, a: 1}
+  m_Sprite: {fileID: 5373404155403702569, guid: eaa722cec0d49ee45bc1de07e62808c0, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 2719547517925061684}
   - component: {fileID: 4303297304717696539}
   - component: {fileID: 134585691630499490}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4931,7 +4931,7 @@ GameObject:
   - component: {fileID: 1916698913526644924}
   - component: {fileID: 2759395390308026626}
   - component: {fileID: 269413014869959326}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BurnEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9941,8 +9941,7 @@ GameObject:
   - component: {fileID: 9154991784330223258}
   - component: {fileID: 6868240381655303118}
   - component: {fileID: 4868506519002121604}
-  - component: {fileID: 3126341213566847188}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Objective
   m_TagString: Objective
   m_Icon: {fileID: 0}
@@ -10029,7 +10028,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2
+  m_Radius: 4
 --- !u!61 &6868240381655303118
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10093,41 +10092,7 @@ MonoBehaviour:
   burningDmg: 5
   healSpeed: 1
   burnSpeed: 1
+  enemyKillzone: 0
   burnEffect: {fileID: 6456118637973538027}
   healingEffect: {fileID: 6141978003280216783}
---- !u!114 &3126341213566847188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7322169324286365058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3d8bad9153554a46b8f65dae98e46f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  normalEnemy: {fileID: 0}
-  speedEnemy: {fileID: 0}
-  slowEnemy: {fileID: 0}
-  rangeEnemy: {fileID: 0}
-  colliders: []
-  notSpawnLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  radiusOfArea: 0
-  NormalEnemy_ChanceToSpawn: 95
-  SpeedEnemy_ChanceToSpawn: 2.5
-  SlowEnemy_ChanceToSpawn: 1
-  RangeEnemy_ChanceToSpawn: 0.5
-  minSpawnPosX: -5
-  maxSpawnPosX: 5
-  minSpawnPosY: -5
-  maxSpawnPosY: 5
-  maxEnemyCountPerWave: 0
-  maxEnemyCount: 0
-  enemyCountPerWave: 0
-  enemyCount: 0
-  enemyFrequencyTime: 0
-  waveTime: 30
-  waveDelay: 10
+  winCanvas: {fileID: 1997299088719311101, guid: cf80395c7bf9e5e4e8af93575cacd541, type: 3}

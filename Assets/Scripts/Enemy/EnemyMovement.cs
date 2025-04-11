@@ -5,23 +5,35 @@ using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    // Serialize fields
-    [SerializeField] GameObject walkableArea;
+    // Accessable variables. The public ones are needed for the spawn script. 
+    public bool disableMovement = false;
     [SerializeField] float speed = 2f;
-    [SerializeField] float maxDistance = 3;
+    //[SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
-    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] int targetRestriction = 0;
-    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] int attackType = 0;
+    [SerializeField] int checkIfStuckFrequency = 5;
     [SerializeField] float stopDistanceFromPlayer = 5;
-    [SerializeField, Tooltip("Radius around to check if near objective or player.")] float nearObjectCheckRadius = 5;
-    [SerializeField, Tooltip("Wander around before becomign agressive.")] bool randomWander = false;
+
+    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
+    int targetRestriction = 0;
+
+    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] 
+    int attackType = 0;
+
+    [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
+    float nearObjectCheckRadius = 5;
+
+    [SerializeField, Tooltip("Wander around before becomign agressive.")] 
+    bool randomWander = false;
+
     //[SerializeField] bool followPlayer = false;
-    [SerializeField, Tooltip("If it's able to attack players.")] bool canAttackPlayers = true; // Should be private later
+    [SerializeField, Tooltip("If it's able to attack players.")] 
+    bool canAttackPlayers = true; // Should be private later
 
     // Private variables 
     float randomWanderPrecision = 1f; // How close it has to be to its random wander target before walking somewhere else.
     bool canMove = true; // Needed for random wander
+    bool objectiveIsBurning = false; // Used to make enemies instantly move after extinguising an objective
     bool isNearPlayer = false;
     bool isNearObjective;
 
@@ -36,12 +48,7 @@ public class EnemyMovement : MonoBehaviour
     Vector3 randomDestination;
     Vector2 target;
     NavMeshAgent agent;
-
-    // Constructor
-    public EnemyMovement(bool wander)
-    {
-        this.randomWander = wander;
-    }
+    GameObject walkableArea;
 
     void Start()
     {
@@ -50,21 +57,22 @@ public class EnemyMovement : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         agent.speed = speed;
-        savedPositions = new Vector2[10];
+        savedPositions = new Vector2[checkIfStuckFrequency];
+        walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
         // If it's a melee enemy it should go all the way to the player
         if (attackType == 0)
         {
-            stopDistanceFromPlayer = 0;
+            stopDistanceFromPlayer = 0.2f;
         }
-
-        // To avoid problems
+        
+        // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
             canAttackPlayers = false;
         }
 
-        if (randomWander && canMove)
+        if (randomWander && canMove && !disableMovement)
         {
             SetNewRandomDestination();
             MoveToDestination(randomDestination);
@@ -75,8 +83,19 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate() // FixedUpdate because there's no need to update any quicker than the framerate
+    void Update()
     {
+        // Makes all code below temporarily unreachable
+        if (disableMovement) 
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
         nearestPlayer = FindNearestObject("Player");
         nearestObjective = FindNearestObject("Objective");
 
@@ -85,7 +104,7 @@ public class EnemyMovement : MonoBehaviour
         CheckIfStuck();
 
         if (BehaviourChecks()) { return; };
-
+        
         RandomWanderCheck();
     }
 
@@ -98,13 +117,13 @@ public class EnemyMovement : MonoBehaviour
 
             Temporary script = nearestObjective.GetComponent<Temporary>();
 
-            if (DistanceTo(nearestObjective) <= 2.5f)
+            if (DistanceTo(nearestObjective) <= 5f)
             {
                 agent.isStopped = true;
                 //print("Stopped");
                 // Do fire extinguish stuff
             }
-            return true; // Return so it doesn't access the code below.
+            return true; // Return true so it doesn't access the code below.
         }
 
         // Go to objective if it's not near a player and not restricted to players, or if it's restricted to objectves. Only works if the objective is under attack
@@ -116,9 +135,10 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        if (canAttackPlayers && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
+        if (canAttackPlayers && nearestPlayer != null && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
         {
             agent.isStopped = true;
+            // Attack logic here
             return true;
         }
         else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
@@ -141,7 +161,7 @@ public class EnemyMovement : MonoBehaviour
             arrayCount++;
             timer = 0f;
 
-            if (arrayCount < 10) // 0 to 9 (10 elements)
+            if (arrayCount < checkIfStuckFrequency) // 0 to 9 (10 elements)
             {
                 return; // Return if 10 positions haven't been saved yet
             }
@@ -172,7 +192,7 @@ public class EnemyMovement : MonoBehaviour
 
     void NearObjectChecks()
     {
-        if (DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
+        if (nearestPlayer && DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
         else
         {
             isNearPlayer = false;
@@ -186,16 +206,19 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        if (DistanceTo(nearestObjective) <= nearObjectCheckRadius) { isNearObjective = true; }
-        else
+        if (nearestObjective != null)
         {
-            isNearObjective = false;
+            if (DistanceTo(nearestObjective) <= nearObjectCheckRadius) { isNearObjective = true; }
+            else
+            {
+                isNearObjective = false;
+            }
         }
     }
 
     void RandomWanderCheck()
     {
-        if (!randomWander)
+        if (!randomWander) // For testing when you want it to follow the mouse
         {
             // Follow mouse stuff for testing
             //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
@@ -209,7 +232,7 @@ public class EnemyMovement : MonoBehaviour
         {
             canMove = false;
             float waitTime = Random.Range(movePauseMin, movePauseMax);
-            print($"Should move in {waitTime} seconds");
+            //print($"Should move in {waitTime} seconds");
             StartCoroutine(WaitThenMove(waitTime));
             return;
         }
@@ -237,10 +260,19 @@ public class EnemyMovement : MonoBehaviour
                 }
             }
 
-            if (objects.Count <= 0)
+            if (objects.Count <= 0) // If there are no burning bjectives
             {
-                randomWander = true;
+                if (randomWander && objectiveIsBurning && canMove)
+                {
+                    StartCoroutine(WaitThenMove(1));
+                    objectiveIsBurning = false;
+                    canMove = false;
+                }
                 return null;
+            }
+            else
+            {
+                objectiveIsBurning = true;
             }
         }
 
