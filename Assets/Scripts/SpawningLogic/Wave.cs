@@ -8,15 +8,17 @@ using UnityEngine;
 public abstract class Wave : MonoBehaviour
 {
     public GameObject enemyParent;
-    public int difficulty = 1;       // e.g., 0, 1, 2, etc.
-    public float spawnRate = 3;      // How frequently enemies spawn.
-    public Transform[] players;      // List of all players (used for distance validation).
-    public Transform[] positions_tmp;// Temporary variable for setting a position 
+    public int difficulty = 1;        // e.g., 0, 1, 2, etc.
+    public float spawnRate = 3;       // How frequently enemies spawn.
+    public Transform[] players;       // List of all players (used for distance validation).
+    public Transform[] positions_tmp; // Temporary variable for setting a position 
 
     // The radius used when spawning enemies around a reference point.
-    public float spawnRadius = 20f;
+    public float? spawnRadius = 20f;
     // Minimum allowed distance from any player.
-    public float minDistance = 3f;
+    public float? minDistanceFromPlayer = 3f;
+    // Minimum allowed distance from point.
+    public float? minDistanceFromPoint = 7.5f;
 
     /// <summary>
     /// Every concrete wave must implement its execution logic.
@@ -31,10 +33,22 @@ public abstract class Wave : MonoBehaviour
     /// </summary>
     /// <param name="spawnType">The spawn mode to use.</param>
     /// <param name="referencePoints">An array of reference points (for Fixed or AreaAroundPosition).</param>
-    /// <param name="minDistanceFromPoint">Minimum distance from the reference point (for area spawning).</param>
+    /// <param name="_minDistanceFromPoint">(Optional) Minimum distance from the reference point (for area spawning).</param>
+    /// <param name="_minDistanceFromPlayer">(Optional) Minimum distance from players area spawning can spawn (if fails 10 times it spawns anyways).</param>
+    /// <param name="_spawnRadius">(Optional) The radius for the cirle that confines the spawning area around a point.</param>
     /// <returns>A valid spawn position.</returns>
-    protected Vector3 GetValidSpawnPosition(SpawnType spawnType, Transform[] referencePoints = null, float minDistanceFromPoint = 0f)
+    protected Vector3 GetValidSpawnPosition(SpawnType spawnType, Transform[] referencePoints = null, float? _minDistanceFromPoint = null, float? _minDistanceFromPlayer = null, float? _spawnRadius = null)
     {
+        // Make sure minDistanceFrom Point and Player are set to a value in priority order of, input to function, this functions value, 0f.
+        float minDistanceFromPoint    = _minDistanceFromPoint  ?? (float?)this.minDistanceFromPoint    ?? 0f;
+        float minDistanceFromPlayer   = _minDistanceFromPlayer ?? (float?)this.minDistanceFromPlayer   ?? 0f;
+        float spawnRadius             = _spawnRadius           ?? (float?)this.spawnRadius             ?? 0f;
+
+        minDistanceFromPoint    = Mathf.Abs(minDistanceFromPoint);
+        spawnRadius             = Mathf.Abs(spawnRadius);
+
+        spawnRadius             = (minDistanceFromPoint >= spawnRadius) ? minDistanceFromPoint : spawnRadius;
+
         // If no reference points are provided, use the temporary positions.
         if (referencePoints == null || referencePoints.Length == 0)
             referencePoints = positions_tmp;
@@ -61,10 +75,7 @@ public abstract class Wave : MonoBehaviour
                     if (referencePoints != null && referencePoints.Length > 0)
                     {
                         Transform refPoint = referencePoints[Random.Range(0, referencePoints.Length)];
-
-                        if (minDistanceFromPoint >= spawnRadius) Debug.LogError("minDistanceFromPoint is larger than spawnRadius!"); break;
-                        minDistanceFromPoint *= (minDistanceFromPoint < 0) ? -1 : 1; // abs of minDistanceFromPoint
-
+                        
                         Vector2 randomDirection = Random.insideUnitCircle.normalized;
                         float randomDistance = Random.Range(minDistanceFromPoint, spawnRadius);
                         Vector2 randomOffset = randomDirection * randomDistance;
@@ -94,7 +105,7 @@ public abstract class Wave : MonoBehaviour
             }
 
             // For non-Fixed types, validate the spawn position.
-            if (spawnType == SpawnType.Fixed || IsSpawnValid(spawnPos))
+            if (spawnType == SpawnType.Fixed || IsSpawnValid(spawnPos, minDistanceFromPlayer))
                 break;
         }
         return spawnPos; // Returns the randomized spawnPos, if all iterations failed it'll spawn the latest attempt anyway.
@@ -105,11 +116,13 @@ public abstract class Wave : MonoBehaviour
     /// </summary>
     /// <param name="pos">The potential spawn position.</param>
     /// <returns>True if valid, otherwise false.</returns>
-    protected bool IsSpawnValid(Vector3 pos)
+    protected bool IsSpawnValid(Vector3 pos, float? minDistanceFromPlayer = null)
     {
+        minDistanceFromPlayer = minDistanceFromPlayer ?? (float?)this.minDistanceFromPlayer ?? 0f;
+
         foreach (Transform player in players)
         {
-            if (Vector3.Distance(pos, player.position) < minDistance)
+            if (Vector3.Distance(pos, player.position) < minDistanceFromPlayer)
                 return false;
         }
         return true;
