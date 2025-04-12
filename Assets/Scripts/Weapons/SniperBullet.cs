@@ -5,9 +5,7 @@ using System.Linq; // Required for OrderBy
 public class SniperBullet : MonoBehaviour
 {
     [Header("Stats")]
-    [SerializeField] float lifeTime = 0.15f; // Reduce lifetime significantly for visual bullet
-    public float damage = 5f;
-    // Controls how many enemies the initial raycast damages. 0 = damages first hit, 1 = damages first two, etc.
+    [SerializeField] float lifeTime = 0.5f; // Reduce lifetime significantly for visual bullet
     [SerializeField] int maxPenetration = 1;
     [SerializeField] float maxRayDistance = 100f; // Max distance the initial raycast travels
 
@@ -15,8 +13,6 @@ public class SniperBullet : MonoBehaviour
     [SerializeField] GameObject bloodHitEffect;
     [SerializeField] GameObject sparksHitEffect;
     [SerializeField] GameObject damageNumber;
-    // Optional: A tracer effect prefab for the visual bullet
-    [SerializeField] TrailRenderer tracerEffect;
 
     [Header("Collision")]
     // Layers the initial Raycast should IGNORE. Also used by the visual bullet's trigger.
@@ -25,6 +21,7 @@ public class SniperBullet : MonoBehaviour
     [SerializeField] LayerMask hittableLayers;
 
     // Internal State
+    float damage;
     private Rigidbody2D rb;
     private Vector2 _direction; // Direction is crucial for the initial raycast
     // Note: hitEnemies and enemiesHitCount are now local to Start method
@@ -36,10 +33,6 @@ public class SniperBullet : MonoBehaviour
         {
             Debug.LogError("SniperBullet requires a Rigidbody2D component for visual movement!", this);
             enabled = false;
-        }
-        if (tracerEffect != null)
-        {
-            tracerEffect.emitting = true; // Ensure tracer starts active if present
         }
     }
 
@@ -182,14 +175,6 @@ public class SniperBullet : MonoBehaviour
     // Method to cleanly destroy the visual bullet and stop its effects
     void DestroyVisualBullet()
     {
-        // Stop emitting trail before destroying
-        if (tracerEffect != null)
-        {
-            tracerEffect.transform.SetParent(null, true); // Unparent to let trail fade
-            tracerEffect.emitting = false;
-            // Optionally destroy the trail object after a delay
-            // Destroy(tracerEffect.gameObject, tracerEffect.time);
-        }
         // Stop Rigidbody movement
         if (rb != null)
         {
@@ -203,6 +188,11 @@ public class SniperBullet : MonoBehaviour
     public void SetDirection(Vector2 dir)
     {
         _direction = dir.normalized;
+    }
+
+    public void SetDamage(float damage)
+    {
+        this.damage = damage;
     }
 
     // Weapon script MUST call this *immediately* after Instantiate

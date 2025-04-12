@@ -173,3 +173,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeToEnableCollider: 1
+  despawnTimer: 30

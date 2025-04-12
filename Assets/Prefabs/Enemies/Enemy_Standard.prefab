@@ -585,7 +585,6 @@ GameObject:
   - component: {fileID: -2921794130836257963}
   - component: {fileID: 2698823367928685974}
   - component: {fileID: 4201214158487945568}
-  - component: {fileID: -3984463516665255149}
   m_Layer: 6
   m_Name: Enemy_Standard
   m_TagString: Enemy
@@ -782,6 +781,9 @@ MonoBehaviour:
   - {fileID: 7526131994675719849, guid: 17919f0245cbd09408d4f6c463c7d765, type: 3}
   - {fileID: 7526131994675719849, guid: 8dc408fdac5c79b4eb77de857a704908, type: 3}
   - {fileID: 7526131994675719849, guid: dfcebe1e4144d154babfe0f82cdb9095, type: 3}
+  lootTableOverride: {fileID: 0}
+  minDrops: 1
+  maxDrops: 1
 --- !u!114 &2698823367928685974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,24 +818,3 @@ MonoBehaviour:
   spawnDelay: 1.5
   spawnSprite: {fileID: 1120224024326937870}
   enemySprite: {fileID: 2489835579024003555}
---- !u!114 &-3984463516665255149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9205428136142299004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3958068f7181ac4c941dab2d440680b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lootTable: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
-  overallDropChance: 1
-  minDrops: 1
-  maxDrops: 1
-  dropSpawnPoint: {fileID: 8523370411644743543}
-  useRandomOffset: 1
-  dropOffsetRange: {x: 0, y: -1}
-  addDropForce: 1
-  dropForceMagnitudeRange: {x: 1, y: 3}

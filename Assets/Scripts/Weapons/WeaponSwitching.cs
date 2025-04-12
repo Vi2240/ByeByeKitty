@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 // This class holds data for each weapon.
 [System.Serializable]
@@ -64,7 +65,6 @@ public class WeaponSwitching : MonoBehaviour
                 TryToCollectWeapon(weaponEntry); // Attempt to add each weapon
             }
         }
-        // Otherwise (testing flag is off), check if we should start with the first weapon.
         else if (startWithFirstWeapon && allWeapons.Count > 0)
         {
             TryToCollectWeapon(allWeapons[0]); // Add only the first weapon
@@ -170,29 +170,33 @@ public class WeaponSwitching : MonoBehaviour
         return collected; // Return true if the weapon was newly collected, otherwise false.
     }
 
-    // Tries to add a weapon entry to the collected list. Returns true if added, false if already present.
     private bool TryToCollectWeapon(WeaponEntry weaponEntry)
     {
-        if (weaponEntry == null || weaponEntry.WeaponObject == null)
+        if (weaponEntry?.WeaponObject == null)
         {
-            Debug.LogError("WeaponSwitching: Tried to collect an invalid WeaponEntry (null or missing WeaponObject).", this);
+            Debug.LogError("WeaponSwitching: Invalid WeaponEntry provided.", this);
             return false;
         }
 
-        // Check if this specific weapon *entry* (by reference or name) is already collected. Using Name is safer if entries could be duplicated.
         if (!collectedWeapons.Any(w => w.Name == weaponEntry.Name))
         {
             collectedWeapons.Add(weaponEntry);
-            // Ensure the newly added weapon object is initially inactive UNLESS it's the one we are about to switch to.
-            // The SwitchToIndex method handles activation.
+
+            if (!InventoryAndBuffs.collectedAndDroppedWeapons.Contains(weaponEntry.Name))
+            {
+                InventoryAndBuffs.collectedAndDroppedWeapons.Add(weaponEntry.Name);
+                Debug.Log($"'{weaponEntry.Name}' added to global collected list.");
+            }
+
             weaponEntry.WeaponObject.SetActive(false);
-            // Debug.Log($"Added {weaponEntry.Name} to collected list. Currently inactive.");
-            return true; // Weapon was successfully added.
+            return true; // Weapon was successfully added to CURRENT inventory.
         }
-        // Debug.Log($"{weaponEntry.Name} is already collected.");
-        return false; // Weapon was already collected.
+
+        // Weapon was already in the CURRENT collectedWeapons list.
+        return false;
     }
 
+    // Rest of WeaponSwitching.cs remains the same...
 
     private void SwitchToIndex(int index)
     {

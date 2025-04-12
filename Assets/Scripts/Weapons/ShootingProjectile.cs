@@ -20,6 +20,7 @@ public class ShootingProjectile : WeaponBase
         currentMagAmmoCount = magazineSizeMax;
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
         UpdateUI();
     }
 
@@ -60,29 +61,31 @@ public class ShootingProjectile : WeaponBase
         // Original code instantiation that fires away from the player
         GameObject bullet_ = Instantiate(bulletPrefab, projectileSpawnLocation.position, gameObject.transform.rotation * new Quaternion(0f, 0f, 90, -90));
         bullet_.GetComponent<Rigidbody2D>().AddForce(bullet_.transform.up * bulletForce, ForceMode2D.Impulse);
+
+        float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
         if (isMachineGun)
         {
             bullet_.GetComponent<MachineGunBullet>().SetDirection(transform.right);
-            bullet_.GetComponent<MachineGunBullet>().damage = damagePerHit;
+            bullet_.GetComponent<MachineGunBullet>().SetDamage(finalDamage);
         }
         else if (isSniper)
         {
             bullet_.GetComponent<SniperBullet>().SetDirection(transform.right);
-            bullet_.GetComponent<SniperBullet>().damage = damagePerHit;
+            bullet_.GetComponent<SniperBullet>().SetDamage(finalDamage);
         }
         else if (isPistol)
         {
             //bullet_.GetComponent<PistolBullet>().SetDirection(transform.right);
-            //bullet_.GetComponent<PistolBullet>().damage = damagePerHit;
+            //bullet_.GetComponent<PistolBullet>().SetDamage(damagePerHit *= InventoryAndBuffs.playerDamageMultiplier);
         }
-        
+
         currentMagAmmoCount--;
         magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
     }
 
     private void Reload()
     {
-        if (currentMagAmmoCount < magazineSizeMax && Inventory.ammo > 0 && !isReloading)
+        if (currentMagAmmoCount < magazineSizeMax && InventoryAndBuffs.ammo > 0 && !isReloading)
         {
             StartCoroutine(ReloadDelay());
         }
@@ -92,9 +95,9 @@ public class ShootingProjectile : WeaponBase
     {
         isReloading = true;
         yield return new WaitForSeconds(reloadTime);
-        int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, Inventory.ammo);
+        int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, InventoryAndBuffs.ammo);
         currentMagAmmoCount += bulletsToReload;
-        Inventory.ammo -= bulletsToReload;
+        InventoryAndBuffs.ammo -= bulletsToReload;
         UpdateUI();
         isReloading = false;
     }
@@ -102,6 +105,6 @@ public class ShootingProjectile : WeaponBase
     private void UpdateUI()
     {
         magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
-        inventoryAmmoText.SetText(Inventory.ammo.ToString());
+        inventoryAmmoText.SetText(InventoryAndBuffs.ammo.ToString());
     }
 }

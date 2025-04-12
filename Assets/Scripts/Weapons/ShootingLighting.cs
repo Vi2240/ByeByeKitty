@@ -44,11 +44,11 @@ public class ShootingLightning : WeaponBase
     {
         base.Update();
 
-        if (Input.GetMouseButton(0) && canFire && Inventory.energyAmmo > 0)
+        if (Input.GetMouseButton(0) && canFire && InventoryAndBuffs.energyAmmo > 0)
         {
             Fire();
         }
-        else if (Input.GetMouseButtonDown(0) && canFire && Inventory.energyAmmo <= 0)
+        else if (Input.GetMouseButtonDown(0) && canFire && InventoryAndBuffs.energyAmmo <= 0)
         {
             // Play 'out of ammo' sound/effect
         }
@@ -77,7 +77,7 @@ public class ShootingLightning : WeaponBase
 
     protected override void Fire()
     {
-        if (!canFire || Inventory.energyAmmo <= 0) return;
+        if (!canFire || InventoryAndBuffs.energyAmmo <= 0) return;
 
         // Find the initial target*relative to the spawn location
         GameObject initialTarget = FindClosestEnemy(lightningSpawnLocation.position, chainingRange, null);
@@ -87,7 +87,7 @@ public class ShootingLightning : WeaponBase
             return;
         }
 
-        Inventory.energyAmmo--;
+        InventoryAndBuffs.energyAmmo--;
         UpdateAmmoUI();
         StartCoroutine(ShootCooldown());
 
@@ -101,10 +101,11 @@ public class ShootingLightning : WeaponBase
             return;
         }
 
+        float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
         EnemyHealth health = target.GetComponent<EnemyHealth>();
         if (health != null)
         {
-            health.TakeDamage(damagePerHit);
+            health.TakeDamage(finalDamage);
         }
         else
         {
@@ -219,7 +220,7 @@ public class ShootingLightning : WeaponBase
         if (magCapacityText != null && inventoryAmmoText != null)
         {
             inventoryAmmoText.SetText("");
-            magCapacityText.SetText(Inventory.energyAmmo.ToString());
+            magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
         }
     }
 }

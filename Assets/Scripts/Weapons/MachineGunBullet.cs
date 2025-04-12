@@ -3,20 +3,26 @@ using UnityEngine;
 
 public class MachineGunBullet : MonoBehaviour
 {
-    [SerializeField] float lifeTime = 2f;
+    [Header("Stats")]
+    [SerializeField] float lifetime = 1f;
+
+    [Header("Effects")]
     [SerializeField] float hitEffectTime = 1f;
     [SerializeField] GameObject bloodHitEffect;
     [SerializeField] GameObject sparksHitEffect;
     [SerializeField] GameObject damageNumber;
+
+    [Header("Collision")]
     [SerializeField] LayerMask ignoredLayers;
 
-    public float damage = 5f;
+    // Internal
+    float damage;
     private Vector2 _direction;
     private bool hasDamaged = false;
 
     void Start()
     {
-        Destroy(gameObject, lifeTime);
+        Destroy(gameObject, lifetime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -74,6 +80,11 @@ public class MachineGunBullet : MonoBehaviour
     public void SetDirection(Vector2 dir)
     {
         _direction = dir.normalized;
+    }
+
+    public void SetDamage(float damage)
+    {
+        this.damage = damage;
     }
 }
 

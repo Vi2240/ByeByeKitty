@@ -117,7 +117,7 @@ public class ShootingChargeBeam : WeaponBase
     private void HandleInputs()
     {
         // Start Charging
-        if (Input.GetMouseButtonDown(0) && !isCharging && !isFiring && canFire && Inventory.energyAmmo >= ammoCostPerShot)
+        if (Input.GetMouseButtonDown(0) && !isCharging && !isFiring && canFire && InventoryAndBuffs.energyAmmo >= ammoCostPerShot)
         {
             StartCharging();
         }
@@ -134,7 +134,7 @@ public class ShootingChargeBeam : WeaponBase
         {
             if (currentChargeTime >= chargeUpTime)
             {
-                if (Inventory.energyAmmo >= ammoCostPerShot)
+                if (InventoryAndBuffs.energyAmmo >= ammoCostPerShot)
                 {
                     FireBeam();
                 }
@@ -150,7 +150,7 @@ public class ShootingChargeBeam : WeaponBase
         }
 
         // Cancel Charge (mouse release or out of ammo)
-        if (isCharging && (!Input.GetMouseButton(0) || Inventory.energyAmmo < ammoCostPerShot))
+        if (isCharging && (!Input.GetMouseButton(0) || InventoryAndBuffs.energyAmmo < ammoCostPerShot))
         {
             CancelCharge();
         }
@@ -183,7 +183,7 @@ public class ShootingChargeBeam : WeaponBase
         isCharging = false;
         isFiring = true; // Set firing state to true
 
-        Inventory.energyAmmo -= ammoCostPerShot;
+        InventoryAndBuffs.energyAmmo -= ammoCostPerShot;
         UpdateAmmoUI();
 
         if (chargeVisualSprite != null)
@@ -265,17 +265,18 @@ public class ShootingChargeBeam : WeaponBase
     private void HitEnemy(EnemyHealth enemy)
     {
         if (enemy == null) return;
-        enemy.TakeDamage(damagePerHit); // Use base class damage value
+
+        float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
+        enemy.TakeDamage(finalDamage);
         if (damageNumberPrefab != null)
         {
             GameObject dn = Instantiate(damageNumberPrefab, enemy.transform.position, Quaternion.identity);
             var floatingNumber = dn.GetComponent<FloatingHealthNumber>();
-            if (floatingNumber != null) floatingNumber.SetText(damagePerHit.ToString());
+            if (floatingNumber != null) floatingNumber.SetText((finalDamage).ToString());
             else Debug.LogWarning("Damage Number Prefab does not have FloatingHealthNumber component.", dn);
         }
     }
 
-    // Draws the beam based on current weapon orientation
     private void DrawBeam(float length)
     {
         if (lineRenderer == null || projectileSpawnLocation == null) return;
@@ -332,7 +333,7 @@ public class ShootingChargeBeam : WeaponBase
         if (magCapacityText != null && inventoryAmmoText != null)
         {
             inventoryAmmoText.SetText("");
-            magCapacityText.SetText(Inventory.energyAmmo.ToString());
+            magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
         }
     }
 

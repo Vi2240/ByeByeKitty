@@ -151,7 +151,7 @@ MonoBehaviour:
   ammo:
     enabled: 0
     amount: 0
-  laserEnergy:
+  energyAmmo:
     enabled: 1
     amount: 50
   heal:
@@ -173,3 +173,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeToEnableCollider: 1
+  despawnTimer: 30
