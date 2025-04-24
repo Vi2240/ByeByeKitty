@@ -7,7 +7,7 @@ public class EnemyMovement : MonoBehaviour
 {
     // Accessable variables. The public ones are needed for the spawn script. 
     public bool disableMovement = false;
-    [SerializeField] float speed = 2f;
+    [SerializeField] float speed = 0.5f;
     //[SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;

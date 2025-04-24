@@ -745,7 +745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableMovement: 0
-  speed: 1.8
+  speed: 0.75
   movePauseMin: 2
   movePauseMax: 5
   checkIfStuckFrequency: 5
