@@ -46,7 +46,8 @@ public abstract class WeaponBase : MonoBehaviour
     protected IEnumerator ShootCooldown()
     {
         canFire = false;
-        yield return new WaitForSeconds(fireCooldown);
+        float cooldown = fireCooldown / InventoryAndBuffs.playerFireRateMultiplier;
+        yield return new WaitForSeconds(cooldown);
         canFire = true;
     }
 

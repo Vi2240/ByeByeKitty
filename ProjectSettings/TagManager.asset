@@ -11,6 +11,7 @@ TagManager:
   - AudioManager
   - UI_HealthBar
   - LootManager
+  - Pickup
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - UI
   - Enemy
   - Objective
-  - 
+  - Pickup
   - 
   - 
   - 

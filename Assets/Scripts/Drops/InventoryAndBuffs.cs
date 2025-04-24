@@ -13,12 +13,14 @@ public static class InventoryAndBuffs
 
     // -- Player buffs --
     public static float playerDamageMultiplier = 1f;
+    public static float playerFireRateMultiplier = 1f;
     public static float playerHealthMultiplier = 1f;
     public static float playerSpeedMultiplier = 1f;
 
 
     // -- Enemy buffs --
     public static float enemyDamageMultiplier = 1f;
+    public static float enemyAttackSpeedMultiplier = 1f;
     public static float enemyHealthMultiplier = 1f;
     public static float enemySpeedMultiplier = 1f;
 

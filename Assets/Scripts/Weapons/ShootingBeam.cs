@@ -15,7 +15,7 @@ public class ShootingBeam : WeaponBase
     private List<EnemyHealth> enemiesToDamageThisTick = new List<EnemyHealth>();
 
     // Tags to ignore for beam collision.
-    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player" };
+    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player", "Pickup" };
 
 
     protected override void Start()

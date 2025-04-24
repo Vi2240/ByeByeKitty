@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 2120237492830943653}
   - component: {fileID: 8826423108527944563}
   - component: {fileID: -1362393097213616483}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AmmoPickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
   ammo:
     enabled: 1
     amount: 50
-  laserEnergy:
+  energyAmmo:
     enabled: 0
     amount: 0
   heal:

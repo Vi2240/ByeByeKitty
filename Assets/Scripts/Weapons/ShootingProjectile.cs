@@ -20,7 +20,6 @@ public class ShootingProjectile : WeaponBase
         currentMagAmmoCount = magazineSizeMax;
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-
         UpdateUI();
     }
 
@@ -75,8 +74,8 @@ public class ShootingProjectile : WeaponBase
         }
         else if (isPistol)
         {
-            //bullet_.GetComponent<PistolBullet>().SetDirection(transform.right);
-            //bullet_.GetComponent<PistolBullet>().SetDamage(damagePerHit *= InventoryAndBuffs.playerDamageMultiplier);
+            bullet_.GetComponent<MachineGunBullet>().SetDirection(transform.right); // Using the same script for pistol and machine gun.
+            bullet_.GetComponent<MachineGunBullet>().SetDamage(finalDamage);
         }
 
         currentMagAmmoCount--;
