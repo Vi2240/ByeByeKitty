@@ -167,9 +167,9 @@ public class Objective : MonoBehaviour
         return isBurning;
     }
 
-    public void StopFire(float fireStoppingPower){
+    public void FireExtinguish(float fireStoppingPower){
         fireHP -= fireStoppingPower;
-        fireHP = (fireHP < 0) ? 0 : fireHP;
+        if (fireHP <= 0) isBurning = false;
     }
 
     IEnumerator WinGame()

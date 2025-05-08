@@ -36,7 +36,7 @@ public class EnemyStopFire : MonoBehaviour
     private void StopFire(){
         foreach (Zone zone in zones)
             if (zone.isInZone && !zone.onCooldown) {
-                zone.gameObject.GetComponent<Objective>().StopFire(fireStoppingPower); 
+                zone.gameObject.GetComponent<Objective>().FireExtinguish(fireStoppingPower); 
                 StartCoroutine(zone.startCooldown(extinguishCooldownTime, initialCooldownTime));
             }
     }

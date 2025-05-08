@@ -21,7 +21,7 @@ public class WaveType0 : Wave
 	public SpawnType spawnType = SpawnType.AreaAroundPlayers;
 
 	public override IEnumerator ExecuteWave()
-	{
+	{				
 		// Adjust wait time based on spawnRate and difficulty.
 		float waitTime = spawnRate / (difficulty + 1);
 
