@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 2120237492830943653}
   - component: {fileID: 8826423108527944563}
   - component: {fileID: -1362393097213616483}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AmmoPickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 727785603
   m_SortingLayer: -2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: b68fb8ba8ccfcd547bf6c816e209e43a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9736a74c4fd4da4a9a8c1dc5d4c8c5f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,17 +124,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.107770205, y: -0.633441}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 10.24, y: 10.24}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.16, y: 0.17}
+  m_Size: {x: 6.6273274, y: 7.5567293}
   m_EdgeRadius: 0
 --- !u!114 &8826423108527944563
 MonoBehaviour:
@@ -151,7 +151,7 @@ MonoBehaviour:
   ammo:
     enabled: 1
     amount: 50
-  laserEnergy:
+  energyAmmo:
     enabled: 0
     amount: 0
   heal:
@@ -173,3 +173,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeToEnableCollider: 1
+  despawnTimer: 30

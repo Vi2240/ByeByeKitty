@@ -5,6 +5,7 @@ using UnityEngine;
 public class DroppedItem : MonoBehaviour
 {
     [SerializeField] float timeToEnableCollider = 1f;
+    [SerializeField, Tooltip("Set to zero to disable.")] float despawnTimer = 0f;
 
     private void Awake()
     {
@@ -18,5 +19,6 @@ public class DroppedItem : MonoBehaviour
     {
         yield return new WaitForSeconds(timeToEnableCollider);
         collider.enabled = true;
+        if (despawnTimer > 0) { Destroy(gameObject, despawnTimer); }
     }
 }

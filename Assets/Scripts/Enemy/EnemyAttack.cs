@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    // Serialize fields
+    // Serialize fields    
     public bool disableAttacking = false;
     [SerializeField, Tooltip("0 = melee, 1 = ranged")] int attackType = 0;
     [SerializeField] float attackRange = 0;
@@ -10,11 +10,12 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] float attackCooldown = 0.5f;
 
     [SerializeField] Transform bulletSpawnPos;
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject bulletPrefab;    
 
     EnemyMovement movementScript;
     GameObject nearestPlayer;
     float timer;
+
     void Start()
     {
         movementScript = gameObject.GetComponent<EnemyMovement>();

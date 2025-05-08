@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
 {
-    [SerializeField] string weaponName;
+    public string weaponName;
 
     void OnTriggerEnter2D(Collider2D other)
     {

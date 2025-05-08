@@ -15,7 +15,7 @@ public class ShootingBeam : WeaponBase
     private List<EnemyHealth> enemiesToDamageThisTick = new List<EnemyHealth>();
 
     // Tags to ignore for beam collision.
-    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player" };
+    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player", "Pickup" };
 
 
     protected override void Start()
@@ -27,7 +27,7 @@ public class ShootingBeam : WeaponBase
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         inventoryAmmoText.SetText("");
-        magCapacityText.SetText(Inventory.energyAmmo.ToString());
+        magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
 
         UpdateAmmoUI();
     }
@@ -52,14 +52,14 @@ public class ShootingBeam : WeaponBase
     {
         base.Update();
 
-        if (Input.GetMouseButtonDown(0) && Inventory.energyAmmo > 0)
+        if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo > 0)
         {
             beamActive = true;
             lineRenderer.enabled = true;
         }
-        else if (Input.GetMouseButtonUp(0) || Inventory.energyAmmo <= 0)
+        else if (Input.GetMouseButtonUp(0) || InventoryAndBuffs.energyAmmo <= 0)
         {
-            if (Input.GetMouseButtonDown(0) && Inventory.energyAmmo <= 0) { /* Add out of ammo sound */ }
+            if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo <= 0) { /* Add out of ammo sound */ }
 
             if (beamActive)
             {
@@ -75,9 +75,9 @@ public class ShootingBeam : WeaponBase
 
             if (canFire)
             {
-                if (Inventory.energyAmmo > 0)
+                if (InventoryAndBuffs.energyAmmo > 0)
                 {
-                    Inventory.energyAmmo--;
+                    InventoryAndBuffs.energyAmmo--;
                     UpdateAmmoUI();
                     StartCoroutine(ShootCooldown());
 
@@ -143,13 +143,13 @@ public class ShootingBeam : WeaponBase
         }
     }
 
-
     private void HitEnemy(EnemyHealth enemy)
     {
-        enemy.TakeDamage(damagePerHit);
+        float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
+        enemy.TakeDamage(finalDamage);
         if (damageNumber != null)
         {
-            Instantiate(damageNumber, enemy.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(damagePerHit.ToString());
+            Instantiate(damageNumber, enemy.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(finalDamage.ToString());
         }
     }
 
@@ -162,7 +162,7 @@ public class ShootingBeam : WeaponBase
     private void UpdateAmmoUI()
     {
         inventoryAmmoText.SetText("");
-        magCapacityText.SetText(Inventory.energyAmmo.ToString());
+        magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
     }
 
     protected override void Fire() { /* Not used in beam */ }

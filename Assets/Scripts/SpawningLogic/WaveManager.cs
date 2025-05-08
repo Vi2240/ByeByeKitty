@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEditor;
 
 using UnityEngine;
@@ -75,6 +76,34 @@ public class WaveManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="waveType"></param>
+    /// <param name="spawnType"></param>
+    /// <param name="difficulty"></param>
+    /// <param name="positions"></param>
+    /// <param name="delay"></param>
+    public void StartWaveWithDelay(WaveType waveType, SpawnType spawnType, int difficulty, Transform[] positions, float delay)
+    { 
+        waitForSec(delay);
+        StartWave(waveType, spawnType, difficulty, positions);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="waveType"></param>
+    /// <param name="spawnType"></param>
+    /// <param name="difficulty"></param>
+    /// <param name="position"></param>
+    /// <param name="delay"></param>
+    public void StartWaveWithDelay(WaveType waveType, SpawnType spawnType, int difficulty, Transform position, float delay)
+    { 
+        waitForSec(delay);
+        StartWave(waveType, spawnType, difficulty, new Transform[] {position});
+    }
+
+    /// <summary>
     /// Stops all currently running wave coroutines.
     /// </summary>
     public void EndAllWaves()
@@ -84,5 +113,10 @@ public class WaveManager : MonoBehaviour
             StopCoroutine(waveCoroutine);
         }
         runningWaves.Clear();
+    }
+
+    IEnumerator waitForSec(float secondsToWait)
+    {
+        yield return new WaitForSeconds(secondsToWait);
     }
 }

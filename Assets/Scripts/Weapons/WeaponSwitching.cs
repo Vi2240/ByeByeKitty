@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 // This class holds data for each weapon.
 [System.Serializable]
@@ -15,7 +16,11 @@ public class WeaponSwitching : MonoBehaviour
 {
     // Use a single list for all weapon definitions.
     [SerializeField] List<WeaponEntry> allWeapons = new List<WeaponEntry>();
+
+    [Header("Starting Options")]
     [SerializeField] bool startWithFirstWeapon = true; // Option to start with the first weapon in the list.
+    // --- ADDED SERIALIZE FIELD ---
+    [SerializeField] bool collectAllWeaponsOnStartForTesting = false; // If true, grants all weapons at start.
 
     List<WeaponEntry> collectedWeapons = new List<WeaponEntry>();
     WeaponEntry currentWeapon = null; // Reference to the currently active weapon entry.
@@ -30,7 +35,7 @@ public class WeaponSwitching : MonoBehaviour
             return;
         }
 
-        // Ensure all starting weapon objects are inactive.
+        // Ensure all starting weapon objects are inactive and check definitions.
         foreach (var entry in allWeapons)
         {
             if (entry.WeaponObject != null)
@@ -49,44 +54,56 @@ public class WeaponSwitching : MonoBehaviour
 
         collectedWeapons.Clear(); // Start with no weapons collected.
 
-        // --- Add Starting Weapon ---
-        if (startWithFirstWeapon && allWeapons.Count > 0)
+        // --- Logic for Adding Starting Weapons ---
+
+        // If the testing flag is enabled, collect all defined weapons.
+        if (collectAllWeaponsOnStartForTesting)
         {
-            TryToCollectWeapon(allWeapons[0]);
-            // Automatically switch to the first collected weapon.
-            SwitchToIndex(0);
+            Debug.LogWarning("WeaponSwitching: CollectAllWeaponsOnStartForTesting is TRUE. Collecting all weapons.");
+            foreach (var weaponEntry in allWeapons)
+            {
+                TryToCollectWeapon(weaponEntry); // Attempt to add each weapon
+            }
+        }
+        else if (startWithFirstWeapon && allWeapons.Count > 0)
+        {
+            TryToCollectWeapon(allWeapons[0]); // Add only the first weapon
         }
 
-        // ---- For testing ----
-        //Debug.LogWarning("WeaponSwitching: Collecting all weapons for testing purposes.");
-        //foreach (var weaponEntry in allWeapons)
-        //{
-        //    TryToCollectWeapon(weaponEntry);
-        //}
-        //// Ensure the first weapon is active if multiple were added for testing.
-        //if (collectedWeapons.Count > 0) 
-        //{
-        //   SwitchToIndex(0);
-        //}
+        // After potentially adding starting weapons, switch to the first available one (index 0).
+        if (collectedWeapons.Count > 0)
+        {
+            SwitchToIndex(0);
+        }
+        else
+        {
+            Debug.Log("WeaponSwitching: Starting with no weapons equipped.");
+            // Ensure state is clean if no weapons were added
+            currentWeapon = null;
+            currentWeaponCollectedIndex = -1;
+        }
+
+        // ---- Old For testing block removed as it's replaced by the bool flag ----
     }
 
     void Update()
     {
-        // Check weapon switching input.
-        for (int i = 0; i < 9; i++)
+        // Check weapon switching input (1-9 keys).
+        for (int i = 0; i < 9; i++) // Check keys 1 through 9
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
+                // Check if the requested index exists in the *collected* weapons list.
                 if (i < collectedWeapons.Count)
                 {
                     SwitchToIndex(i);
                 }
                 else
                 {
-                    Debug.Log($"WeaponSwitching: No weapon collected at slot {i + 1}.");
-                    // Reminder to add "empty slot sound" here latre.
+                    // Debug.Log($"WeaponSwitching: No weapon collected at slot {i + 1}.");
+                    // Reminder: Add "empty slot sound" here later.
                 }
-                break;
+                break; // Exit loop once a key is processed
             }
         }
 
@@ -97,142 +114,183 @@ public class WeaponSwitching : MonoBehaviour
         }
 
         // Scroll wheel switching.
+        HandleScrollWheelSwitching();
+    }
+
+    void HandleScrollWheelSwitching()
+    {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f && collectedWeapons.Count > 1) // Only switch if more than one weapon collected.
         {
             int nextIndex = currentWeaponCollectedIndex;
-            if (scroll > 0f) // Scroll up
+            if (scroll > 0f) // Scroll up (previous weapon)
             {
                 nextIndex--;
-                if (nextIndex < 0) { nextIndex = collectedWeapons.Count - 1; } // Wrap around
+                if (nextIndex < 0) { nextIndex = collectedWeapons.Count - 1; } // Wrap around to the end
             }
-            else if (scroll < 0f) // Scroll down
+            else // scroll < 0f (Scroll down - next weapon)
             {
                 nextIndex++;
-                if (nextIndex >= collectedWeapons.Count) { nextIndex = 0; } // Wrap around
+                if (nextIndex >= collectedWeapons.Count) { nextIndex = 0; } // Wrap around to the beginning
             }
-            SwitchToIndex(nextIndex);
+
+            // Only switch if the index actually changed (prevents issues if only 1 weapon)
+            if (nextIndex != currentWeaponCollectedIndex)
+            {
+                SwitchToIndex(nextIndex);
+            }
         }
     }
 
     public bool CollectWeaponByName(string weaponName)
     {
-        // Find the weapon definition in the master list
-        WeaponEntry weaponToCollect = allWeapons.FirstOrDefault(w => w.Name == weaponName);
+        // Find the weapon definition in the master list. Case-insensitive compare is safer.
+        WeaponEntry weaponToCollect = allWeapons.FirstOrDefault(w => w.Name.Equals(weaponName, System.StringComparison.OrdinalIgnoreCase));
 
         if (weaponToCollect == null)
         {
-            Debug.LogWarning($"WeaponSwitching: Attempted to collect unknown weapon '{weaponName}'.", this);
+            Debug.LogWarning($"WeaponSwitching: Attempted to collect unknown weapon '{weaponName}'. Check spelling and definition list.", this);
             return false;
         }
 
-        // Try to add it, it will handle duplicates.
+        // Try to add it; this method handles duplicates.
         bool collected = TryToCollectWeapon(weaponToCollect);
 
         if (collected)
         {
             Debug.Log($"WeaponSwitching: Collected '{weaponName}'.");
+            // If this is the *first* weapon collected, switch to it immediately.
+            if (collectedWeapons.Count == 1)
+            {
+                SwitchToIndex(0);
+            }
         }
-        else
-        {
-            Debug.Log($"WeaponSwitching: Already have weapon '{weaponName}'.");
-        }
+        // else: Weapon was already collected, TryToCollectWeapon returned false. (No message needed here)
 
-        return collected; // Return true if the weapon got collected, otherise false.
+        return collected; // Return true if the weapon was newly collected, otherwise false.
     }
 
     private bool TryToCollectWeapon(WeaponEntry weaponEntry)
     {
-        if (weaponEntry == null || weaponEntry.WeaponObject == null) { return false; } // Error handling
+        if (weaponEntry?.WeaponObject == null)
+        {
+            Debug.LogError("WeaponSwitching: Invalid WeaponEntry provided.", this);
+            return false;
+        }
 
-        // Check if this the weapon has already been collected.
-        if (!collectedWeapons.Any(w => w.WeaponObject == weaponEntry.WeaponObject))
+        if (!collectedWeapons.Any(w => w.Name == weaponEntry.Name))
         {
             collectedWeapons.Add(weaponEntry);
-            if (currentWeapon != weaponEntry)
+
+            if (!InventoryAndBuffs.collectedAndDroppedWeapons.Contains(weaponEntry.Name))
             {
-                weaponEntry.WeaponObject.SetActive(false);
+                InventoryAndBuffs.collectedAndDroppedWeapons.Add(weaponEntry.Name);
+                //Debug.Log($"'{weaponEntry.Name}' added to global collected list.");
             }
-            return true;
+
+            weaponEntry.WeaponObject.SetActive(false);
+            return true; // Weapon was successfully added to CURRENT inventory.
         }
-        return false; // Returns false if the weapon is already collected. 
+
+        // Weapon was already in the CURRENT collectedWeapons list.
+        return false;
     }
 
+    // Rest of WeaponSwitching.cs remains the same...
 
     private void SwitchToIndex(int index)
     {
-        // Check if index is out of bounds.
+        // Validate index against the *currently collected* weapons count.
         if (index < 0 || index >= collectedWeapons.Count)
         {
-            Debug.LogError($"WeaponSwitching: Attempted to switch to invalid collected index {index}. Collected count: {collectedWeapons.Count}", this);
+            // This can happen if a weapon was just dropped. Log as warning, not error.
+            Debug.LogWarning($"WeaponSwitching: Attempted to switch to invalid collected index {index}. Collected count: {collectedWeapons.Count}", this);
+            // Optionally, try to switch to the last available weapon if index is too high?
+            // if (collectedWeapons.Count > 0) index = collectedWeapons.Count - 1; else return;
+            return; // Exit if index is truly invalid (e.g., -1 or >= count when count > 0)
+        }
+
+        // Get the target weapon entry from the *collected* list.
+        WeaponEntry targetWeapon = collectedWeapons[index];
+
+        // Prevent switching if the target is somehow null (shouldn't happen with checks)
+        if (targetWeapon == null || targetWeapon.WeaponObject == null)
+        {
+            Debug.LogError($"WeaponSwitching: Target weapon entry or its WeaponObject is null at collected index {index}. Aborting switch.", this);
             return;
         }
 
-        WeaponEntry targetWeapon = collectedWeapons[index];
-
-        // Only switch to other weapons.
+        // Only perform actions if switching to a *different* weapon.
         if (currentWeapon == targetWeapon) { return; }
 
-        // Deactivate current weapon if a weapon is active.
+        // Deactivate the previously active weapon, if there was one.
         if (currentWeapon != null && currentWeapon.WeaponObject != null)
         {
-            currentWeapon.WeaponObject.SetActive(false);
+            // Check if it's still active before deactivating (safety check)
+            if (currentWeapon.WeaponObject.activeSelf)
+            {
+                currentWeapon.WeaponObject.SetActive(false);
+                // Debug.Log($"Deactivated {currentWeapon.Name}.");
+            }
         }
 
         // Activate the new weapon.
-        if (targetWeapon != null && targetWeapon.WeaponObject != null)
-        {
-            targetWeapon.WeaponObject.SetActive(true);
-            currentWeapon = targetWeapon;
-            currentWeaponCollectedIndex = index;
-            Debug.Log($"WeaponSwitching: Switched to '{currentWeapon.Name}' (Collected Index: {index}).");
-        }
-        else
-        {
-            Debug.LogError($"WeaponSwitching: Target weapon or its object is null at collected index {index}.", this);
-            currentWeapon = null;
-            currentWeaponCollectedIndex = -1;
-        }
+        targetWeapon.WeaponObject.SetActive(true);
+        currentWeapon = targetWeapon;
+        currentWeaponCollectedIndex = index;
+        // Debug.Log($"WeaponSwitching: Switched to '{currentWeapon.Name}' (Collected Index: {index}).");
     }
 
     private void DropCurrentWeapon()
     {
-        if (currentWeapon == null) { return; }
-
-        if (currentWeapon.PickupPrefab == null)
+        // Can't drop if no weapon is currently equipped.
+        if (currentWeapon == null)
         {
-            Debug.LogWarning($"WeaponSwitching: Cannot drop '{currentWeapon.Name}' because no PickupPrefab is assigned.", this);
+            // Debug.Log("WeaponSwitching: No weapon equipped to drop.");
             return;
         }
 
+        if (currentWeapon.PickupPrefab == null)
+        {
+            Debug.LogWarning($"WeaponSwitching: Cannot drop '{currentWeapon.Name}' because no PickupPrefab is assigned in its WeaponEntry.", this);
+            return;
+        }
+
+        Debug.Log($"WeaponSwitching: Dropping '{currentWeapon.Name}'.");
+
         // Instantiate the pickup item slightly below the player.
-        float dropOffsetY = 1f; // How far below the player's to drop the item.
+        float dropOffsetY = 0.5f; // Adjust as needed for visual placement.
         Vector3 dropPosition = transform.position - (Vector3.up * dropOffsetY);
         Instantiate(currentWeapon.PickupPrefab, dropPosition, Quaternion.identity);
 
-        // Deactivate the weapon object.
-        if (currentWeapon.WeaponObject != null)
+        // --- IMPORTANT: Update state BEFORE removing from list ---
+        WeaponEntry droppedWeapon = currentWeapon; // Keep reference for list removal
+        int removedIndex = currentWeaponCollectedIndex; // Store the index before modifying list/state
+
+        // Deactivate the weapon object being dropped.
+        if (droppedWeapon.WeaponObject != null)
         {
-            currentWeapon.WeaponObject.SetActive(false);
+            droppedWeapon.WeaponObject.SetActive(false);
         }
 
-        // Remove the weapon from the collected list.
-        int removedIndex = currentWeaponCollectedIndex;
-        collectedWeapons.RemoveAt(removedIndex);
-
-        // Switch to another weapon or unarmed state.
+        // Set current weapon state to none temporarily.
         currentWeapon = null;
         currentWeaponCollectedIndex = -1;
 
+        // Remove the weapon from the collected list *using the stored reference*.
+        collectedWeapons.Remove(droppedWeapon); // More robust than removing by index if list order changes unexpectedly.
+
+        // Switch to another weapon if available.
         if (collectedWeapons.Count > 0)
         {
-            // Switch to the weapon that is now at the same index, or the last one if the dropped weapon was last.
+            // Try to switch to the weapon that is now at the same index (or the last one if the dropped weapon was last).
             int nextIndex = Mathf.Clamp(removedIndex, 0, collectedWeapons.Count - 1);
             SwitchToIndex(nextIndex);
         }
         else
         {
             Debug.Log("WeaponSwitching: No weapons left after dropping.");
+            // Already set currentWeapon = null above.
         }
     }
 }

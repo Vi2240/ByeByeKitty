@@ -17,7 +17,7 @@ public class PlayerVisual : MonoBehaviour
     {
         if (material == null)
         {
-            Debug.Log("no material set");
+            //Debug.Log("no material set");
             return;
         }
         material.color = color;

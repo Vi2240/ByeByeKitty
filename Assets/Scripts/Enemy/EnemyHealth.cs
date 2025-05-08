@@ -5,19 +5,29 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
+    [Header("Health")]
     [SerializeField] float maxHealth = 100;
     [SerializeField] float currentHealth;
     [SerializeField, Tooltip("Healing starts after X seconds out of combat.")] float timeToHeal = 3;
     [SerializeField] int healPerTick = 2;
     [SerializeField] float timeBetweenHealingTicks = 0.5f;
     [SerializeField] Enemy_HealthBar healthBar;
+
+    [Header("Blood")]
     [SerializeField] GameObject bloodExplosion;
     [SerializeField] GameObject[] bloodPuddles;
+
+    [Header("Loot")]
+    [SerializeField, Tooltip("Overrides the loot table set by LootManager.")] LootTable lootTableOverride;
+    [SerializeField] int minDrops = 1;
+    [SerializeField] int maxDrops = 1;
+
 
     float timer = 0;
     float timer2 = 0;
     bool outOfCombat = false;
     bool immune = false;
+    LootManager lootManager;
 
     void Start()
     {
@@ -91,8 +101,20 @@ public class EnemyHealth : MonoBehaviour
             Instantiate(bloodPuddles[UnityEngine.Random.Range(0, bloodPuddles.Length)], transform.position, Quaternion.identity);
         }
 
-        //GameObject drop = GetComponent<LootDropper>().GetRandomDrop();
-        //if (drop) { Instantiate(drop, transform.position, Quaternion.identity); }
+        if (LootManager.Instance != null)
+        {
+            LootManager.Instance.RequestLootDrop(
+                transform.position,
+                minDrops,
+                maxDrops,
+                lootTableOverride
+            );
+        }
+        else
+        {
+            Debug.LogError("LootManager Instance not found in scene! Cannot drop loot.", this);
+        }
+
         Destroy(gameObject);
     }
 

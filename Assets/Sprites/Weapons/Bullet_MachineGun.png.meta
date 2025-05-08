@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b061c10927e51484a84f6f11bf8c22c7
+guid: 4d75acba02217db46a0aa9268fa32652
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1796033823884457378
-    second: LaserGun_0
+      213: 8636620706706138813
+    second: Bullet_MachineGun_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: LaserGun_0
+      name: Bullet_MachineGun_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 33
-        width: 275
-        height: 196
+        x: 0
+        y: 0
+        width: 35
+        height: 148
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e5ac7c2c0c43317e0800000000000000
-      internalID: -1796033823884457378
+      spriteID: db6a00326c07bd770800000000000000
+      internalID: 8636620706706138813
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      LaserGun_0: -1796033823884457378
+      Bullet_MachineGun_0: 8636620706706138813
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

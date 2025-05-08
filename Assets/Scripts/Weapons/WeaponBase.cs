@@ -10,7 +10,7 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected float reloadTime;
     [SerializeField] protected float damagePerHit;
     [SerializeField] protected int magazineSizeMax;
-    [SerializeField] protected int magazineReservesMax;
+    //[SerializeField] protected int magazineReservesMax;
     [SerializeField] protected int currentMagAmmoCount;
     [SerializeField] float requiredMouseDistanceFromPlayer = 1.5f;
 
@@ -21,18 +21,15 @@ public abstract class WeaponBase : MonoBehaviour
     protected bool canReload = true;
     protected bool isReloading = false;
 
-
     protected virtual void Start()
     {
         mainCam = Camera.main;
     }
 
-
     protected virtual void Update()
     {
         WeaponRotation();
     }
-
 
     protected void WeaponRotation()
     {
@@ -46,14 +43,13 @@ public abstract class WeaponBase : MonoBehaviour
         weaponSpriteTransform.localScale = saveScale;
     }
 
-
     protected IEnumerator ShootCooldown()
     {
         canFire = false;
-        yield return new WaitForSeconds(fireCooldown);
+        float cooldown = fireCooldown / InventoryAndBuffs.playerFireRateMultiplier;
+        yield return new WaitForSeconds(cooldown);
         canFire = true;
     }
-
 
     protected abstract void Fire(); // Enforce that each weapon must implement Fire()
 

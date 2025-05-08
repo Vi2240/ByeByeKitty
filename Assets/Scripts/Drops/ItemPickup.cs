@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
-    [SerializeField] Item ammo, laserEnergy, heal, experience;
+    [SerializeField] Item ammo, energyAmmo, heal, experience;
 
     const string PLAYER_TAG = "Player";
 
@@ -17,7 +17,7 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
-        if (!ammo.Enabled && !laserEnergy.Enabled && !heal.Enabled && !experience.Enabled)
+        if (!ammo.Enabled && !energyAmmo.Enabled && !heal.Enabled && !experience.Enabled)
         {
             // LogWarning for potential setup errors
             Debug.LogWarning($"Pickup '{gameObject.name}' (ID: {gameObject.GetInstanceID()}) has no item type enabled! Destroying.", gameObject);
@@ -33,22 +33,22 @@ public class ItemPickup : MonoBehaviour
             bool itemWasPickedUp = false; // Bool to track if any pickup was successful
 
             // Ammo
-            if (ammo.Enabled && Inventory.ammo < Inventory.maxAmmo)
+            if (ammo.Enabled && InventoryAndBuffs.ammo < InventoryAndBuffs.maxAmmo)
             {
                 int ammoToAdd = ammo.Amount;
-                int newAmmoTotal = Inventory.ammo + ammoToAdd;
-                Inventory.ammo = Mathf.Clamp(newAmmoTotal, 0, Inventory.maxAmmo); // Clamp ensures we don't exceed max or go below 0
-                Debug.Log($"Picked up {ammoToAdd} ammo. Current ammo: {Inventory.ammo}");
+                int newAmmoTotal = InventoryAndBuffs.ammo + ammoToAdd;
+                InventoryAndBuffs.ammo = Mathf.Clamp(newAmmoTotal, 0, InventoryAndBuffs.maxAmmo); // Clamp ensures we don't exceed max or go below 0
+                Debug.Log($"Picked up {ammoToAdd} ammo. Current ammo: {InventoryAndBuffs.ammo}");
                 itemWasPickedUp = true;
             }
 
             // Laser energy
-            if (laserEnergy.Enabled && Inventory.energyAmmo < Inventory.maxEnergyAmmo)
+            if (energyAmmo.Enabled && InventoryAndBuffs.energyAmmo < InventoryAndBuffs.maxEnergyAmmo)
             {
-                int energyToAdd = laserEnergy.Amount;
-                int newEnergyTotal = Inventory.energyAmmo + energyToAdd;
-                Inventory.energyAmmo = Mathf.Clamp(newEnergyTotal, 0, Inventory.maxEnergyAmmo); // Use Clamp
-                Debug.Log($"Picked up {energyToAdd} laser energy. Current energy: {Inventory.energyAmmo}");
+                int energyToAdd = energyAmmo.Amount;
+                int newEnergyTotal = InventoryAndBuffs.energyAmmo + energyToAdd;
+                InventoryAndBuffs.energyAmmo = Mathf.Clamp(newEnergyTotal, 0, InventoryAndBuffs.maxEnergyAmmo); // Use Clamp
+                Debug.Log($"Picked up {energyToAdd} laser energy. Current energy: {InventoryAndBuffs.energyAmmo}");
                 itemWasPickedUp = true;
             }
 

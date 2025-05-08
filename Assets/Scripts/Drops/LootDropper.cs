@@ -14,7 +14,7 @@ public class LootDropper : MonoBehaviour
     private int minDrops = 1;
 
     [SerializeField, Tooltip("Maximum number of items to drop *if* the overall drop chance succeeds.")]
-    [Min(0)] // Allow 0 for consistency, though usually > minDrops
+    [Min(0)] // Allow 0 for consistency, though usually > minDrops  
     private int maxDrops = 1;
 
     [Header("Drop Location & Style")]
@@ -26,13 +26,6 @@ public class LootDropper : MonoBehaviour
 
     [SerializeField, Tooltip("Maximum random offset distance on X and Y axes.")]
     private Vector2 dropOffsetRange = new Vector2(0.5f, 0.5f);
-
-    [SerializeField, Tooltip("Add a small force to dropped items (requires Rigidbody2D)?")]
-    private bool addDropForce = true;
-
-    [SerializeField, Tooltip("Range of the magnitude of the force applied.")]
-    private Vector2 dropForceMagnitudeRange = new Vector2(1f, 3f);
-
 
     /// <summary>
     /// Call this method to attempt dropping items (e.g., on enemy death).
@@ -87,23 +80,20 @@ public class LootDropper : MonoBehaviour
                     spawnPosition += randomOffset;
                 }
 
-                // Instantiate the chosen item
-                GameObject droppedItemInstance = Instantiate(itemToDropPrefab, spawnPosition, Quaternion.identity);
-
-                // Optional: Add force if requested and Rigidbody2D exists
-                if (addDropForce)
+                try
                 {
-                    Rigidbody2D rb2d = droppedItemInstance.GetComponent<Rigidbody2D>();
-                    if (rb2d != null)
+                    // Should not drop the weapon if it is already in the collectedAndDroppedWeapons-list.
+                    WeaponPickup weaponPickup = itemToDropPrefab.GetComponent<WeaponPickup>();
+                    if (!InventoryAndBuffs.collectedAndDroppedWeapons.Contains(weaponPickup.weaponName))
                     {
-                        Vector2 randomDirection = Random.insideUnitCircle.normalized; // Get a random direction
-                        float randomMagnitude = Random.Range(dropForceMagnitudeRange.x, dropForceMagnitudeRange.y);
-                        rb2d.AddForce(randomDirection * randomMagnitude, ForceMode2D.Impulse);
+                        // If it's not in the list, drop it then add it to the list.
+                        InventoryAndBuffs.collectedAndDroppedWeapons.Add(weaponPickup.weaponName);
+                        Instantiate(itemToDropPrefab, spawnPosition, Quaternion.identity);
                     }
-                    else
-                    {
-                        Debug.LogWarning($"LootDropper on '{gameObject.name}' tried to add force to '{itemToDropPrefab.name}', but it has no Rigidbody2D.", droppedItemInstance);
-                    }
+                }
+                catch // If the item is not a weapon, it gets dropped anyway.
+                {
+                    Instantiate(itemToDropPrefab, spawnPosition, Quaternion.identity);
                 }
             }
             else
@@ -126,14 +116,4 @@ public class LootDropper : MonoBehaviour
         // Also ensure maxDrops isn't negative if minDrops is 0
         if (maxDrops < 0) maxDrops = 0;
     }
-
-    // --- Example Usage (Remove or adapt for your game) ---
-    // Example: Call DropItems with a key press for testing
-    // void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.L))
-    //     {
-    //         AttemptDropItems();
-    //     }
-    // }
 }

@@ -100,7 +100,7 @@ public class WaveType0 : Wave
 						spawnPos = GetValidSpawnPosition(SpawnType.Fixed, fixedSpawnPoints);
 						break;
 					case SpawnType.AreaAroundPosition:
-						spawnPos = GetValidSpawnPosition(SpawnType.AreaAroundPosition, positions_tmp, 4);
+						spawnPos = GetValidSpawnPosition(SpawnType.AreaAroundPosition, positions_tmp, null, null, null);
 						break;
 					case SpawnType.AreaAroundPlayers:
 					default:
