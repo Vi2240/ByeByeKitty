@@ -20,6 +20,7 @@ public class Objective : MonoBehaviour
     [SerializeField] GameObject winCanvas;
 
     [SerializeField] GameObject waveManagerObject;
+    [SerializeField] float delay = 5;
 
     public bool CanSpawn => isBurning;
 
@@ -63,7 +64,7 @@ public class Objective : MonoBehaviour
             {
                 isBurning = true;
                 fireHP = maxFireHp/4;
-                waveManager.StartWave(WaveType.WaveType0, SpawnType.AreaAroundPosition, gameObject.transform);
+                waveManager.StartWaveWithDelay(WaveType.WaveType0, SpawnType.AreaAroundPosition, 1, gameObject.transform, delay);
             }
         }
     }
