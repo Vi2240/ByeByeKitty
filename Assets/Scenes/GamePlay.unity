@@ -1014,6 +1014,26 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: firePH
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: fireHeal
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: healSpeed
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: maxFireHp
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: fireTickHeal
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: waveManagerObject
       value: 
       objectReference: {fileID: 1380949261}

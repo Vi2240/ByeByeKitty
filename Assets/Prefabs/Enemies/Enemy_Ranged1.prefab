@@ -616,6 +616,7 @@ GameObject:
   - component: {fileID: -2921794130836257963}
   - component: {fileID: 2698823367928685974}
   - component: {fileID: 4201214158487945568}
+  - component: {fileID: -6824037311908109032}
   m_Layer: 6
   m_Name: Enemy_Ranged1
   m_TagString: Enemy
@@ -813,6 +814,9 @@ MonoBehaviour:
   - {fileID: 7526131994675719849, guid: 17919f0245cbd09408d4f6c463c7d765, type: 3}
   - {fileID: 7526131994675719849, guid: 8dc408fdac5c79b4eb77de857a704908, type: 3}
   - {fileID: 7526131994675719849, guid: dfcebe1e4144d154babfe0f82cdb9095, type: 3}
+  lootTableOverride: {fileID: 0}
+  minDrops: 1
+  maxDrops: 1
 --- !u!114 &2698823367928685974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -847,3 +851,17 @@ MonoBehaviour:
   spawnDelay: 1.5
   spawnSprite: {fileID: 1120224024326937870}
   enemySprite: {fileID: 2489835579024003555}
+--- !u!114 &-6824037311908109032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9205428136142299004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed55d8d754aae5df8144e4b12a1079b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireStoppingPower: 2.5
+  stopFireCooldown: 5

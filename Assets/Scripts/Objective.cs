@@ -7,11 +7,11 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 public class Objective : MonoBehaviour
 {
     [SerializeField] float maxHp;
-    [SerializeField] float heal;
+    [SerializeField] float maxFireHp;
+    [SerializeField] float fireHeal;
     [SerializeField] float burningDmg;
     [SerializeField] float healSpeed;
-    [SerializeField] float burnSpeed;
-
+    [SerializeField] float burnSpeed;   
     [SerializeField] bool enemyKillzone;
 
     [SerializeField] GameObject burnEffect;
@@ -24,6 +24,11 @@ public class Objective : MonoBehaviour
     public bool CanSpawn => isBurning;
 
     float currentHp;
+    float fireHP;
+    float fireTickHeal;
+    float fireIntensityPercentageFactor;
+
+    Vector3 maxBurnEffectScale;
 
     bool playersInZone;
     bool playerIn;
@@ -36,12 +41,18 @@ public class Objective : MonoBehaviour
     WaveManager waveManager;
 
     void Start()
-    {
+    {        
         winCanvas.SetActive(false);
 
+        fireHP = 0;
+        fireTickHeal = 0.1f;
         currentHp = maxHp;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
         audioPlayer = FindAnyObjectByType<AudioPlayer>();
+        
+        if (burnEffect != null)
+            maxBurnEffectScale = burnEffect.transform.localScale * 1.5f;
+        else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);        
     }
 
     void Update()
@@ -51,6 +62,7 @@ public class Objective : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E) && !isBurning)
             {
                 isBurning = true;
+                fireHP = maxFireHp/4;
                 waveManager.StartWave(WaveType.WaveType0, SpawnType.AreaAroundPosition, gameObject.transform);
             }
         }
@@ -58,15 +70,34 @@ public class Objective : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!isBurning && currentHp < maxHp && !isHealing)
+        if (!isBurning)
         {
-            StartCoroutine(HealingHealth());
+            if (currentHp < maxHp && !isHealing)
+            {
+                StartCoroutine(HealingHealth());
+            }
+            
+            if (burnEffect != null && burnEffect.activeSelf)
+            {
+                burnEffect.SetActive(false);
+            }
+            return;
         }
-        if(isBurning && !isTakingBurningDmg)
+
+        if (burnEffect != null && !burnEffect.activeSelf)
         {
-            StartCoroutine(BurningTickDmg());
-            //audioPlayer.SfxPlayer("Fire_Sound");
+            burnEffect.SetActive(true);
         }
+
+        fireHP += fireTickHeal;
+        fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
+        fireIntensityPercentageFactor = fireHP/maxFireHp;
+
+        burnEffect.transform.localScale = maxBurnEffectScale * fireIntensityPercentageFactor;
+        
+        if (isTakingBurningDmg) return;
+        StartCoroutine(BurningTickDmg());
+        //audioPlayer.SfxPlayer("Fire_Sound");        
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -77,7 +108,7 @@ public class Objective : MonoBehaviour
         }
         if (other.tag == "Enemy" && enemyKillzone == false)
         {
-            isBurning = false;
+            other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(true, this.gameObject);
         }
         if(other.tag == "Enemy" && enemyKillzone == true) 
         {
@@ -98,14 +129,17 @@ public class Objective : MonoBehaviour
         isTakingBurningDmg = true;
         burnEffect.SetActive(true);
 
-        if(currentHp > 0)
-        {
-            currentHp -= burningDmg;
+        if (currentHp > 0)
+        {        
+            currentHp -= burningDmg * fireIntensityPercentageFactor;            
         }
         else
         {
             //Debug.Log("Died");
             StartCoroutine(WinGame());
+            isTakingBurningDmg = false;
+            if (burnEffect != null) burnEffect.SetActive(false);
+            yield break; // Exit the coroutine
         }
 
         yield return new WaitForSeconds(burnSpeed);
@@ -119,7 +153,7 @@ public class Objective : MonoBehaviour
         isHealing = true;
         healingEffect.SetActive(true);
 
-        currentHp += heal;
+        currentHp += fireHeal;
 
         yield return new WaitForSeconds(healSpeed);
 
@@ -130,6 +164,11 @@ public class Objective : MonoBehaviour
     public bool GetIsBurning()
     { 
         return isBurning;
+    }
+
+    public void StopFire(float fireStoppingPower){
+        fireHP -= fireStoppingPower;
+        fireHP = (fireHP < 0) ? 0 : fireHP;
     }
 
     IEnumerator WinGame()

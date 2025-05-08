@@ -585,6 +585,7 @@ GameObject:
   - component: {fileID: -2921794130836257963}
   - component: {fileID: 2698823367928685974}
   - component: {fileID: 4201214158487945568}
+  - component: {fileID: 7666606696232653905}
   m_Layer: 6
   m_Name: Enemy_Standard
   m_TagString: Enemy
@@ -818,3 +819,18 @@ MonoBehaviour:
   spawnDelay: 1.5
   spawnSprite: {fileID: 1120224024326937870}
   enemySprite: {fileID: 2489835579024003555}
+--- !u!114 &7666606696232653905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9205428136142299004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed55d8d754aae5df8144e4b12a1079b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireStoppingPower: 4
+  extinguishCooldownTime: 3
+  initialCooldownTime: 5
