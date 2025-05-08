@@ -105,7 +105,7 @@ public class Objective : MonoBehaviour
         else
         {
             //Debug.Log("Died");
-            StartCoroutine(WinGame());
+            StartCoroutine(WinGame());            
         }
 
         yield return new WaitForSeconds(burnSpeed);

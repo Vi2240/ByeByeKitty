@@ -185,7 +185,7 @@ public class WeaponSwitching : MonoBehaviour
             if (!InventoryAndBuffs.collectedAndDroppedWeapons.Contains(weaponEntry.Name))
             {
                 InventoryAndBuffs.collectedAndDroppedWeapons.Add(weaponEntry.Name);
-                Debug.Log($"'{weaponEntry.Name}' added to global collected list.");
+                //Debug.Log($"'{weaponEntry.Name}' added to global collected list.");
             }
 
             weaponEntry.WeaponObject.SetActive(false);
