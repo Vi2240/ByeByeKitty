@@ -50,8 +50,12 @@ public class EnemyMovement : MonoBehaviour
     NavMeshAgent agent;
     GameObject walkableArea;
 
+    Wrapper<bool> agroFlag;
+
     void Start()
     {
+        agroFlag = transform.parent.GetComponent<AgroFlag>().agroFlag;
+
         canMove = true;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
