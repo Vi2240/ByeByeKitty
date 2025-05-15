@@ -82,15 +82,14 @@ MonoBehaviour:
   reloadTime: 0
   damagePerHit: 2
   magazineSizeMax: 10
-  magazineReservesMax: 50
   currentMagAmmoCount: 10
-  currentAmmoReservesCount: 50
   requiredMouseDistanceFromPlayer: 1.5
   chainingRange: 3
   maxChainDepth: 4
   maxTargetsPerChain: 5
   lightningPrefab: {fileID: 8000453896257956698, guid: 86f59d09fb7479c688366767f6966873, type: 3}
   lightningSpawnLocation: {fileID: 5401358535718712645}
+  damageNumber: {fileID: 6509593360542762755, guid: bd69952a302ffc8438699c617cb5cd6b, type: 3}
 --- !u!1 &7089222596692172611
 GameObject:
   m_ObjectHideFlags: 0

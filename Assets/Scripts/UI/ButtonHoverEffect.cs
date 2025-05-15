@@ -17,6 +17,12 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         originalScale = rectTransform.localScale;
     }
 
+    public void PlayButtonPressSFX() // Never gets here for some reason
+    {
+        AudioPlayer.Current.PlaySfxAtPoint("ButtonPress", transform.position);
+        print("should play");
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (scaleCoroutine != null) StopCoroutine(scaleCoroutine);

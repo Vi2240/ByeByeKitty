@@ -65,8 +65,7 @@ public class AudioPlayer : MonoBehaviour
                 PlayMusic("MenuMusic");
                 break;
             case "GamePlay":
-                PlayMusic("Forest_sound");
-                //PlayMusic("GameplayMusic");
+                PlayMusic("Forest_Sound");
                 break; ;
             default:
                 StopMusic();
@@ -149,7 +148,7 @@ public class AudioPlayer : MonoBehaviour
         Transform a = sourceTransform;
     }
 
-    public AudioSource PlayLoopingSfx(string sfxName, Vector3 position, float volumeScale = 1.0f, Transform parentTo = null)
+    public AudioSource PlayLoopingSfx(string sfxName, Vector3 position, float volumeScale = 1.0f, Transform parentTo = null, bool shouldLoop = true) // Added 'shouldLoop' parameter with a default
     {
         if (!_sfxLibrary.TryGetValue(sfxName, out AudioClip clipToPlay))
         {
@@ -157,7 +156,7 @@ public class AudioPlayer : MonoBehaviour
             return null;
         }
 
-        GameObject sfxObject = new GameObject($"LoopingSFX_{sfxName}");
+        GameObject sfxObject = new GameObject($"LoopingSFX_{sfxName}"); // Consider renaming if not always looping, e.g., "ManagedSFX_"
         sfxObject.transform.position = position;
         if (parentTo != null) sfxObject.transform.SetParent(parentTo);
         else sfxObject.transform.SetParent(_loopingSfxContainer);
@@ -165,7 +164,7 @@ public class AudioPlayer : MonoBehaviour
         AudioSource audioSource = sfxObject.AddComponent<AudioSource>();
         audioSource.clip = clipToPlay;
         audioSource.volume = GetSfxVolume() * volumeScale;
-        audioSource.loop = true;
+        audioSource.loop = shouldLoop;
         audioSource.spatialBlend = 1.0f;
         audioSource.minDistance = loopingSfxMinDistance;
         audioSource.maxDistance = loopingSfxMaxDistance;

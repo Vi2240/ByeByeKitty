@@ -94,7 +94,7 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-        // Add other death stuff here later
+        AudioPlayer.Current.PlaySfxAtPoint("BloodExplosion", transform.position, 0.5f);
         if (bloodExplosion) { Instantiate(bloodExplosion, transform.position, quaternion.identity); }; // Blood splatter
         if (bloodPuddles.Length > 0) 
         {

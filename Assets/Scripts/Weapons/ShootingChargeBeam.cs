@@ -27,11 +27,14 @@ public class ShootingChargeBeam : WeaponBase
 
     private LineRenderer lineRenderer;
     private bool isCharging = false;
-    private bool isFiring = false; // Tracks if the beam is currently active
+    private string chargeUpSoundName = "BeamCharge";
+    private bool isFiring = false;
     private float currentChargeTime = 0f;
     private Coroutine beamCoroutine;
     private Coroutine damageTickCoroutine;
     private HashSet<EnemyHealth> enemiesDamagedThisTick = new HashSet<EnemyHealth>();
+
+    private AudioSource chargeUpSoundSource; // To store the charging sound AudioSource
 
     protected override void Start()
     {
@@ -40,11 +43,11 @@ public class ShootingChargeBeam : WeaponBase
         lineRenderer = GetComponentInChildren<LineRenderer>();
         if (lineRenderer == null)
         {
-            Debug.LogError("No line render found.", this);
+            Debug.LogError("No line renderer found on " + gameObject.name, this);
             this.enabled = false;
             return;
         }
-        lineRenderer.enabled = false; // Start disabled
+        lineRenderer.enabled = false;
 
         if (chargeVisualSprite != null)
         {
@@ -53,7 +56,7 @@ public class ShootingChargeBeam : WeaponBase
         }
         else
         {
-            Debug.LogWarning("No charge ball assigned.", this);
+            Debug.LogWarning("No charge visual sprite assigned to " + gameObject.name, this);
         }
 
         FindUIElements();
@@ -62,6 +65,7 @@ public class ShootingChargeBeam : WeaponBase
 
     private void OnEnable()
     {
+        AudioPlayer.Current.PlaySfxAtPoint("Equip_Beam", transform.position);
         FindUIElements();
         UpdateAmmoUI();
         ResetState();
@@ -69,67 +73,66 @@ public class ShootingChargeBeam : WeaponBase
 
     private void OnDisable()
     {
-        ResetState();
+        ResetState(); // Clean up when disabled (e.g., weapon switch)
     }
 
     protected override void Update()
     {
-        base.Update(); // Handles cooldown timer
+        base.Update();
 
         HandleInputs();
         UpdateChargeVisual();
 
-        // *** ADDED: Continuously redraw the beam while firing ***
         if (isFiring)
         {
-            // Ensure the beam visually follows the weapon's orientation
             DrawBeam(maxBeamLength);
-            // Note: Damage application is still handled by the DamageTickTimer coroutine
         }
     }
 
     private void FindUIElements()
     {
-        // Reduced redundancy slightly
         if (magCapacityText == null)
         {
             GameObject ammoCountObject = GameObject.FindGameObjectWithTag(AmmoCountTag);
             if (ammoCountObject == null)
             {
+                // Debug.LogWarning("UI_AmmoCount object not found in scene.");
                 return;
             }
 
             magCapacityText = ammoCountObject.GetComponent<TextMeshProUGUI>();
             if (magCapacityText == null)
             {
+                // Debug.LogWarning("TextMeshProUGUI component not found on UI_AmmoCount object.");
                 return;
             }
 
-            // Find child only if parent is found and has the component
-            if (magCapacityText.transform.childCount > 0) // Safer check than GetChild(0) directly
+            if (magCapacityText.transform.childCount > 0)
             {
                 Transform childTransform = magCapacityText.transform.GetChild(0);
                 inventoryAmmoText = childTransform.GetComponent<TextMeshProUGUI>();
+                if (inventoryAmmoText == null)
+                {
+                    // Debug.LogWarning("TextMeshProUGUI component not found on child of UI_AmmoCount object.");
+                }
             }
+            // else Debug.LogWarning("UI_AmmoCount object has no children for inventory ammo text.");
         }
     }
 
     private void HandleInputs()
     {
-        // Start Charging
         if (Input.GetMouseButtonDown(0) && !isCharging && !isFiring && canFire && InventoryAndBuffs.energyAmmo >= ammoCostPerShot)
         {
             StartCharging();
         }
 
-        // Hold Charge
         if (isCharging && Input.GetMouseButton(0))
         {
             currentChargeTime += Time.deltaTime;
-            currentChargeTime = Mathf.Min(currentChargeTime, chargeUpTime); // Clamp time
+            currentChargeTime = Mathf.Min(currentChargeTime, chargeUpTime);
         }
 
-        // Release Charge
         if (isCharging && Input.GetMouseButtonUp(0))
         {
             if (currentChargeTime >= chargeUpTime)
@@ -141,16 +144,20 @@ public class ShootingChargeBeam : WeaponBase
                 else
                 {
                     CancelCharge();
+                    if (AudioPlayer.Current != null) AudioPlayer.Current.PlayUISfx("Empty_Chamber");
                 }
             }
             else
             {
-                CancelCharge();
+                CancelCharge(); // Released too early
             }
         }
 
-        // Cancel Charge (mouse release or out of ammo)
-        if (isCharging && (!Input.GetMouseButton(0) || InventoryAndBuffs.energyAmmo < ammoCostPerShot))
+        // This handles cancellation if mouse button is released OR if ammo drops below cost while charging
+        // Note: GetMouseButtonUp is for the frame it's released. GetMouseButton is for while it's held.
+        // So the above GetMouseButtonUp block handles intended firing/cancellation.
+        // This one is more of a safety for edge cases or if ammo is depleted by other means during charge.
+        if (isCharging && (!Input.GetMouseButton(0) && !Input.GetMouseButtonUp(0)) || (isCharging && InventoryAndBuffs.energyAmmo < ammoCostPerShot))
         {
             CancelCharge();
         }
@@ -160,12 +167,25 @@ public class ShootingChargeBeam : WeaponBase
     {
         isCharging = true;
         currentChargeTime = 0f;
-        canFire = false;
+        canFire = false; // Prevent base class cooldown from resetting too early
 
         if (chargeVisualSprite != null)
         {
             chargeVisualSprite.enabled = true;
             chargeVisualSprite.transform.localScale = initialChargeScale;
+        }
+
+        // Play Charge Sound
+        StopChargeUpSound(); // Stop any previous instance
+        if (AudioPlayer.Current != null && !string.IsNullOrEmpty(chargeUpSoundName) && projectileSpawnLocation != null)
+        {
+            chargeUpSoundSource = AudioPlayer.Current.PlayLoopingSfx(
+                chargeUpSoundName,
+                projectileSpawnLocation.position, // Sound from weapon tip
+                1.0f,      // volumeScale
+                null,      // parentTo (null means it parents to AudioPlayer's container)
+                false      // shouldLoop = false (play once)
+            );
         }
     }
 
@@ -180,8 +200,11 @@ public class ShootingChargeBeam : WeaponBase
 
     private void FireBeam()
     {
+        AudioPlayer.Current.PlaySfxAtPoint("BeamSFX", transform.position, 1f);
         isCharging = false;
-        isFiring = true; // Set firing state to true
+        isFiring = true;
+
+        StopChargeUpSound(); // Stop charge sound when firing
 
         InventoryAndBuffs.energyAmmo -= ammoCostPerShot;
         UpdateAmmoUI();
@@ -191,18 +214,16 @@ public class ShootingChargeBeam : WeaponBase
             chargeVisualSprite.enabled = false;
         }
 
-        // Start timers
         if (beamCoroutine != null) StopCoroutine(beamCoroutine);
-        beamCoroutine = StartCoroutine(BeamActiveTimer()); // This timer will eventually set isFiring = false
+        beamCoroutine = StartCoroutine(BeamActiveTimer());
 
         if (damageTickCoroutine != null) StopCoroutine(damageTickCoroutine);
-        damageTickCoroutine = StartCoroutine(DamageTickTimer()); // This timer applies damage periodically
+        damageTickCoroutine = StartCoroutine(DamageTickTimer());
 
-        StartCoroutine(ShootCooldown()); // Start weapon cooldown
+        StartCoroutine(ShootCooldown()); // Start base weapon cooldown AFTER firing
 
-        // *** Initial setup of the beam ***
-        lineRenderer.enabled = true; // Enable the renderer
-        DrawBeam(maxBeamLength); // Draw the first frame immediately
+        if (lineRenderer != null) lineRenderer.enabled = true;
+        DrawBeam(maxBeamLength);
         ApplyDamage(); // Apply first damage tick immediately
     }
 
@@ -210,7 +231,9 @@ public class ShootingChargeBeam : WeaponBase
     {
         isCharging = false;
         currentChargeTime = 0f;
-        canFire = true;
+        canFire = true; // Allow firing again (or cooldown to manage it)
+
+        StopChargeUpSound(); // Stop the charge sound
 
         if (chargeVisualSprite != null)
         {
@@ -218,42 +241,44 @@ public class ShootingChargeBeam : WeaponBase
         }
     }
 
-    // This coroutine now ONLY controls the duration and stops the firing state
+    private void StopChargeUpSound()
+    {
+        if (chargeUpSoundSource != null && AudioPlayer.Current != null)
+        {
+            AudioPlayer.Current.StopLoopingSfx(chargeUpSoundSource);
+            chargeUpSoundSource = null; // Clear the reference
+        }
+    }
+
     private IEnumerator BeamActiveTimer()
     {
         yield return new WaitForSeconds(beamDuration);
-        StopFiring(); // Call the method to clean up the firing state
+        StopFiring();
     }
 
-    // This coroutine handles periodic damage (no change needed here)
     private IEnumerator DamageTickTimer()
     {
-        // Wait for the interval *after* the initial immediate damage
-        yield return new WaitForSeconds(damageTickInterval);
-
-        while (isFiring) // Continue ticking as long as the beam is active
+        yield return new WaitForSeconds(damageTickInterval); // Wait for the interval *after* the initial immediate damage
+        while (isFiring)
         {
             ApplyDamage();
             yield return new WaitForSeconds(damageTickInterval);
         }
     }
 
-
     private void ApplyDamage()
     {
-        // Raycast needs to happen each tick to find enemies currently in the beam's path
         if (!isFiring || projectileSpawnLocation == null) return;
 
         enemiesDamagedThisTick.Clear();
-        // *** Raycast direction MUST match the DrawBeam direction ***
         RaycastHit2D[] allHits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, maxBeamLength);
 
         foreach (RaycastHit2D hit in allHits)
         {
+            // Add tag filtering here if needed, similar to your other beam script
             if (hit.collider.CompareTag("Enemy"))
             {
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
-                // Add returns true if the element was added (wasn't already present)
                 if (enemyHealth != null && enemiesDamagedThisTick.Add(enemyHealth))
                 {
                     HitEnemy(enemyHealth);
@@ -280,35 +305,33 @@ public class ShootingChargeBeam : WeaponBase
     private void DrawBeam(float length)
     {
         if (lineRenderer == null || projectileSpawnLocation == null) return;
-        // Use transform.right to get the current forward direction of the weapon
         Vector3 endPoint = projectileSpawnLocation.position + (Vector3)transform.right * length;
         lineRenderer.SetPosition(0, projectileSpawnLocation.position);
         lineRenderer.SetPosition(1, endPoint);
     }
 
-    // Stops the firing state and cleans up visuals/coroutines
     private void StopFiring()
     {
-        isFiring = false; // Critical: Stops the drawing in Update and the damage ticks
+        isFiring = false;
         if (lineRenderer != null)
         {
-            lineRenderer.enabled = false; // Disable the renderer
+            lineRenderer.enabled = false;
         }
 
-        // Ensure coroutines are stopped if they somehow haven't finished
         if (beamCoroutine != null) StopCoroutine(beamCoroutine);
         if (damageTickCoroutine != null) StopCoroutine(damageTickCoroutine);
         beamCoroutine = null;
         damageTickCoroutine = null;
-        // canFire is handled by ShootCooldown
+        // canFire is reset by the ShootCooldown() in WeaponBase or by CancelCharge
     }
 
-    // Reset state for disable/enable cycles
     private void ResetState()
     {
         isCharging = false;
-        isFiring = false; // Ensure firing stops on reset
+        isFiring = false;
         currentChargeTime = 0f;
+
+        StopChargeUpSound(); // Ensure sound is stopped
 
         if (lineRenderer != null) lineRenderer.enabled = false;
 
@@ -318,24 +341,27 @@ public class ShootingChargeBeam : WeaponBase
             chargeVisualSprite.transform.localScale = initialChargeScale;
         }
 
-        // Stop all potentially running coroutines related to firing/charging
-        if (beamCoroutine != null) StopCoroutine(beamCoroutine);
-        if (damageTickCoroutine != null) StopCoroutine(damageTickCoroutine);
-        StopCoroutine(ShootCooldown()); // Also stop base cooldown if running
+        // Stop all relevant coroutines
+        if (beamCoroutine != null) { StopCoroutine(beamCoroutine); beamCoroutine = null; }
+        if (damageTickCoroutine != null) { StopCoroutine(damageTickCoroutine); damageTickCoroutine = null; }
+        // If ShootCooldown is a Coroutine variable in WeaponBase and you need to stop it here:
+        // if (shootCooldownCoroutine != null) { StopCoroutine(shootCooldownCoroutine); shootCooldownCoroutine = null; }
+        // For now, assuming ShootCooldown manages itself or is fine to just run its course.
+        // We also call StopCoroutine(ShootCooldown()) in the original script if it was a direct call to StartCoroutine.
+        // If WeaponBase.ShootCooldown() returns a coroutine and it's stored, you might need to stop it.
+        // For simplicity, let's assume WeaponBase handles its cooldown state correctly or it's not stored.
 
-        beamCoroutine = null;
-        damageTickCoroutine = null;
-        canFire = true; // Ready to fire again
+        canFire = true; // Ready to be used again
     }
 
     private void UpdateAmmoUI()
     {
-        if (magCapacityText != null && inventoryAmmoText != null)
+        if (magCapacityText != null) // inventoryAmmoText might be null if not found
         {
-            inventoryAmmoText.SetText("");
+            if (inventoryAmmoText != null) inventoryAmmoText.SetText("");
             magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
         }
     }
 
-    protected override void Fire() { /* Not used directly */ }
+    protected override void Fire() { /* Not used directly by this charge beam logic */ }
 }

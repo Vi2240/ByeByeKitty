@@ -33,7 +33,7 @@ public class MachineGunBullet : MonoBehaviour
         {
             DamageEnemy(other.gameObject);
         }
-        else { CreateHitEffect(sparksHitEffect, true); }
+        //else { CreateHitEffect(sparksHitEffect, true); }
     }
 
     void OnCollisionEnter2D(Collision2D collision)

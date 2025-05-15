@@ -18,6 +18,8 @@ public class ShootingLightning : WeaponBase
     [Header("Visuals")]
     [SerializeField] private GameObject lightningPrefab;        // Prefab for the lightning visual
     [SerializeField] private Transform lightningSpawnLocation; // Assign the barrel tip transform
+    [SerializeField] GameObject damageNumber;
+
 
     protected override void Start()
     {
@@ -38,6 +40,7 @@ public class ShootingLightning : WeaponBase
     {
         FindUIElements();
         UpdateAmmoUI();
+        AudioPlayer.Current.PlaySfxAtPoint("Equip_ElectricityGun", transform.position);
     }
 
     protected override void Update()
@@ -102,10 +105,20 @@ public class ShootingLightning : WeaponBase
         }
 
         float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
-        EnemyHealth health = target.GetComponent<EnemyHealth>();
-        if (health != null)
+        EnemyHealth enemyHealth = target.GetComponent<EnemyHealth>();
+        if (enemyHealth != null)
         {
-            health.TakeDamage(finalDamage);
+            enemyHealth.TakeDamage(finalDamage);
+
+            AudioPlayer.Current.PlaySfxAtPoint("Electricity", enemyHealth.transform.position);
+
+            if (damageNumber != null)
+            {
+                var damageNum = Instantiate(damageNumber, enemyHealth.transform.position, Quaternion.identity);
+                damageNum.GetComponent<FloatingHealthNumber>().SetText(finalDamage.ToString());
+                damageNum.transform.localScale = new Vector3(0.5f, 0.5f, 1f); // Make them smaller so you still can see shit.
+            }
+
         }
         else
         {

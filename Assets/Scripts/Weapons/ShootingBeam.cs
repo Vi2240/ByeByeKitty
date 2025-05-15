@@ -11,10 +11,9 @@ public class ShootingBeam : WeaponBase
 
     private LineRenderer lineRenderer;
     private bool beamActive = false;
-
+    private AudioSource loopingLaser;
     private List<EnemyHealth> enemiesToDamageThisTick = new List<EnemyHealth>();
 
-    // Tags to ignore for beam collision.
     [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player", "Pickup" };
 
 
@@ -22,21 +21,49 @@ public class ShootingBeam : WeaponBase
     {
         base.Start();
         lineRenderer = GetComponentInChildren<LineRenderer>();
-        lineRenderer.enabled = false;
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = false;
+        }
 
-        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        inventoryAmmoText.SetText("");
-        magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
-
+        GameObject ammoCountObject = GameObject.FindGameObjectWithTag("UI_AmmoCount");
+        if (ammoCountObject != null)
+        {
+            magCapacityText = ammoCountObject.GetComponent<TextMeshProUGUI>();
+            if (magCapacityText != null && magCapacityText.transform.childCount > 0)
+            {
+                inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            }
+        }
         UpdateAmmoUI();
     }
 
     private void OnEnable()
     {
-        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        AudioPlayer.Current.PlaySfxAtPoint("Equip_ElectricityGun", transform.position);
+        canFire = true;
+        GameObject ammoCountObject = GameObject.FindGameObjectWithTag("UI_AmmoCount");
+        if (ammoCountObject != null)
+        {
+            magCapacityText = ammoCountObject.GetComponent<TextMeshProUGUI>();
+            if (magCapacityText != null && magCapacityText.transform.childCount > 0)
+            {
+                inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            }
+        }
         UpdateAmmoUI();
+
+        // Reset state in case it was disabled mid-fire
+        if (beamActive)
+        {
+            beamActive = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
+        }
+        if (AudioPlayer.Current != null && loopingLaser != null)
+        {
+            AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+            loopingLaser = null;
+        }
     }
 
     private void OnDisable()
@@ -44,7 +71,12 @@ public class ShootingBeam : WeaponBase
         if (beamActive)
         {
             beamActive = false;
-            lineRenderer.enabled = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
+        }
+        if (AudioPlayer.Current != null && loopingLaser != null)
+        {
+            AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+            loopingLaser = null;
         }
     }
 
@@ -52,21 +84,37 @@ public class ShootingBeam : WeaponBase
     {
         base.Update();
 
-        if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo > 0)
+        if (Input.GetMouseButtonDown(0) && !beamActive && InventoryAndBuffs.energyAmmo > 0)
         {
-            beamActive = true;
-            lineRenderer.enabled = true;
-        }
-        else if (Input.GetMouseButtonUp(0) || InventoryAndBuffs.energyAmmo <= 0)
-        {
-            if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo <= 0) { /* Add out of ammo sound */ }
-
-            if (beamActive)
+            if (AudioPlayer.Current != null)
             {
-                beamActive = false;
-                lineRenderer.enabled = false;
+                AudioPlayer.Current.PlaySfxAtPoint("StartShootingLaser", transform.position);
+                if (loopingLaser == null) // Start looping sound only if not already playing
+                {
+                    loopingLaser = AudioPlayer.Current.PlayLoopingSfx("ShootingLaserLoop", transform.position);
+                }
+            }
+            beamActive = true;
+            if (lineRenderer != null) lineRenderer.enabled = true;
+        }
+        else if ((Input.GetMouseButtonUp(0) || InventoryAndBuffs.energyAmmo <= 0) && beamActive)
+        {
+            beamActive = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
+            if (AudioPlayer.Current != null && loopingLaser != null)
+            {
+                AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+                loopingLaser = null;
             }
         }
+        else if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo <= 0) // Clicked with no ammo
+        {
+            if (AudioPlayer.Current != null)
+            {
+                AudioPlayer.Current.PlaySfxAtPoint("Empty_Chamber", transform.position);
+            }
+        }
+
 
         if (beamActive)
         {
@@ -91,22 +139,29 @@ public class ShootingBeam : WeaponBase
                 }
                 else
                 {
-                    // Turns off beam if out of ammo.
                     beamActive = false;
-                    lineRenderer.enabled = false;
+                    if (lineRenderer != null) lineRenderer.enabled = false;
+                    if (AudioPlayer.Current != null && loopingLaser != null)
+                    {
+                        AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+                        loopingLaser = null;
+                    }
                 }
             }
         }
     }
 
-    // Finds the first hit that should stop the beam while ignoring tags in the ignoreTags list.
     private void ProcessBeamHits(out float beamEndPointDistance, out List<EnemyHealth> enemiesFound)
     {
-        // Clear the list from the previous frame.
         enemiesToDamageThisTick.Clear();
         enemiesFound = enemiesToDamageThisTick;
 
         float firstObstructionDistance = maxBeamLength;
+        if (projectileSpawnLocation == null)
+        {
+            beamEndPointDistance = 0f;
+            return;
+        }
         RaycastHit2D[] allHits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, maxBeamLength);
 
         foreach (RaycastHit2D hit in allHits)
@@ -127,7 +182,6 @@ public class ShootingBeam : WeaponBase
             }
         }
 
-        // This is the final distance the beam should visually travel to.
         beamEndPointDistance = firstObstructionDistance;
 
         foreach (RaycastHit2D hit in allHits)
@@ -155,14 +209,15 @@ public class ShootingBeam : WeaponBase
 
     private void DrawBeam(float currentLength)
     {
+        if (lineRenderer == null || projectileSpawnLocation == null) return;
         lineRenderer.SetPosition(0, projectileSpawnLocation.position);
         lineRenderer.SetPosition(1, projectileSpawnLocation.position + (Vector3)transform.right * currentLength);
     }
 
     private void UpdateAmmoUI()
     {
-        inventoryAmmoText.SetText("");
-        magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
+        if (inventoryAmmoText != null) inventoryAmmoText.SetText("");
+        if (magCapacityText != null) magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
     }
 
     protected override void Fire() { /* Not used in beam */ }

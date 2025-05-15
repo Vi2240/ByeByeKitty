@@ -83,10 +83,7 @@ public class ItemPickup : MonoBehaviour
 
             if (itemWasPickedUp)
             {
-                // Maybe add effects like sound or particles here before destroying it, like below
-                // SoundManager.Instance.PlayPickupSound();
-                // Instantiate(pickupEffectPrefab, transform.position, Quaternion.identity);
-
+                if (ammo.enabled || energyAmmo.enabled) { AudioPlayer.Current.PlaySfxAtPoint("Pickup_Ammo", transform.position); }
                 Destroy(gameObject);
             }
         }
@@ -96,7 +93,7 @@ public class ItemPickup : MonoBehaviour
 [System.Serializable]
 struct Item
 {
-    [SerializeField] bool enabled;
+    [SerializeField] public bool enabled;
     [SerializeField] int amount;
 
     public bool Enabled => enabled;
