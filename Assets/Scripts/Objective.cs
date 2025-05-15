@@ -64,7 +64,7 @@ public class Objective : MonoBehaviour
             {
                 isBurning = true;
                 fireHP = maxFireHp/4;
-                waveManager.StartWaveWithDelay(WaveType.WaveType0, SpawnType.AreaAroundPosition, 1, gameObject.transform, delay);
+                waveManager.StartContinuousWaves(gameObject.transform, new Wrapper<bool>(isBurning));
             }
         }
     }
