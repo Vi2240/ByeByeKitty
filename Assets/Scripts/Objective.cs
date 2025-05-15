@@ -11,11 +11,13 @@ public class Objective : MonoBehaviour
     [SerializeField] float fireHeal;
     [SerializeField] float burningDmg;
     [SerializeField] float healSpeed;
-    [SerializeField] float burnSpeed;   
+    [SerializeField] float burnSpeed;
     [SerializeField] bool enemyKillzone;
 
+    [Header("Fire Activation Variables")]
     [SerializeField] GameObject burnEffect;
     [SerializeField] GameObject healingEffect;
+    [SerializeField] float rekindleFireDelay = 5f;
 
     [SerializeField] GameObject winCanvas;
 
@@ -37,12 +39,19 @@ public class Objective : MonoBehaviour
     bool isTakingBurningDmg;
     bool isHealing;
     bool isBurning;
+    bool canRekindleFire = true;
+
+    [Header("Fire Activation Variables")]
+    [SerializeField] UnityEngine.Transform fireCircle;
+    [SerializeField] float maxScale = 1f;
+    [SerializeField] float requiredHoldTime = 5.0f;
+    float holdTimer = 0f;
 
     AudioPlayer audioPlayer;
     WaveManager waveManager;
 
     void Start()
-    {        
+    {
         winCanvas.SetActive(false);
 
         fireHP = 0;
@@ -50,22 +59,32 @@ public class Objective : MonoBehaviour
         currentHp = maxHp;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
         audioPlayer = FindAnyObjectByType<AudioPlayer>();
-        
+
         if (burnEffect != null)
             maxBurnEffectScale = burnEffect.transform.localScale * 1.5f;
-        else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);        
+        else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);
     }
 
     void Update()
     {
-        if(playersInZone)
+        if (!playersInZone || isBurning || !Input.GetKey(KeyCode.E) || !canRekindleFire)
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isBurning)
-            {
-                isBurning = true;
-                fireHP = maxFireHp/4;
-                waveManager.StartWaveWithDelay(WaveType.WaveType0, SpawnType.AreaAroundPosition, 1, gameObject.transform, delay);
-            }
+            holdTimer = 0f;
+            fireCircle.localScale = Vector3.zero;
+            return;
+        }
+
+        holdTimer += Time.deltaTime;
+        Debug.Log(holdTimer);
+        float scale = Mathf.Clamp01(holdTimer / requiredHoldTime) * maxScale;
+        fireCircle.localScale = new Vector3(scale, scale, scale);
+
+        if (holdTimer >= requiredHoldTime)
+        {
+            isBurning = true;
+            fireHP = maxFireHp / 4;
+            waveManager.StartContinuousWaves(gameObject.transform, new Wrapper<bool>(isBurning));
+            StartCoroutine(RekindleFireTimmer());
         }
     }
 
@@ -77,7 +96,7 @@ public class Objective : MonoBehaviour
             {
                 StartCoroutine(HealingHealth());
             }
-            
+
             if (burnEffect != null && burnEffect.activeSelf)
             {
                 burnEffect.SetActive(false);
@@ -92,10 +111,10 @@ public class Objective : MonoBehaviour
 
         fireHP += fireTickHeal;
         fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
-        fireIntensityPercentageFactor = fireHP/maxFireHp;
+        fireIntensityPercentageFactor = fireHP / maxFireHp;
 
         burnEffect.transform.localScale = maxBurnEffectScale * fireIntensityPercentageFactor;
-        
+
         if (isTakingBurningDmg) return;
         StartCoroutine(BurningTickDmg());
         //audioPlayer.SfxPlayer("Fire_Sound");        
@@ -111,7 +130,7 @@ public class Objective : MonoBehaviour
         {
             other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(true, this.gameObject);
         }
-        if(other.tag == "Enemy" && enemyKillzone == true) 
+        if (other.tag == "Enemy" && enemyKillzone == true)
         {
             Destroy(other.gameObject);
         }
@@ -131,8 +150,8 @@ public class Objective : MonoBehaviour
         burnEffect.SetActive(true);
 
         if (currentHp > 0)
-        {        
-            currentHp -= burningDmg * fireIntensityPercentageFactor;            
+        {
+            currentHp -= burningDmg * fireIntensityPercentageFactor;
         }
         else
         {
@@ -163,11 +182,11 @@ public class Objective : MonoBehaviour
     }
 
     public bool GetIsBurning()
-    { 
+    {
         return isBurning;
     }
 
-    public void FireExtinguish(float fireStoppingPower){
+    public void FireExtinguish(float fireStoppingPower) {
         fireHP -= fireStoppingPower;
         if (fireHP <= 0) isBurning = false;
     }
@@ -177,5 +196,12 @@ public class Objective : MonoBehaviour
         winCanvas.SetActive(true);
         yield return new WaitForSeconds(1);
         Loader.LoadNetwork(Loader.Scene.MenuScene);
+    }
+    
+    IEnumerator RekindleFireTimmer()
+    {
+        canRekindleFire = false;
+        yield return new WaitForSeconds(rekindleFireDelay);
+        canRekindleFire = true;
     }
 }
