@@ -1,6 +1,10 @@
 using UnityEngine;
 
-public class TargetPlayer : MonoBehaviour
+public class TargetPlayerWrapper : MonoBehaviour
 {
-    public Wrapper<bool> targetPlayer = new Wrapper<bool>(false);
+    public bool targetPlayer;
+    
+    void Start(){
+        targetPlayer = false;
+    }    
 }
