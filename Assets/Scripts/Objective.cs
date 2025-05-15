@@ -38,6 +38,9 @@ public class Objective : MonoBehaviour
     bool isHealing;
     bool isBurning;
 
+    private float holdTimer = 0f;
+    public float requiredHoldTime = 5.0f;
+
     AudioPlayer audioPlayer;
     WaveManager waveManager;
 
@@ -58,14 +61,19 @@ public class Objective : MonoBehaviour
 
     void Update()
     {
-        if(playersInZone)
+        if (!playersInZone || isBurning || !Input.GetKey(KeyCode.E))
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isBurning)
-            {
-                isBurning = true;
-                fireHP = maxFireHp/4;
-                waveManager.StartContinuousWaves(gameObject.transform, new Wrapper<bool>(isBurning));
-            }
+            holdTimer = 0f;
+            return;
+        }
+
+        holdTimer += Time.deltaTime;
+        Debug.Log(holdTimer);
+        if (holdTimer >= requiredHoldTime)
+        {
+            isBurning = true;
+            fireHP = maxFireHp / 4;
+            waveManager.StartContinuousWaves(gameObject.transform, new Wrapper<bool>(isBurning));
         }
     }
 
