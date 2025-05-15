@@ -13,11 +13,13 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private List<UITalentButton> _talentButtons = new List<UITalentButton>();
 
+    [SerializeField] private UIDocument uIDocument;
+
     private PlayerSkillManager playerSkillManager;
     public PlayerSkillManager _playerSkillManager => playerSkillManager;
 
-    private UIDocument uIDocument;
     public UIDocument _uIDocument => uIDocument;
+    public ScritableSkillLibrary _SkillLibrary => skillLibrary;
 
     private VisualElement skillRowOne, skillRowTwo, skillRowThree, skillRowFour, skillRowFive;
 
@@ -43,12 +45,12 @@ public class UIManager : MonoBehaviour
         skillRowThree = root.Q<VisualElement>(name: "Skill_RowThree");
         skillRowFour = root.Q<VisualElement>(name: "Skill_RowFour");
         skillRowFive = root.Q<VisualElement>(name: "Skill_RowFive");
-        /*
+        
         SpawnButton(skillRowOne, skillLibrary.GetSkillOfTier(1));   
         SpawnButton(skillRowTwo, skillLibrary.GetSkillOfTier(2));
         SpawnButton(skillRowThree, skillLibrary.GetSkillOfTier(3));
         SpawnButton(skillRowFour, skillLibrary.GetSkillOfTier(4));
-        SpawnButton(skillRowFive, skillLibrary.GetSkillOfTier(5));*/
+        SpawnButton(skillRowFive, skillLibrary.GetSkillOfTier(5));
     }
 
     private void SpawnButton(VisualElement parent, List<ScriptableSkill> skills)

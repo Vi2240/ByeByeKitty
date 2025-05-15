@@ -16,7 +16,7 @@ namespace _Scripts.Skill_System
         public bool overWriteDescription;
         [TextArea(1, 4)] public string SkillDescription;
         public Sprite SkillIcon;
-        public List<ScriptableSkill> SkillPrerequisit = new List<ScriptableSkill>();
+        public List<ScriptableSkill> SkillRequisit = new List<ScriptableSkill>();
         public int skillTier;
         public int cost;
 
@@ -35,7 +35,7 @@ namespace _Scripts.Skill_System
             {
                 switch (upgradeData[0].statsType)
                 {
-                    case StatTypes.Abilitys:
+                    case StatTypes.abilitys:
                         SkillDescription = $"{SkillName} grants the ... ability";
                         break;
                 }
@@ -43,7 +43,7 @@ namespace _Scripts.Skill_System
             else
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append($"{SkillName}  increases");
+                sb.Append($"{SkillName} increases ");
                 for (int i = 0; i < upgradeData.Count; i++)
                 {
                     sb.Append(upgradeData[i].statsType.ToString());
@@ -70,8 +70,10 @@ namespace _Scripts.Skill_System
 
     public enum StatTypes
     {
-        Damage,
-        Health,
-        Abilitys,
+        damage,
+        attack_speed,
+        health,
+        speed,
+        abilitys,
     }
 }

@@ -10,7 +10,7 @@ namespace _Scripts.Skill_System
 
     public class PlayerSkillManager : MonoBehaviour
     {
-        private int _damage = 10, _health; //stats
+        private int _damage = 10, _attackSpeed, _health, _speed; //stats
         private int _ability1; //Abilitys
         private int _skillPoints;
 
@@ -58,9 +58,9 @@ namespace _Scripts.Skill_System
             return _unlockedSkills.Contains(skill);
         }
 
-        public bool PreReqsMet(ScriptableSkill skill)
+        public bool ReqstMet(ScriptableSkill skill)
         {
-            return skill.SkillPrerequisit.Count == 0 || skill.SkillPrerequisit.All(_unlockedSkills.Contains);
+            return skill.SkillRequisit.Count == 0 || skill.SkillRequisit.All(_unlockedSkills.Contains);
         }
 
         private void ModifyStats(ScriptableSkill skill)
@@ -70,11 +70,17 @@ namespace _Scripts.Skill_System
                 bool isPrecent = data.isPercentage;
                 switch (data.statsType)
                 {
-                    case StatTypes.Damage:
+                    case StatTypes.damage:
                         ModifyStat(ref _damage, data);
                         break;
-                    case StatTypes.Health:
+                    case StatTypes.attack_speed:
+                        ModifyStat(ref _attackSpeed, data);
+                        break;
+                    case StatTypes.health:
                         ModifyStat(ref _health, data);
+                        break;
+                    case StatTypes.speed:
+                        ModifyStat(ref _speed, data);
                         break;
                         //add new skills
                 }

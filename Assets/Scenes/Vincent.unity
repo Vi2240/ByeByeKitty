@@ -1223,6 +1223,7 @@ GameObject:
   - component: {fileID: 1914214165}
   - component: {fileID: 1914214167}
   - component: {fileID: 1914214168}
+  - component: {fileID: 1914214169}
   m_Layer: 5
   m_Name: TechTreeDocument
   m_TagString: Untagged
@@ -1276,7 +1277,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27318f2d0967557469755aafa83f0a4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillLibrary: {fileID: 11400000, guid: ef7726f7224dea14fa5b9c394f0312a8, type: 2}
   uiTalentButton: {fileID: 9197481963319205126, guid: 3e045920c6dccd34b9fcf56d8d4ebedd, type: 3}
+  _talentButtons: []
+  uIDocument: {fileID: 1914214165}
 --- !u!114 &1914214168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1287,6 +1291,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3da5f3b8d26940145a2b82e6b409ae1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1914214169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914214164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dcb0f097fee8f540a1c90f87287e264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1977645066

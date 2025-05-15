@@ -1,20 +1,30 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Scripts/UI/StyleSheet.uss?fileID=7433441132597879392&amp;guid=f0d99d3b1131a0d4b8e8e4adf9a85b82&amp;type=3#StyleSheet" />
     <engine:VisualElement name="Contener" style="flex-grow: 1; flex-direction: row; background-color: rgb(39, 39, 39); width: auto;">
-        <engine:VisualElement name="Valus" style="flex-grow: 0; flex-basis: auto; flex-shrink: 1; width: 35%; border-right-width: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); background-color: rgb(20, 20, 20); -unity-text-align: middle-center; align-self: auto; justify-content: space-evenly;">
+        <engine:VisualElement name="Valus" style="flex-grow: 0; flex-basis: auto; flex-shrink: 1; width: 30%; border-right-width: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); background-color: rgb(20, 20, 20); -unity-text-align: middle-center; align-self: auto; justify-content: space-evenly;">
             <engine:Label text="Stats" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatsHeader" class="HeadLaber" />
             <engine:Label text="Damge - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatsLabel_Damage" class="StatsLabel" />
+            <engine:Label text="Attack speed - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatsLabel_AttackSpeed" class="StatsLabel" />
             <engine:Label text="Health - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatsLabel_Health" class="StatsLabel" />
+            <engine:Label text="Speed - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatsLabel_Speed" class="StatsLabel" />
             <engine:Label text="Ability" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AbilityHeader" class="HeadLaber" />
-            <engine:Label text="Ability1 - Locked" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AbilitysLabel_Ability1" class="StatsLabel" />
+            <engine:Label text="Ability1 - Locked" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AbilitysLabel_Ability1" class="StatsLabel" style="-unity-text-align: lower-center;" />
             <engine:Label text="Skill points - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SkillPointsLabel" class="HeadLaber" />
         </engine:VisualElement>
-        <engine:VisualElement name="SkillTree" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-            <engine:VisualElement name="Skill_RowOne" style="flex-grow: 1;" />
-            <engine:VisualElement name="Skill_RowTwo" style="flex-grow: 1;" />
-            <engine:VisualElement name="Skill_RowThree" style="flex-grow: 1;" />
-            <engine:VisualElement name="Skill_RowFour" style="flex-grow: 1;" />
-            <engine:VisualElement name="Skill_RowFive" style="flex-grow: 1;" />
+        <engine:VisualElement name="SkillTree" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 40%;">
+            <engine:VisualElement name="Skill_RowOne" style="flex-grow: 1; justify-content: center; align-items: center;" />
+            <engine:VisualElement name="Skill_RowTwo" style="flex-grow: 1; justify-content: center; align-items: center;" />
+            <engine:VisualElement name="Skill_RowThree" style="flex-grow: 1; justify-content: center; align-items: center; width: auto;" />
+            <engine:VisualElement name="Skill_RowFour" style="flex-grow: 1; justify-content: center; align-items: center;" />
+            <engine:VisualElement name="Skill_RowFive" style="flex-grow: 1; justify-content: center; align-items: center;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="SkillDescription" style="flex-grow: 1; align-items: center; justify-content: flex-start; border-left-width: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); width: 30%;">
+            <engine:VisualElement name="Icon" style="flex-grow: 1; width: 256px; height: 256px; align-items: center; flex-direction: column-reverse; align-self: center; align-content: auto; justify-content: flex-start; min-height: auto; max-height: 256px; top: 10%; background-image: url(&quot;project://database/Assets/Sprites/Weapons/Banana.png?fileID=2800000&amp;guid=3abc5d43e7fbebf4293b36c1219fade3&amp;type=3#Banana&quot;);" />
+            <engine:Label text="Skill name" name="SkillNameLabel" style="color: rgb(255, 255, 255); font-size: 32px; height: auto; width: 100%; top: 10%; align-items: center; justify-content: flex-start; align-self: center; -unity-text-align: middle-center;" />
+            <engine:Label text="Skill description" name="SkillDescriptionLabel" style="color: rgb(255, 255, 255); font-size: 32px; height: auto; width: 100%; top: 10%; align-items: center; justify-content: flex-start; align-self: center; -unity-text-align: middle-center;" />
+            <engine:Label text="Cost:" name="CostLabel" style="color: rgb(255, 255, 255); font-size: 32px; height: auto; width: 100%; top: 10%; align-items: center; justify-content: flex-start; align-self: center; -unity-text-align: middle-center;" />
+            <engine:Label text="Require:" name="RequireLabel" style="color: rgb(255, 255, 255); font-size: 32px; height: auto; width: 100%; top: 10%; align-items: center; justify-content: flex-start; align-self: center; -unity-text-align: middle-center;" />
+            <engine:Button text="Buy" name="BuySkillButton" style="top: 10%; font-size: 52px; width: 40%; height: 10%;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

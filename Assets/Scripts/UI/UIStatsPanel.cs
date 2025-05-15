@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class UIStatsPanel : MonoBehaviour
 {
-    private Label damage, health;
+    private Label damage, attackSpeed, health, speed;
     private Label ability1;
     private Label skillPointsLabel;
 
@@ -28,7 +28,9 @@ public class UIStatsPanel : MonoBehaviour
     private void GatherLabelReferences()
     {
         damage = uIDocument.rootVisualElement.Q<Label>(name:"StatsLabel_Damage");
+        attackSpeed = uIDocument.rootVisualElement.Q<Label>(name: "StatsLabel_AttackSpeed");
         health = uIDocument.rootVisualElement.Q<Label>(name: "StatsLabel_Health");
+        speed = uIDocument.rootVisualElement.Q<Label>(name: "StatsLabel_Speed");
 
         ability1 = uIDocument.rootVisualElement.Q<Label>(name: "AbilitysLabel_Ability1");
 

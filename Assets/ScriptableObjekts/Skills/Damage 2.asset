@@ -20,7 +20,8 @@ MonoBehaviour:
   SkillName: Damage 2
   overWriteDescription: 0
   SkillDescription: Damage 2  increasesDamage by 15%.
-  SkillIcon: {fileID: 0}
-  SkillPrerequisit: []
+  SkillIcon: {fileID: 4296193443984631328, guid: 6345d7f177895824986ba3315ce5960f, type: 3}
+  SkillRequisit:
+  - {fileID: 11400000, guid: 148c2c5b6f64f8d43b5224af393bc137, type: 2}
   skillTier: 2
   cost: 2

@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d86025a2eb36d54eac744b9055f5f35, type: 3}
-  m_Name: Damage 3
+  m_Name: Speed
   m_EditorClassIdentifier: 
   upgradeData:
-  - statsType: 0
-    skillIncreaseAmount: 25
+  - statsType: 3
+    skillIncreaseAmount: 5
     isPercentage: 1
   IsAbility: 0
-  SkillName: Damage 3
+  SkillName: Health
   overWriteDescription: 0
-  SkillDescription: Damage 3  increasesDamage by 25%.
-  SkillIcon: {fileID: 2667589067915142571, guid: 6c49580691a670948916313de8a702ee, type: 3}
-  SkillRequisit:
-  - {fileID: 11400000, guid: ab9afa059152a98498f62391b90d960c, type: 2}
-  skillTier: 3
-  cost: 3
+  SkillDescription: Health increases speed by 5%.
+  SkillIcon: {fileID: 0}
+  SkillRequisit: []
+  skillTier: 1
+  cost: 1
