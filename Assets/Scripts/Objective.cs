@@ -38,8 +38,11 @@ public class Objective : MonoBehaviour
     bool isHealing;
     bool isBurning;
 
-    private float holdTimer = 0f;
-    public float requiredHoldTime = 5.0f;
+    [Header("Fire Activation Variables")]
+    [SerializeField] UnityEngine.Transform fireCircle;
+    [SerializeField] float maxScale = 1f;
+    [SerializeField] float requiredHoldTime = 5.0f;
+    float holdTimer = 0f;
 
     AudioPlayer audioPlayer;
     WaveManager waveManager;
@@ -64,11 +67,15 @@ public class Objective : MonoBehaviour
         if (!playersInZone || isBurning || !Input.GetKey(KeyCode.E))
         {
             holdTimer = 0f;
+            fireCircle.localScale = Vector3.zero;
             return;
         }
 
         holdTimer += Time.deltaTime;
         Debug.Log(holdTimer);
+        float scale = Mathf.Clamp01(holdTimer / requiredHoldTime) * maxScale;
+        fireCircle.localScale = new Vector3(scale, scale, scale);
+        
         if (holdTimer >= requiredHoldTime)
         {
             isBurning = true;
