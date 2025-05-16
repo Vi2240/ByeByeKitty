@@ -57,7 +57,7 @@ public class SniperBullet : MonoBehaviour
             if (ignoredLayers.Contains(hit.collider.gameObject.layer)) continue;
 
             // -- Hit obstacle --
-            if (!hit.collider.CompareTag("Enemy")) 
+            if (!hit.collider.CompareTag("Enemy") && !hit.collider.CompareTag("Objective")) 
             {
                 CreateHitEffect(sparksHitEffect, true, hit.point);
                 break;
@@ -89,7 +89,7 @@ public class SniperBullet : MonoBehaviour
         if (ignoredLayers.Contains(other.gameObject.layer)) return;
 
         // If the visual bullet hits anything other than an enemy
-        if (!other.CompareTag("Enemy"))
+        if (!other.CompareTag("Enemy") && !other.CompareTag("Objective"))
         {
             CreateHitEffect(sparksHitEffect, true, transform.position);
             DestroyVisualBullet();
@@ -98,7 +98,7 @@ public class SniperBullet : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Enemy"))
+        if (!collision.gameObject.CompareTag("Enemy") && !collision.gameObject.CompareTag("Objective"))
         {
             CreateHitEffect(sparksHitEffect, true, collision.transform.position);
             Destroy(gameObject);

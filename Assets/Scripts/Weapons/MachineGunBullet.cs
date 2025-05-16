@@ -42,7 +42,8 @@ public class MachineGunBullet : MonoBehaviour
         {
             DamageEnemy(collision.gameObject);
         }
-        else { CreateHitEffect(sparksHitEffect, true); }
+        else if (!collision.gameObject.CompareTag("Enemy")) { CreateHitEffect(sparksHitEffect, true); }
+        else { Destroy(gameObject); }
     }
 
     void DamageEnemy(GameObject enemy)

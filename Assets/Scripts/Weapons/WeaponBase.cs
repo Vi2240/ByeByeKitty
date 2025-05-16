@@ -59,6 +59,8 @@ public abstract class WeaponBase : MonoBehaviour
         {
             WeaponRotation();
         }
+
+        //if (!MouseFarEnoughFromPlayer()) { canFire = false; }
     }
 
     protected void WeaponRotation()
@@ -125,7 +127,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected abstract void Fire();
 
-    bool MouseFarEnoughFromPlayer() // Kept as private as per original
+    bool MouseFarEnoughFromPlayer()
     {
         if (mainCam == null) return false;
         return Vector2.Distance(transform.position, mousePos) > requiredMouseDistanceFromPlayer;
