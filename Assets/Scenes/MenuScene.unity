@@ -250,6 +250,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 73cc288718c95289585593c7607111fc, type: 3}
   - {fileID: 8300000, guid: 9679900f210817d6a866d9f8b2f327df, type: 3}
   - {fileID: 8300000, guid: e4ed467dd53df72b5be7fc787f3e1855, type: 3}
+  - {fileID: 8300000, guid: c4ea13021f269be4e9cabfeec502db34, type: 3}
   musicSource: {fileID: 1319425327}
   uiSfxSource: {fileID: 339950684}
   loopingSfxMinDistance: 1
@@ -805,7 +806,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb77aec2faba7b051bd8960fb74b94ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverScale: 1.1
+  hoverScaleMultiplier: 1.1
+  pressScaleMultiplier: 0.95
   duration: 0.1
 --- !u!1 &1077277089
 GameObject:
@@ -860,7 +862,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb77aec2faba7b051bd8960fb74b94ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverScale: 1.1
+  hoverScaleMultiplier: 1.1
+  pressScaleMultiplier: 0.95
   duration: 0.1
 --- !u!114 &1077277092
 MonoBehaviour:
@@ -1586,7 +1589,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb77aec2faba7b051bd8960fb74b94ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverScale: 1.1
+  hoverScaleMultiplier: 1.1
+  pressScaleMultiplier: 0.95
   duration: 0.1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

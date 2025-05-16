@@ -47,8 +47,8 @@ public class Objective : MonoBehaviour
     [SerializeField] float requiredHoldTime = 5.0f;
     float holdTimer = 0f;
 
-    AudioPlayer audioPlayer;
     WaveManager waveManager;
+    AudioSource burningAudioSource;
 
     void Start()
     {
@@ -58,7 +58,6 @@ public class Objective : MonoBehaviour
         fireTickHeal = 0.1f;
         currentHp = maxHp;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
-        audioPlayer = FindAnyObjectByType<AudioPlayer>();
 
         if (burnEffect != null)
             maxBurnEffectScale = burnEffect.transform.localScale * 1.5f;
@@ -81,6 +80,7 @@ public class Objective : MonoBehaviour
 
         if (holdTimer >= requiredHoldTime)
         {
+            burningAudioSource = AudioPlayer.Current.PlayLoopingSfx("Fire_Sound", transform.position);
             isBurning = true;
             fireHP = maxFireHp / 4;
             waveManager.StartContinuousWaves(gameObject.transform, new Wrapper<bool>(isBurning));
@@ -117,7 +117,6 @@ public class Objective : MonoBehaviour
 
         if (isTakingBurningDmg) return;
         StartCoroutine(BurningTickDmg());
-        //audioPlayer.SfxPlayer("Fire_Sound");        
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -188,7 +187,14 @@ public class Objective : MonoBehaviour
 
     public void FireExtinguish(float fireStoppingPower) {
         fireHP -= fireStoppingPower;
-        if (fireHP <= 0) isBurning = false;
+        if (fireHP <= 0)
+        {
+            isBurning = false;
+            if (burningAudioSource)
+            {
+                AudioPlayer.Current.StopLoopingSfx(burningAudioSource); 
+            }
+        }
     }
 
     IEnumerator WinGame()
