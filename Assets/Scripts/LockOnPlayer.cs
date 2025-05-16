@@ -7,7 +7,11 @@ public class LockOnPlayer : MonoBehaviour
     {
         if (player == null)
         {
-            player = GameObject.FindGameObjectWithTag("Player").transform;
+            try
+            {
+                player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+            }
+            catch {}
             return;
         }
         transform.position = player.position;

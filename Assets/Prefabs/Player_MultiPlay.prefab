@@ -143,6 +143,7 @@ MonoBehaviour:
   dashChargeUpTime: 0
   dashCooldownTime: 1
   dashOnCooldown: 0
+  walkingSfxName: Walk_Grass
 --- !u!114 &1088832818248008299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,24 +159,24 @@ MonoBehaviour:
   allWeapons:
   - Name: Pistol
     WeaponObject: {fileID: 4717193967019025442}
-    PickupPrefab: {fileID: 0}
+    PickupPrefab: {fileID: 1473717975669852885, guid: 93376e84392f0558a909b36c349ba45d, type: 3}
   - Name: LaserGun
     WeaponObject: {fileID: 2558146594349086605}
     PickupPrefab: {fileID: 8125233738006395700, guid: 33d97976791e58642908626726d68b6a, type: 3}
   - Name: MachineGun
     WeaponObject: {fileID: 3495672725555809388}
-    PickupPrefab: {fileID: 8125233738006395700, guid: d2726d2af028fe443bffb976c6d5980c, type: 3}
+    PickupPrefab: {fileID: 5896259601204447925, guid: 3fb5c422f63688707a4af91a18fcad01, type: 3}
   - Name: Sniper
     WeaponObject: {fileID: 7532437899677132459}
-    PickupPrefab: {fileID: 0}
-  - Name: ChargeBeamGun
+    PickupPrefab: {fileID: 6823317579066835080, guid: e31518bea0a3101039d234efac399308, type: 3}
+  - Name: ChargeBeam
     WeaponObject: {fileID: 3945831468030162675}
-    PickupPrefab: {fileID: 0}
+    PickupPrefab: {fileID: 3668328503340749546, guid: d262a24789a4c1b1f9fec3bb3984e2f1, type: 3}
   - Name: LightningGun
     WeaponObject: {fileID: 3817111896344598929}
     PickupPrefab: {fileID: 8125233738006395700, guid: 1d9ad28aaa52eb8478aa08f04ae2b583, type: 3}
-  startWithFirstWeapon: 1
-  collectAllWeaponsOnStartForTesting: 1
+  startWithFirstWeapon: 0
+  collectAllWeaponsOnStartForTesting: 0
 --- !u!114 &7342326090686955952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,6 +484,10 @@ PrefabInstance:
     - target: {fileID: 6600473513433018646, guid: 7d8a435ad8256ca548f6e0e0a3762a28, type: 3}
       propertyPath: m_Name
       value: Pistol
+      objectReference: {fileID: 0}
+    - target: {fileID: 6600473513433018646, guid: 7d8a435ad8256ca548f6e0e0a3762a28, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

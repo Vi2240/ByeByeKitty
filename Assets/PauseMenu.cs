@@ -40,29 +40,34 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    public void Resume()
-    {
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(false);
-        }
-        Time.timeScale = 1f; // Resume game time
-        AudioListener.pause = false; // Resume audio
-        GameIsPaused = false;
-        Debug.Log("Game Resumed");
-    }
-
     void Pause()
     {
         if (pauseMenuUI != null)
         {
             pauseMenuUI.SetActive(true);
         }
-        Time.timeScale = 0f; // Freeze game time
-        AudioListener.pause = true; // Pause all audio
+        Time.timeScale = 0f;
+        AudioListener.pause = true;
         GameIsPaused = true;
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Debug.Log("Game Paused");
+    }
+
+    public void Resume()
+    {
+        if (pauseMenuUI != null)
+        {
+            pauseMenuUI.SetActive(false);
+        }
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        GameIsPaused = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Debug.Log("Game Resumed");
     }
 
     public void LoadOptionsMenu()

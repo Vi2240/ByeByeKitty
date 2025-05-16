@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 5073704278769595037}
   - component: {fileID: -5202537044656648939}
   m_Layer: 0
-  m_Name: ChargeBeamGun
+  m_Name: ChargeBeam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

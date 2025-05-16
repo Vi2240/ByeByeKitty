@@ -62,10 +62,10 @@ public class AudioPlayer : MonoBehaviour
             case "Manager":
                 break;
             case "MenuScene":
-                PlayMusic("MenuMusic");
+                PlayMusic("MenuMusic", true, 0.8f);
                 break;
             case "GamePlay":
-                PlayMusic("Forest_Sound");
+                PlayMusic("Forest_Sound", true, 0.1f);
                 break; ;
             default:
                 StopMusic();
@@ -93,22 +93,25 @@ public class AudioPlayer : MonoBehaviour
         }
     }
 
-    public void PlayMusic(string musicName, bool loop = true)
+    public void PlayMusic(string musicName, bool loop = true, float volumeScale = 1.0f)
     {
         if (musicSource == null) { Debug.LogError("AudioPlayer: MusicSource not assigned!"); return; }
         if (_musicLibrary.TryGetValue(musicName, out AudioClip clipToPlay))
         {
-            // Check if the same music is already playing and looping.
-            // If you want to force a restart even if it's the same, remove this check.
-            if (musicSource.clip == clipToPlay && musicSource.isPlaying && musicSource.loop == loop)
+            // Check if the same music is already playing, looping, and at roughly the same volume.
+            if (musicSource.clip == clipToPlay &&
+                musicSource.isPlaying &&
+                musicSource.loop == loop &&
+                Mathf.Approximately(musicSource.volume, Mathf.Clamp01(volumeScale)))
             {
-                Debug.Log($"AudioPlayer: Music '{musicName}' is already playing with the same loop setting.");
+                Debug.Log($"AudioPlayer: Music '{musicName}' is already playing with the same settings (loop: {loop}, volume: {musicSource.volume}).");
                 return;
             }
             musicSource.clip = clipToPlay;
             musicSource.loop = loop;
+            musicSource.volume = Mathf.Clamp01(volumeScale); // Set the volume for this playback
             musicSource.Play();
-            Debug.Log($"AudioPlayer: Playing music '{musicName}'.");
+            Debug.Log($"AudioPlayer: Playing music '{musicName}' (loop: {loop}, volume: {musicSource.volume}).");
         }
         else Debug.LogWarning($"AudioPlayer: Music clip '{musicName}' not found.");
     }
