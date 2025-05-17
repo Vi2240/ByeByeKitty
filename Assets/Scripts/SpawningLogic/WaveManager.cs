@@ -92,7 +92,6 @@ public class WaveManager : MonoBehaviour
             Debug.Log($"Starting Wave: {waveType}, Difficulty: {difficulty}, SpawnType: {spawnType}, SpawnRate: {spawnRateToUse}");
             Coroutine c = StartCoroutine(waveInstance.ExecuteWave());
             runningWaves.Add(c);
-            StartCoroutine(RemoveCoroutineWhenFinished(c)); // Helper to clean up runningWaves list
             return c;
         }
         return null;
@@ -139,7 +138,11 @@ public class WaveManager : MonoBehaviour
     private IEnumerator DelayedWaveStart(WaveType waveType, SpawnType spawnType, int difficulty, float spawnRateToUse, Transform[] positions, float delay)
     {
         yield return new WaitForSeconds(delay);
-        StartWave(waveType, spawnType, difficulty, spawnRateToUse, positions); // This will return a coroutine, but for a delayed one-shot, we might not need to track it further here.
+        Coroutine waveCoroutine = StartWave(waveType, spawnType, difficulty, spawnRateToUse, positions);
+        if (waveCoroutine != null)
+        {
+            StartCoroutine(RemoveCoroutineWhenFinished(waveCoroutine));
+        }
     }
 
     /// <summary>
@@ -177,27 +180,22 @@ public class WaveManager : MonoBehaviour
         continuousWaveCoroutine = StartCoroutine(RunWaveCycle(refrenceFlag));
     }
 
-    /// <summary>
-    /// Stops the continuous wave cycle and the currently active wave from that cycle.
-    /// </summary>
-    public void StopContinuousWaves()
-    {
-        Debug.Log("Stopping continuous wave cycle.");
-        if (continuousWaveCoroutine != null)
-        {
-            StopCoroutine(continuousWaveCoroutine);
-            continuousWaveCoroutine = null;
-        }
-        if (activeContinuousWaveInstance != null)
-        {
-            StopCoroutine(activeContinuousWaveInstance);
-            runningWaves.Remove(activeContinuousWaveInstance); // Ensure it's removed if it was added
-            activeContinuousWaveInstance = null;
-        }
-    }
 
     private IEnumerator RunWaveCycle(Wrapper<bool> refrenceFlag)
     {
+        if (refrenceFlag == null)
+        {
+            Debug.LogError("RunWaveCycle: refrenceFlag is null. Stopping cycle.");
+            yield break;
+        }
+
+        if (refrenceFlag.value == false)
+        {
+            Debug.Log("Continuous wave cycle stopped by reference flag.");
+            yield break; // Exit the cycle if the flag is false
+        }
+
+
         while (refrenceFlag.value)
         {
             if (availableWaveTypes.Count == 0 || availableDifficulties.Count == 0)
@@ -208,16 +206,17 @@ public class WaveManager : MonoBehaviour
 
             WaveType randomWaveType = availableWaveTypes[Random.Range(0, availableWaveTypes.Count)];
             int randomDifficulty = availableDifficulties[Random.Range(0, availableDifficulties.Count)];
-            
+
             Transform[] positionsToUse;
-            switch(continuousWaveSpawnType)
+            switch (continuousWaveSpawnType)
             {
                 case SpawnType.AreaAroundPosition:
                     if (currentContinuousWaveTarget != null)
                         positionsToUse = new Transform[] { currentContinuousWaveTarget };
                     else if (objectivePositions != null && objectivePositions.Length > 0)
                         positionsToUse = objectivePositions; // Fallback
-                    else {
+                    else
+                    {
                         Debug.LogError("Cannot start AreaAroundPosition wave for continuous cycle: No target or objectivePositions defined.");
                         yield return new WaitForSeconds(delayBetweenWaves); // Wait and try next cycle
                         continue;
@@ -241,19 +240,51 @@ public class WaveManager : MonoBehaviour
             if (activeContinuousWaveInstance != null)
             {
                 yield return activeContinuousWaveInstance; // Wait for the wave to complete
+
+                if (runningWaves.Contains(activeContinuousWaveInstance))
+                {
+                    runningWaves.Remove(activeContinuousWaveInstance);
+                }
             }
             else
             {
                 Debug.LogWarning("Continuous Cycle: Failed to start a wave instance. Will retry after delay.");
             }
-            
+
             activeContinuousWaveInstance = null; // Clear the active instance
+
+            if (!refrenceFlag.value)
+            {
+                Debug.Log("RunWaveCycle: refrenceFlag became false during wave execution or before delay. Exiting loop.");
+                break; // Exit while loop
+            }
 
             Debug.Log("Continuous Cycle: Wave finished. Waiting for next wave...");
             yield return new WaitForSeconds(delayBetweenWaves);
         }
+        
+        continuousWaveCoroutine = null;
     }
 
+    /// <summary>
+    /// Stops the continuous wave cycle and the currently active wave from that cycle.
+    /// </summary>
+    public void StopContinuousWaves()
+    {
+        Debug.Log("Stopping continuous wave cycle.");
+        if (continuousWaveCoroutine != null)
+        {
+            StopCoroutine(continuousWaveCoroutine);
+            continuousWaveCoroutine = null;
+        }
+        if (activeContinuousWaveInstance != null)
+        {
+            StopCoroutine(activeContinuousWaveInstance);
+            runningWaves.Remove(activeContinuousWaveInstance); // Ensure it's removed if it was added
+            activeContinuousWaveInstance = null;
+        }
+    }
+    
     /// <summary>
     /// Stops all currently running wave coroutines, including the continuous cycle.
     /// </summary>
@@ -273,8 +304,10 @@ public class WaveManager : MonoBehaviour
         runningWaves.Clear();
 
         // Also destroy any instantiated wave GameObjects
-        foreach (Transform child in transform) {
-            if (child.GetComponent<Wave>() != null) {
+        foreach (Transform child in transform)
+        {
+            if (child.GetComponent<Wave>() != null)
+            {
                 Destroy(child.gameObject);
             }
         }
@@ -284,6 +317,10 @@ public class WaveManager : MonoBehaviour
     private IEnumerator RemoveCoroutineWhenFinished(Coroutine coroutine)
     {
         yield return coroutine; // Wait for the coroutine to complete
-        runningWaves.Remove(coroutine);
+        if (runningWaves.Contains(coroutine))
+        {
+            runningWaves.Remove(coroutine);
+            // Debug.Log($"Coroutine (hash: {coroutine.GetHashCode()}) finished naturally and removed from runningWaves.");
+        }
     }
 }

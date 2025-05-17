@@ -27,8 +27,10 @@ public class WaveType0 : Wave // Ensure Wave.cs exists and is the base class
         Debug.Log($"Executing WaveType0: Difficulty {difficulty}, SpawnRate {spawnRate}, SpawnType {spawnType}");
         // Adjust wait time based on spawnRate and difficulty.
         // Ensure spawnRate is not zero to avoid division by zero.
-        float waitTime = (difficulty + 1 > 0 && spawnRate > 0) ? spawnRate / (difficulty + 1) : 1f;
-        if (spawnRate <= 0) {
+        //float waitTime = (difficulty + 1 > 0 && spawnRate > 0) ? spawnRate / (difficulty + 1) : 1f;
+        float waitTime = 10;
+        if (spawnRate <= 0)
+        {
             Debug.LogWarning("SpawnRate is zero or negative, defaulting waitTime to 1 second.");
             waitTime = 1f;
         }
