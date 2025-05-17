@@ -186,7 +186,7 @@ public class Objective : MonoBehaviour
     }
 
     public void FireExtinguish(float fireStoppingPower) {
-        //fireHP -= fireStoppingPower;
+        fireHP -= fireStoppingPower;
         if (fireHP <= 0)
         {
             isBurning = false;

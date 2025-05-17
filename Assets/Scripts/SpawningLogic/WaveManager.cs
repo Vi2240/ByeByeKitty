@@ -36,6 +36,11 @@ public class WaveManager : MonoBehaviour
     private Coroutine continuousWaveCoroutine;
     private Coroutine activeContinuousWaveInstance; // The specific wave instance started by the continuous cycle
     private Transform currentContinuousWaveTarget;
+    
+    [Header("Progression References")]
+    [Tooltip("Optional: Assign a LootTableProgressionManager to update loot tables after waves.")]
+    public LootTableProgressionManager lootProgressionManager;
+    [SerializeField] bool lootProgressionIsPerCycle = true; // If true, resets the wave count when starting continuous waves
 
     /// <summary>
     /// Starts a wave of the given type and tracks its coroutine.
@@ -66,12 +71,13 @@ public class WaveManager : MonoBehaviour
             waveInstance.spawnRate = spawnRateToUse;
             waveInstance.players = players;
             // Specific setup for WaveType0 if needed, or rely on Wave base class for these
-            if (waveInstance is WaveType0 waveType0Instance) {
-                 waveType0Instance.fixedSpawnPoints = fixedSpawnPoints;
-                 waveType0Instance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
+            if (waveInstance is WaveType0 waveType0Instance)
+            {
+                waveType0Instance.fixedSpawnPoints = fixedSpawnPoints;
+                waveType0Instance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
             }
             waveInstance.positions_tmp = positions;
-            
+
             // Set the desired spawn type (Fixed, AreaAroundPosition, or AreaAroundPlayers).
             // This assumes the Wave script itself has a public spawnType field that its ExecuteWave uses.
             // If WaveType0.cs is the only one with 'spawnType', this needs adjustment or ensure Wave.cs has it.
@@ -189,12 +195,17 @@ public class WaveManager : MonoBehaviour
             yield break;
         }
 
-        if (refrenceFlag.value == false)
+        if (!refrenceFlag.value)
         {
             Debug.Log("Continuous wave cycle stopped by reference flag.");
             yield break; // Exit the cycle if the flag is false
         }
 
+        // Optional: Reset loot progression when the continuous cycle starts
+        if (lootProgressionIsPerCycle && lootProgressionManager != null)
+        {
+            lootProgressionManager.ResetWaveCount();
+        }
 
         while (refrenceFlag.value)
         {
@@ -245,6 +256,19 @@ public class WaveManager : MonoBehaviour
                 {
                     runningWaves.Remove(activeContinuousWaveInstance);
                 }
+
+                // -- THIS IS WHERE THE LOOT TABLES ARE UPDATED --
+                Debug.Log("Continuous Cycle: Wave finished.");
+                if (lootProgressionManager != null)
+                {
+                    lootProgressionManager.OnContinuousWaveCompleted();
+                    // The OnContinuousWaveCompleted will internally call LootManager.Instance.UpdateLootTable
+                }
+                else
+                {
+                    Debug.LogWarning("WaveManager: LootProgressionManager not assigned. Loot tables will not be updated automatically after waves.");
+                }
+                // -- END OF LOOT TABLES UPDATE --
             }
             else
             {
@@ -263,6 +287,7 @@ public class WaveManager : MonoBehaviour
             yield return new WaitForSeconds(delayBetweenWaves);
         }
         
+        Debug.Log("RunWaveCycle: Loop has exited.");
         continuousWaveCoroutine = null;
     }
 
