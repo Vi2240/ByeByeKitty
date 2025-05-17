@@ -2019,12 +2019,24 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: maxHp
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: firePH
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: fireHeal
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: maxScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: treeHeal
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: healSpeed
@@ -2043,12 +2055,36 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: fireHealSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: requiredHoldTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: waveManagerObject
       value: 
       objectReference: {fileID: 1380949261}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: BurnEffectScaleMult
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6868240381655303118, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7322169324286365058, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: m_Name
       value: Objective
+      objectReference: {fileID: 0}
+    - target: {fileID: 9154991784330223258, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: m_Radius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9154991784330223258, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -5434,6 +5470,10 @@ PrefabInstance:
       propertyPath: enemyParent
       value: 
       objectReference: {fileID: 1842976833}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: lootProgressionManager
+      value: 
+      objectReference: {fileID: 1844300514}
     - target: {fileID: 6148110899767884369, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
       propertyPath: m_Name
       value: WaveManager

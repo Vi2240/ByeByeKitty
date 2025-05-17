@@ -258,7 +258,7 @@ public class EnemyMovement : MonoBehaviour
                 GameObject _object = objects[i];
                 Objective script = _object.GetComponent<Objective>(); // Change to objective class later
 
-                if (!script.GetIsBurning())
+                if (!script.GetIsBurningState())
                 {
                     objects.Remove(_object);
                 }
