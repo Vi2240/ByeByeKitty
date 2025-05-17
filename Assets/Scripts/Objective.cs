@@ -1,8 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Objective : MonoBehaviour
 {
@@ -15,12 +12,12 @@ public class Objective : MonoBehaviour
     float currentHp;
 
     [Header("Fire Variables")]
+    [SerializeField] bool canFireBeExtinguished = true;
     [SerializeField] float maxFireHp;
     [SerializeField] float fireHeal;
     [SerializeField] float fireHealSpeed;
     [SerializeField] float burningDmg;
     [SerializeField] float burnSpeed;
-    [SerializeField] bool canExtinguishFire;
     [SerializeField] float BurnEffectScaleMult = 1;
     float fireIntensityPercentageFactor;
     float fireHP;
@@ -34,18 +31,12 @@ public class Objective : MonoBehaviour
     [SerializeField] GameObject winCanvas;
 
     [SerializeField] GameObject waveManagerObject;
-    [SerializeField] float delay = 5;
-
-    public bool CanSpawn => isBurning.value;
 
     bool playersInZone;
-    bool playerIn;
-    bool enemyIn;
-    bool isTakingBurningDmg;
-    bool isGrowingFire;
     bool isHealing;
     Wrapper<bool> isBurning;
     bool canRekindleFire = true;
+    bool gameWon;
 
     [Header("Fire Activation Variables")]
     [SerializeField] UnityEngine.Transform fireCircle;
@@ -64,9 +55,8 @@ public class Objective : MonoBehaviour
         currentHp = maxHp;
         isBurning = new Wrapper<bool>(false);
         fireIntensityPercentageFactor = 0f;
-        isTakingBurningDmg = false;
-        isGrowingFire = false;
         isHealing = false;
+        gameWon = false;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
 
         if (burnEffect != null)
@@ -100,36 +90,34 @@ public class Objective : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isBurning.value)
+        if (isBurning.value)
         {
-            if (currentHp < maxHp && !isHealing)
-            {
-                StartCoroutine(HealingHealth());
-            }
-
-            if (burnEffect != null && burnEffect.activeSelf)
-            {
-                burnEffect.SetActive(false);
-            }
+            fireIntensityPercentageFactor = fireHP / maxFireHp;
+            HandleBurningDamage(Time.fixedDeltaTime);
+            HandleFireGrowth(Time.fixedDeltaTime);
+            //DebugShowHP(Time.fixedDeltaTime)
             return;
         }
 
-        fireIntensityPercentageFactor = fireHP / maxFireHp;
+        if (currentHp < maxHp && !isHealing)
+        {
+            StartCoroutine(HealingHealth());
+        }
 
-        HandleBurningDamage(Time.fixedDeltaTime);
-        HandleFireGrowth(Time.fixedDeltaTime);
-        DebugShowHP(Time.fixedDeltaTime);
+        if (burnEffect != null && burnEffect.activeSelf)
+        {
+            burnEffect.SetActive(false);
+        }
     }
 
-    float debugShowHPTimer = 0f;
-    void DebugShowHP(float dt)
-    {
-        debugShowHPTimer += dt;
-        if (debugShowHPTimer < 1f) return;
-        debugShowHPTimer = 0f;
-        Debug.Log("Current HP: " + currentHp);
-        Debug.Log("Fire HP: " + fireHP);
-    }
+    // float debugShowHPTimer = 0f;
+    // void DebugShowHP(float dt)
+    // {
+    //     debugShowHPTimer += dt;
+    //     if (debugShowHPTimer <= 0.5f) return;
+    //     debugShowHPTimer = 0f;
+    //     Debug.Log("Current HP: " + currentHp + "\tFireHP: " + fireHP);        
+    // }
 
     float burnDMGTimer = 0f;
     void HandleBurningDamage(float dt)
@@ -146,17 +134,19 @@ public class Objective : MonoBehaviour
     float growthTimer = 0f;
     void HandleFireGrowth(float dt)
     {
+        growthTimer += dt;
         while (growthTimer >= fireHealSpeed)
         {
-            growthTimer -= fireHealSpeed;            
+            growthTimer -= fireHealSpeed;
             fireHP += fireHeal;
-            fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;                       
+            fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
         }
+        UpdateBurnEffectScale();
     }
 
     void UpdateBurnEffectScale()
     {
-        if (burnEffect != null && !burnEffect.activeSelf)
+        if (burnEffect == null || !burnEffect.activeSelf)
         {
             burnEffect.SetActive(true);
         }
@@ -187,49 +177,6 @@ public class Objective : MonoBehaviour
         }
     }
 
-    IEnumerator GrowFire()
-    {
-        isGrowingFire = true;
-
-        while (isBurning.value) {
-        if (fireHP < maxFireHp)
-        {
-            fireHP += fireHeal;
-            fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
-        }
-
-        burnEffect.transform.localScale = maxBurnEffectScale_Vec * fireIntensityPercentageFactor;
-
-        yield return new WaitForSeconds(fireHealSpeed);
-        }
-        isGrowingFire = false;
-    }
-
-    IEnumerator BurningDmg()
-    {
-        isTakingBurningDmg = true;
-        burnEffect.SetActive(true);
-        while (isBurning.value)
-        {
-            if (currentHp > 0)
-            {
-                currentHp -= burningDmg * fireIntensityPercentageFactor;
-            }
-            else
-            {
-                StartCoroutine(WinGame());
-                isTakingBurningDmg = false;
-                if (burnEffect != null) burnEffect.SetActive(false);
-                yield break; // Exit the coroutine
-            }
-
-            yield return new WaitForSeconds(burnSpeed);            
-        }
-
-        isTakingBurningDmg = false;
-        burnEffect.SetActive(false);
-    }
-
     IEnumerator HealingHealth()
     {
         isHealing = true;
@@ -255,7 +202,7 @@ public class Objective : MonoBehaviour
 
     public void FireExtinguish(float fireStoppingPower)
     {
-        if (!canExtinguishFire) return;
+        if (!canFireBeExtinguished) return;
         fireHP -= fireStoppingPower;
         if (fireHP <= 0)
         {
@@ -269,8 +216,10 @@ public class Objective : MonoBehaviour
 
     IEnumerator WinGame()
     {
+        if (gameWon) yield break;
+        gameWon = true;
         winCanvas.SetActive(true);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(5);
         Loader.LoadNetwork(Loader.Scene.MenuScene);
     }
     
