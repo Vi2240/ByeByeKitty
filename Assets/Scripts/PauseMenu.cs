@@ -10,7 +10,7 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Settings")]
     [Tooltip("Name of your Main Menu scene. Leave empty if you only want to quit.")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu"; // Change this to your actual main menu scene name
+    [SerializeField] private string mainMenuSceneName = "MenuScene"; // Change this to your actual main menu scene name
     [SerializeField] bool pauseTimeAtStart = false;
 
     void Start()
@@ -18,7 +18,7 @@ public class PauseMenu : MonoBehaviour
         if (pauseTimeAtStart)
         {
             Time.timeScale = 0f;
-            AudioListener.pause = true;
+            //AudioListener.pause = true;
             GameIsPaused = true;
         }
         else
@@ -84,14 +84,14 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        // IMPORTANT: Always unpause time before loading a new scene
-        // if the game was paused, otherwise the new scene might start paused.
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-        GameIsPaused = false; // Reset pause state
-
         if (!string.IsNullOrEmpty(mainMenuSceneName))
         {
+            // IMPORTANT: Always unpause time before loading a new scene
+            // if the game was paused, otherwise the new scene might start paused.
+            Time.timeScale = 1f;
+            AudioListener.pause = false;
+            GameIsPaused = false; // Reset pause state
+
             SceneManager.LoadScene(mainMenuSceneName);
             Debug.Log("Loading Main Menu: " + mainMenuSceneName);
         }

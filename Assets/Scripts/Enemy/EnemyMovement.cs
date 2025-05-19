@@ -57,9 +57,14 @@ public class EnemyMovement : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        agent.speed = speed;
+        agent.speed = speed; // Make sure speed is set before any potential SetDestination
         savedPositions = new Vector2[checkIfStuckFrequency];
         walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
+
+        if (walkableArea == null)
+        {
+            Debug.LogError("WalkableArea not found! Random wandering will not work correctly.", this);
+        }
 
         // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
@@ -67,14 +72,35 @@ public class EnemyMovement : MonoBehaviour
             canAttackPlayers = false;
         }
 
-        if (randomWander && canMove && !disableMovement)
+        if (!disableMovement) // Only attempt to move if not disabled
         {
-            SetNewRandomDestination();
-            MoveToDestination(randomDestination);
+            if (randomWander && canMove) // canMove is true by default
+            {
+                if (walkableArea != null) // Only set random destination if walkable area exists
+                {
+                    SetNewRandomDestination();
+                    MoveToDestination(randomDestination);
+                }
+                else
+                {
+                    // What to do if random wander is on but no walkable area?
+                    // Option: Stay put, or log error and disable movement.
+                    Debug.LogWarning("Cannot random wander: WalkableArea is missing.", this);
+                    agent.isStopped = true;
+                }
+            }
+            else if (!randomWander)
+            {
+                // If not random wandering, the enemy should probably wait for Update()
+                // to find a player/objective, or be assigned a target by another system.
+                // Don't move to the uninitialized 'target' (0,0).
+                agent.isStopped = true; // Start stationary
+                Debug.Log(gameObject.name + " is not random wandering and will wait for a target.", this);
+            }
         }
         else
         {
-            MoveToDestination(target);
+            agent.isStopped = true;
         }
     }
 

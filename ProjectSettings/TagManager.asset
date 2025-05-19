@@ -13,7 +13,7 @@ TagManager:
   - LootManager
   - Pickup
   - EnemyBullet
-  - DeathScreenManager
+  - EndScreenManager
   layers:
   - Default
   - TransparentFX
