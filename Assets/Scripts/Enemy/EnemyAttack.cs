@@ -8,7 +8,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] float attackRange = 0;
     [SerializeField] float bulletForce = 20;
     [SerializeField] float attackCooldown = 0.5f;
-
+    [SerializeField] float attackDamage = 5f;
     [SerializeField] Transform bulletSpawnPos;
     [SerializeField] GameObject bulletPrefab;    
 
@@ -27,6 +27,8 @@ public class EnemyAttack : MonoBehaviour
 
         timer += Time.deltaTime;
         nearestPlayer = movementScript.FindNearestObject("Player");
+        if (nearestPlayer == null) { return; }
+
         if (nearestPlayer && movementScript.DistanceTo(nearestPlayer) > attackRange) { return; } // Return if it's too far away to skip code below
 
         if (timer >= attackCooldown)
@@ -63,7 +65,7 @@ public class EnemyAttack : MonoBehaviour
     void MeleeAttack()
     {
         print("Enemy used melee attack");
-        //var playerHealthScriptOrSomething = nearestPlayer.GetComponent<TheClassName>();
-        //playerHealthScriptOrSomething.TakeDamage(damageAmount);
+        var playerHealth = nearestPlayer.GetComponent<PlayerHealth>();
+        playerHealth.TakeDamage(attackDamage * InventoryAndBuffs.enemyDamageMultiplier);
     }
 }

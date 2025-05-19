@@ -747,16 +747,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableMovement: 0
-  speed: 3
-  movePauseMin: 2
-  movePauseMax: 5
+  speed: 8.5
+  movePauseMin: 1
+  movePauseMax: 2
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 0
-  targetRestriction: 0
+  targetRestriction: 1
   attackType: 1
-  nearObjectCheckRadius: 0
+  nearObjectCheckRadius: 2
   randomWander: 1
-  canAttackPlayers: 0
+  canAttackPlayers: 1
 --- !u!114 &-2921794130836257963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,6 +802,7 @@ MonoBehaviour:
   attackRange: 2
   bulletForce: 0
   attackCooldown: 0.75
+  attackDamage: 5
   bulletSpawnPos: {fileID: 0}
   bulletPrefab: {fileID: 0}
 --- !u!114 &4201214158487945568
