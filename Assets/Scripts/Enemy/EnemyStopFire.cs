@@ -6,20 +6,34 @@ public class EnemyStopFire : MonoBehaviour
 {
     class Zone{
         public bool isInZone;
-        public GameObject gameObject;
+        public GameObject targetGameObject;
         public bool onCooldown = false;
         public bool initialCooldownDone = false;
-        public Zone(bool isInZone, GameObject gameObject){ this.isInZone = isInZone; this.gameObject = gameObject; }
-        public IEnumerator startCooldown(float extinguishCooldownTime, float initialCooldownTime) 
+
+        public Zone(bool isInZone, GameObject targetGameObject)
+        {
+            this.isInZone = isInZone;
+            this.targetGameObject = targetGameObject;
+        }
+        
+        public IEnumerator startCooldown(float extinguishTime, float initialTime )
         {
             onCooldown = true;
-            if (!initialCooldownDone)
-                { yield return new WaitForSeconds(extinguishCooldownTime); initialCooldownDone = true; }                    
 
-            yield return new WaitForSeconds(extinguishCooldownTime); 
-            onCooldown = false; 
+            if (!initialCooldownDone)
+            {
+                if (initialTime > 0)
+                {
+                    yield return new WaitForSeconds(initialTime);
+                }
+                initialCooldownDone = true;
+            }
+
+            yield return new WaitForSeconds(extinguishTime);
+            onCooldown = false;
         }        
     }
+
     List<Zone> zones = new List<Zone>();
     [SerializeField] float fireStoppingPower;
     [SerializeField] float extinguishCooldownTime;
@@ -27,16 +41,18 @@ public class EnemyStopFire : MonoBehaviour
     
     void FixedUpdate() { ExtinguishFire(); }
     
-    public void SetInObjectiveZone(bool isInZone, GameObject gameObject){    
+    public void SetInObjectiveZone(bool isInZone, GameObject targetGameObject){
         foreach (Zone zone in zones)
-            if (zone.gameObject == gameObject) { zone.isInZone = isInZone; zone.initialCooldownDone = false; break; }            
-        zones.Add(new Zone(isInZone, gameObject));            
+            if (zone.targetGameObject == targetGameObject) { zone.isInZone = isInZone; zone.initialCooldownDone = false; break; }            
+        zones.Add(new Zone(isInZone, targetGameObject));            
     }
-
-    private void ExtinguishFire(){
+    
+    private void ExtinguishFire()
+    {
         foreach (Zone zone in zones)
-            if (zone.isInZone && !zone.onCooldown) {
-                zone.gameObject.GetComponent<Objective>().FireExtinguish(fireStoppingPower); 
+            if (zone.isInZone && !zone.onCooldown)
+            {
+                zone.targetGameObject.GetComponent<Objective>().FireExtinguish(fireStoppingPower);
                 StartCoroutine(zone.startCooldown(extinguishCooldownTime, initialCooldownTime));
             }
     }
