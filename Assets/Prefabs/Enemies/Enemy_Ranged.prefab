@@ -618,7 +618,7 @@ GameObject:
   - component: {fileID: 4201214158487945568}
   - component: {fileID: -6824037311908109032}
   m_Layer: 6
-  m_Name: Enemy_Ranged1
+  m_Name: Enemy_Ranged
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -779,16 +779,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableMovement: 0
-  speed: 3
+  speed: 2.5
   movePauseMin: 2
-  movePauseMax: 5
+  movePauseMax: 3
   checkIfStuckFrequency: 5
-  stopDistanceFromPlayer: 0
-  targetRestriction: 0
+  stopDistanceFromPlayer: 7
+  targetRestriction: 1
   attackType: 1
-  nearObjectCheckRadius: 0
+  nearObjectCheckRadius: 7
   randomWander: 1
-  canAttackPlayers: 0
+  canAttackPlayers: 1
 --- !u!114 &-2921794130836257963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -831,9 +831,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableAttacking: 0
   attackType: 1
-  attackRange: 5
-  bulletForce: 20
+  attackRange: 8
+  bulletForce: 10
   attackCooldown: 1.5
+  attackDamage: 10
   bulletSpawnPos: {fileID: 1780101275016146398}
   bulletPrefab: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
 --- !u!114 &4201214158487945568
