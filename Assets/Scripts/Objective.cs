@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour
 {
-    [SerializeField] GameObject numberEffect;
 
     [Header("Tree Variables")]
+    [SerializeField] GameObject numberEffect;
     [SerializeField] GameObject healingEffect;
+    [SerializeField] GameObject waterEffect;
+    [SerializeField] float waterEffectTime = 10f;
     [SerializeField] float maxHp;
     [SerializeField] float healSpeed;
     [SerializeField] float treeHeal;
@@ -108,6 +110,7 @@ public class Objective : MonoBehaviour
             return;
         }
 
+        waterEffect.SetActive(false);
         burnEffect.SetActive(false);
 
         if (currentHp < maxHp)
@@ -218,6 +221,8 @@ public class Objective : MonoBehaviour
     public void FireExtinguish(float fireStoppingPower)
     {
         if (!canFireBeExtinguished) return;
+
+        StartCoroutine(WaterEffectTimer());
         fireHP -= fireStoppingPower;
         if (fireHP <= 0)
         {
@@ -243,5 +248,12 @@ public class Objective : MonoBehaviour
         canRekindleFire = false;
         yield return new WaitForSeconds(rekindleFireDelay);
         canRekindleFire = true;
-    }   
+    }
+
+    IEnumerator WaterEffectTimer()
+    {
+        waterEffect.SetActive(true);
+        yield return new WaitForSeconds(waterEffectTime);
+        waterEffect.SetActive(false);
+    }
 }
