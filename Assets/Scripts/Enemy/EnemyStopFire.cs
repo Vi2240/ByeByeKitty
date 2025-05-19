@@ -25,7 +25,7 @@ public class EnemyStopFire : MonoBehaviour
     [SerializeField] float extinguishCooldownTime;
     [SerializeField] float initialCooldownTime;
     
-    void FixedUpdate() { StopFire(); }
+    void FixedUpdate() { ExtinguishFire(); }
     
     public void SetInObjectiveZone(bool isInZone, GameObject gameObject){    
         foreach (Zone zone in zones)
@@ -33,7 +33,7 @@ public class EnemyStopFire : MonoBehaviour
         zones.Add(new Zone(isInZone, gameObject));            
     }
 
-    private void StopFire(){
+    private void ExtinguishFire(){
         foreach (Zone zone in zones)
             if (zone.isInZone && !zone.onCooldown) {
                 zone.gameObject.GetComponent<Objective>().FireExtinguish(fireStoppingPower); 
