@@ -8,6 +8,7 @@ public class FloatingHealthNumber : MonoBehaviour
     [Header("Text Components")]
     [SerializeField] private TMP_Text redTextComponent;
     [SerializeField] private TMP_Text orangeTextComponent;
+    [SerializeField] private TMP_Text greenTextComponent;
 
     [Header("Movement Settings")]
     [SerializeField] float initialYVelocity = 7f;
@@ -38,12 +39,23 @@ public class FloatingHealthNumber : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    public void SetText(string text, bool useRedText)
+    public void SetText(string text, int colour)
     {
         TMP_Text activeTextComponent = null;
-        redTextComponent.gameObject.SetActive(useRedText);
-        orangeTextComponent.gameObject.SetActive(!useRedText);
-        activeTextComponent = (useRedText) ? redTextComponent : orangeTextComponent;
+        redTextComponent.gameObject.SetActive(false);
+        orangeTextComponent.gameObject.SetActive(false);
+        greenTextComponent.gameObject.SetActive(false);
+
+        switch (colour)
+        {
+            case 1:     orangeTextComponent.gameObject.SetActive(true); break;
+            case 2:     greenTextComponent.gameObject.SetActive(true);  break;
+            default:    redTextComponent.gameObject.SetActive(true);    break;
+        }
+
+        activeTextComponent = (colour == 1) ? orangeTextComponent
+                            : (colour == 2) ? greenTextComponent
+                            : redTextComponent;
         activeTextComponent.SetText(text);
     }
 
