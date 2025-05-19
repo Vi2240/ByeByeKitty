@@ -391,8 +391,8 @@ MonoBehaviour:
   delayBeforeFade: 1
   deathScreenCanvasGroup: {fileID: 1836543121}
   deathScreenRoot: {fileID: 1836543118}
-  winScreenCanvasGroup: {fileID: 825802721}
-  winScreenRoot: {fileID: 825802719}
+  winScreenCanvasGroup: {fileID: 0}
+  winScreenRoot: {fileID: 0}
 --- !u!1001 &134671493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -873,7 +873,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 825802720}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1013,7 +1013,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 985416338}
-  m_Father: {fileID: 825802720}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4603,7 +4603,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 825802720}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5793,7 +5793,6 @@ RectTransform:
   - {fileID: 4534191467121102721}
   - {fileID: 626138406}
   - {fileID: 1836543119}
-  - {fileID: 825802720}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6733,3 +6732,6 @@ SceneRoots:
   - {fileID: 2264580121970028736}
   - {fileID: 532202758805189195}
   - {fileID: 1023371954}
+  - {fileID: 309888331}
+  - {fileID: 332994487}
+  - {fileID: 1774768318}
