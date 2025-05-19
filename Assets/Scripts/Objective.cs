@@ -12,6 +12,7 @@ public class Objective : MonoBehaviour
     [SerializeField] float treeHeal;
     [SerializeField] bool enemyKillzone;
     float currentHp;
+    bool treeAlive = true;
 
     [Header("Fire Variables")]
     [SerializeField] bool canFireBeExtinguished = true;
@@ -56,6 +57,7 @@ public class Objective : MonoBehaviour
         isBurning = new Wrapper<bool>(false);
         fireIntensityPercentageFactor = 0f;
         gameWon = false;
+        treeAlive = true;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
 
         if (burnEffect != null)
@@ -74,6 +76,8 @@ public class Objective : MonoBehaviour
 
     void Update()
     {
+        if (!treeAlive) return;
+
         if (!playersInZone || isBurning.value || !Input.GetKey(KeyCode.E) || !canRekindleFire)
         {
             holdTimer = 0f;
@@ -98,6 +102,8 @@ public class Objective : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!treeAlive) return;
+
         if (isBurning.value)
         {
             healingEffect.SetActive(false);
@@ -139,7 +145,11 @@ public class Objective : MonoBehaviour
             currentHp -= burningDmg;
             var dmgnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
             dmgnr.GetComponent<FloatingHealthNumber>().SetText(burningDmg.ToString(), 1);
-            if (currentHp <= 0) StartCoroutine(WinGame());
+            if (currentHp <= 0 && treeAlive)
+            {
+                treeAlive = false;
+                waveManager.StartBossWave();
+            }
         }
     }
 
@@ -202,6 +212,10 @@ public class Objective : MonoBehaviour
         if (other.tag == "Player")
         {
             playersInZone = false;
+        }
+        if (other.tag == "Enemy")
+        {
+            other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(false, this.gameObject);
         }
     }
 

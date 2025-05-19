@@ -10,6 +10,10 @@ using UnityEngine;
 /// </summary>
 public class WaveManager : MonoBehaviour
 {
+    [Header("Quick fix boss spawn")]
+    [SerializeField] GameObject bossPrefab;
+    [SerializeField] Transform bossSpawnPoint;
+
     [Header("Wave Settings")]
     public WaveType0 waveType0Prefab;  // Prefab with the WaveType0 component.
     // TODO: Consider a more generic way to handle prefabs if more WaveTypes are added
@@ -41,6 +45,10 @@ public class WaveManager : MonoBehaviour
     [Tooltip("Optional: Assign a LootTableProgressionManager to update loot tables after waves.")]
     public LootTableProgressionManager lootProgressionManager;
     [SerializeField] bool lootProgressionIsPerCycle = true; // If true, resets the wave count when starting continuous waves
+
+    [Tooltip("Optional: Assign a WaveProgressionManager to control the sequence of wave types and difficulties.")]
+    public WaveProgressionManager waveProgressionManager;
+    [SerializeField] bool waveProgressionIsPerCycle = true;
 
     /// <summary>
     /// Starts a wave of the given type and tracks its coroutine.
@@ -201,22 +209,48 @@ public class WaveManager : MonoBehaviour
             yield break; // Exit the cycle if the flag is false
         }
 
-        // Optional: Reset loot progression when the continuous cycle starts
+        // Optionals: Reset progression systems if configured
         if (lootProgressionIsPerCycle && lootProgressionManager != null)
         {
             lootProgressionManager.ResetWaveCount();
         }
+        if (waveProgressionIsPerCycle && waveProgressionManager != null)
+        {
+            waveProgressionManager.ResetProgression();
+        }
 
         while (refrenceFlag.value)
         {
-            if (availableWaveTypes.Count == 0 || availableDifficulties.Count == 0)
-            {
-                Debug.LogError("Wave cycle cannot continue: available wave types or difficulties are empty.");
-                yield break; // Exit the cycle
-            }
+            WaveType selectedWaveType;
+            int selectedDifficulty;
 
-            WaveType randomWaveType = availableWaveTypes[Random.Range(0, availableWaveTypes.Count)];
-            int randomDifficulty = availableDifficulties[Random.Range(0, availableDifficulties.Count)];
+            // --- GET WAVE PARAMETERS FROM PROGRESSION MANAGER OR FALLBACK ---
+            if (waveProgressionManager != null)
+            {
+                if (waveProgressionManager.GetNextWaveParameters(out selectedWaveType, out selectedDifficulty))
+                {
+                    // Parameters successfully retrieved from progression manager
+                }
+                else
+                {
+                    // Progression manager indicated end of sequence and not looping/repeating
+                    Debug.Log("RunWaveCycle: Wave progression finished. Stopping continuous waves.");
+                    refrenceFlag.value = false; // Signal to stop the cycle
+                    break; // Exit while loop
+                }
+            }
+            else // Fallback to random selection if no progression manager is assigned
+            {
+                Debug.LogWarning("RunWaveCycle: WaveProgressionManager not assigned. Falling back to random wave selection.");
+                if (availableWaveTypes.Count == 0 || availableDifficulties.Count == 0)
+                {
+                    Debug.LogError("Wave cycle cannot continue: available wave types or difficulties are empty for random selection.");
+                    yield break;
+                }
+                selectedWaveType = availableWaveTypes[Random.Range(0, availableWaveTypes.Count)];
+                selectedDifficulty = availableDifficulties[Random.Range(0, availableDifficulties.Count)];
+            }
+            // --- END OF GETTING WAVE PARAMETERS ---
 
             Transform[] positionsToUse;
             switch (continuousWaveSpawnType)
@@ -245,8 +279,8 @@ public class WaveManager : MonoBehaviour
                     continue;
             }
 
-            Debug.Log($"Continuous Cycle: Starting new wave - Type: {randomWaveType}, Difficulty: {randomDifficulty}, SpawnType: {continuousWaveSpawnType}");
-            activeContinuousWaveInstance = StartWave(randomWaveType, continuousWaveSpawnType, randomDifficulty, defaultSpawnRate, positionsToUse);
+            Debug.Log($"Continuous Cycle: Starting new wave - Type: {selectedWaveType}, Difficulty: {selectedDifficulty}, SpawnType: {continuousWaveSpawnType}");
+            activeContinuousWaveInstance = StartWave(selectedWaveType, continuousWaveSpawnType, selectedDifficulty, defaultSpawnRate, positionsToUse);
 
             if (activeContinuousWaveInstance != null)
             {
@@ -289,6 +323,23 @@ public class WaveManager : MonoBehaviour
         
         Debug.Log("RunWaveCycle: Loop has exited.");
         continuousWaveCoroutine = null;
+    }
+
+    public void StartBossWave()
+    {
+        if (bossPrefab != null && bossSpawnPoint != null)
+        {
+            Debug.Log("Starting boss wave.");
+            GameObject bossInstance = Instantiate(bossPrefab, bossSpawnPoint.position, Quaternion.identity);
+            if (enemyParent != null)
+            {
+                bossInstance.transform.SetParent(enemyParent.transform, true);
+            }
+        }
+        else
+        {
+            Debug.LogError("Boss prefab or spawn point is not assigned.");
+        }      
     }
 
     /// <summary>

@@ -44,15 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c931d2e4403378648ae34f81810b378a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: 1
-  spawnRate: 3
-  players: []
-  spawnRadius: 20
-  minDistance: 3
   normalEnemy: {fileID: 9205428136142299004, guid: 7ffa109d000a87b0886ba5e675a438d0, type: 3}
   speedEnemy: {fileID: 9205428136142299004, guid: b9be07b5789b50a4b9b7dad470828830, type: 3}
   slowEnemy: {fileID: 9205428136142299004, guid: a9c3b3de85c865ab9ad37e7f10cebe47, type: 3}
   rangeEnemy: {fileID: 9205428136142299004, guid: f0c34cbb5d081c34c88ce5135d23aaba, type: 3}
+  bossEnemy: {fileID: 9205428136142299004, guid: 47d2cce17a099e22e8e61ce4ea476508, type: 3}
+  enemyParent: {fileID: 0}
+  difficulty: 1
+  spawnRate: 3
+  players: []
+  positions_tmp: []
   fixedSpawnPoints: []
   objectivePositions: []
   spawnType: 0

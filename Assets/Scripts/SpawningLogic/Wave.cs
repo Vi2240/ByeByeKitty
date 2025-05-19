@@ -9,6 +9,13 @@ using UnityEngine;
 /// </summary>
 public abstract class Wave : MonoBehaviour
 {
+    [Header("Enemy Prefabs")]
+    public GameObject normalEnemy;
+    public GameObject speedEnemy;
+    public GameObject slowEnemy;
+    public GameObject rangeEnemy;
+    public GameObject bossEnemy;
+
     public GameObject enemyParent;
     public int difficulty = 1;        // e.g., 0, 1, 2, etc.
     public float spawnRate = 3;       // How frequently enemies spawn (interpreted by concrete wave).
@@ -50,34 +57,39 @@ public abstract class Wave : MonoBehaviour
         currentSpawnRadius = Mathf.Abs(currentSpawnRadius);
 
         // Ensure spawn radius is at least as large as min distance from point if both are positive
-        if (currentMinDistanceFromPoint > 0 && currentSpawnRadius > 0 && currentMinDistanceFromPoint >= currentSpawnRadius) {
-             currentSpawnRadius = currentMinDistanceFromPoint + 1f; // Ensure radius is slightly larger
+        if (currentMinDistanceFromPoint > 0 && currentSpawnRadius > 0 && currentMinDistanceFromPoint >= currentSpawnRadius)
+        {
+            currentSpawnRadius = currentMinDistanceFromPoint + 1f; // Ensure radius is slightly larger
         }
 
 
         Transform[] effectiveReferencePoints = referencePoints;
-        if (spawnTypeToUse == SpawnType.AreaAroundPlayers) {
+        if (spawnTypeToUse == SpawnType.AreaAroundPlayers)
+        {
             effectiveReferencePoints = this.players; // AreaAroundPlayers always uses the 'players' array
-        } else if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0) {
+        }
+        else if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0)
+        {
             effectiveReferencePoints = this.positions_tmp; // Fallback for Fixed/AreaAroundPosition if specific not given
         }
 
 
-        if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0) {
+        if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0)
+        {
             Debug.LogWarning($"GetValidSpawnPosition: No reference points available for spawn type {spawnTypeToUse}. Returning Vector3.zero.");
             return Vector3.zero;
         }
-    
+
         if (spawnTypeToUse == SpawnType.Fixed)
         {
             return effectiveReferencePoints[Random.Range(0, effectiveReferencePoints.Length)].position;
         }
-        
+
         Vector3 spawnPos = Vector3.zero;
         int attempts = 10; // Max attempts to find a valid position
         bool foundValid = false;
 
-        for(int i=0; i < attempts; i++)
+        for (int i = 0; i < attempts; i++)
         {
             Transform refPoint = effectiveReferencePoints[Random.Range(0, effectiveReferencePoints.Length)];
             if (refPoint == null) continue; // Skip if a reference point is null
@@ -89,10 +101,13 @@ public abstract class Wave : MonoBehaviour
                     Vector2 randomDirection = Random.insideUnitCircle.normalized;
                     // Ensure minDistance < spawnRadius for Random.Range to be valid
                     float actualMinDistance = (spawnTypeToUse == SpawnType.AreaAroundPosition) ? currentMinDistanceFromPoint : 0f; // Players don't need min distance from *themselves* as the center
-                    if (actualMinDistance >= currentSpawnRadius && currentSpawnRadius > 0) { // If min dist is too large for radius
+                    if (actualMinDistance >= currentSpawnRadius && currentSpawnRadius > 0)
+                    { // If min dist is too large for radius
                         actualMinDistance = currentSpawnRadius * 0.5f; // Adjust to be within radius
-                         Debug.LogWarning($"MinDistanceFromPoint ({currentMinDistanceFromPoint}) was >= SpawnRadius ({currentSpawnRadius}). Adjusted for random range.");
-                    } else if (currentSpawnRadius <=0) { // If radius is zero or negative, just use the point
+                        Debug.LogWarning($"MinDistanceFromPoint ({currentMinDistanceFromPoint}) was >= SpawnRadius ({currentSpawnRadius}). Adjusted for random range.");
+                    }
+                    else if (currentSpawnRadius <= 0)
+                    { // If radius is zero or negative, just use the point
                         spawnPos = refPoint.position;
                         break;
                     }
@@ -109,13 +124,15 @@ public abstract class Wave : MonoBehaviour
                     return refPoint.position; // Failsafe
             }
 
-            if (IsSpawnValid(spawnPos, currentMinDistanceFromPlayer)) {
+            if (IsSpawnValid(spawnPos, currentMinDistanceFromPlayer))
+            {
                 foundValid = true;
                 break;
             }
         }
 
-        if (!foundValid) {
+        if (!foundValid)
+        {
             //Debug.LogWarning($"Could not find a spawn position respecting minDistanceFromPlayer ({currentMinDistanceFromPlayer}u) after {attempts} attempts for spawn type {spawnTypeToUse}. Using last attempt.");
         }
         return spawnPos;
@@ -129,7 +146,8 @@ public abstract class Wave : MonoBehaviour
         float currentMinDistance = minDistance ?? this.minDistanceFromPlayer ?? 0f;
         if (currentMinDistance <= 0) return true; // No validation needed if distance is zero or negative
 
-        if (players == null || players.Length == 0) {
+        if (players == null || players.Length == 0)
+        {
             //Debug.LogWarning("IsSpawnValid: No players assigned to Wave, cannot validate distance. Assuming valid.");
             return true; // Or false, depending on desired behavior
         }
@@ -141,5 +159,21 @@ public abstract class Wave : MonoBehaviour
                 return false;
         }
         return true;
+    }
+    
+    public void SpawnBossEnemy(Vector3 spawnPos)
+    {
+        if (bossEnemy != null)
+        {
+            GameObject enemyInstance = Instantiate(bossEnemy, spawnPos, Quaternion.identity);
+            if (enemyParent != null)
+            {
+                enemyInstance.transform.SetParent(enemyParent.transform, true);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Boss enemy prefab is not assigned or is null.");
+        }
     }
 }

@@ -9,12 +9,6 @@ using UnityEngine;
 /// </summary>
 public class WaveType0 : Wave // Ensure Wave.cs exists and is the base class
 {
-    [Header("Enemy Prefabs")]
-    public GameObject normalEnemy;
-    public GameObject speedEnemy; // Currently unused in spawn logic based on chances
-    public GameObject slowEnemy;
-    public GameObject rangeEnemy; // Currently unused in spawn logic based on chances
-
     [Header("Reference Points for Spawning (assigned by WaveManager or defaults)")]
     public Transform[] fixedSpawnPoints;    // For Fixed mode.
     public Transform[] objectivePositions;  // For AreaAroundPosition mode if positions_tmp not set by WaveManager.
