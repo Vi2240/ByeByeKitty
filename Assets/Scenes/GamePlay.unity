@@ -2650,7 +2650,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: waterEffectTime
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: requiredHoldTime

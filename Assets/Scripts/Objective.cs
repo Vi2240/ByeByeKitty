@@ -8,7 +8,7 @@ public class Objective : MonoBehaviour
     [SerializeField] GameObject numberEffect;
     [SerializeField] GameObject healingEffect;
     [SerializeField] GameObject waterEffect;
-    [SerializeField] float waterEffectTime = 10f;
+    [SerializeField] float waterEffectTime = 2.0f;
     [SerializeField] float maxHp;
     [SerializeField] float healSpeed;
     [SerializeField] float treeHeal;
