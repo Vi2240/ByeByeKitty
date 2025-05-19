@@ -2014,6 +2014,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1916698913526644924, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3126341213566847188, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: spawnRate
       value: 5
@@ -2039,8 +2043,12 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: burnSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: healSpeed
-      value: 0.25
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: maxFireHp
@@ -2048,7 +2056,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: burningDmg
-      value: 50
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: fireCircle
@@ -2059,8 +2067,12 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: enemyKillzone
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: fireHealSpeed
-      value: 0.2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: requiredHoldTime
@@ -2074,6 +2086,10 @@ PrefabInstance:
       propertyPath: waveManagerObject
       value: 
       objectReference: {fileID: 1380949261}
+    - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
+      propertyPath: damageNumberEffect
+      value: 
+      objectReference: {fileID: 6509593360542762755, guid: bd69952a302ffc8438699c617cb5cd6b, type: 3}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: BurnEffectScaleMult
       value: 1.5

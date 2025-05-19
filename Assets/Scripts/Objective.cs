@@ -5,6 +5,7 @@ public class Objective : MonoBehaviour
 {
 
     [Header("Tree Variables")]
+    [SerializeField] GameObject healingEffect;
     [SerializeField] float maxHp;
     [SerializeField] float healSpeed;
     [SerializeField] float treeHeal;
@@ -12,6 +13,7 @@ public class Objective : MonoBehaviour
     float currentHp;
 
     [Header("Fire Variables")]
+    [SerializeField] GameObject damageNumberEffect;
     [SerializeField] bool canFireBeExtinguished = true;
     [SerializeField] float maxFireHp;
     [SerializeField] float fireHeal;
@@ -25,7 +27,6 @@ public class Objective : MonoBehaviour
 
     [Header("Fire Activation Variables")]
     [SerializeField] GameObject burnEffect;
-    [SerializeField] GameObject healingEffect;
     [SerializeField] float rekindleFireDelay = 5f;
 
     [SerializeField] GameObject winCanvas;
@@ -62,6 +63,12 @@ public class Objective : MonoBehaviour
         if (burnEffect != null)
             maxBurnEffectScale_Vec = burnEffect.transform.localScale * BurnEffectScaleMult;
         else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);
+
+        // flip all timers -- set to TPS instead of SPT
+        healSpeed       = (healSpeed == 0)     ? 0 : 1 / healSpeed;
+        burnSpeed       = (burnSpeed == 0)     ? 0 : 1 / burnSpeed;
+        fireHealSpeed   = (fireHealSpeed == 0) ? 0 : 1 / fireHealSpeed;
+
     }
 
     void Update()
@@ -90,8 +97,11 @@ public class Objective : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isHealing) { healingEffect.SetActive(false); }
+
         if (isBurning.value)
         {
+            isHealing = false;
             fireIntensityPercentageFactor = fireHP / maxFireHp;
             HandleBurningDamage(Time.fixedDeltaTime);
             HandleFireGrowth(Time.fixedDeltaTime);
@@ -102,6 +112,10 @@ public class Objective : MonoBehaviour
         if (currentHp < maxHp && !isHealing)
         {
             StartCoroutine(HealingHealth());
+        }        
+        else if (currentHp == maxHp)
+        {
+            isHealing = false;            
         }
 
         if (burnEffect != null && burnEffect.activeSelf)
@@ -123,10 +137,13 @@ public class Objective : MonoBehaviour
     void HandleBurningDamage(float dt)
     {
         burnDMGTimer += dt;
-        while (burnDMGTimer >= burnSpeed)
+        float curBurnSpeed = burnSpeed / fireIntensityPercentageFactor;
+        while (burnDMGTimer >= curBurnSpeed)
         {
-            burnDMGTimer -= burnSpeed;
-            currentHp -= burningDmg * fireIntensityPercentageFactor;
+            burnDMGTimer -= curBurnSpeed;
+            currentHp -= burningDmg;
+            var dmgnr = Instantiate(damageNumberEffect, transform.position, Quaternion.identity);
+            dmgnr.GetComponent<FloatingHealthNumber>().SetText(burningDmg.ToString(), false);
             if (currentHp <= 0) StartCoroutine(WinGame());
         }
     }
@@ -177,6 +194,20 @@ public class Objective : MonoBehaviour
         }
     }
 
+
+    // float healTimer = 0f;
+    // void HandleHealing(float dt)
+    // {
+        // healTimer += dt;
+        // while (healTimer >= healSpeed)
+        // {
+            // burnDMGTimer -= curBurnSpeed;
+            // currentHp -= burningDmg;
+            // var dmgnr = Instantiate(damageNumberEffect, transform.position, Quaternion.identity);
+            // dmgnr.GetComponent<FloatingHealthNumber>().SetText(burningDmg.ToString(), false);
+            // if (currentHp <= 0) StartCoroutine(WinGame());
+        // }
+    // }
     IEnumerator HealingHealth()
     {
         isHealing = true;
@@ -185,9 +216,6 @@ public class Objective : MonoBehaviour
         currentHp += treeHeal;
 
         yield return new WaitForSeconds(healSpeed);
-
-        isHealing = false;
-        healingEffect.SetActive(false);
     }
 
     public Wrapper<bool> GetIsBurning()
