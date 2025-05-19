@@ -825,6 +825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61c1d283d7cdd4d4a800b8a96185e1fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBoss: 1
   maxHealth: 2000
   currentHealth: 0
   healthBar: {fileID: 235728362966786466}

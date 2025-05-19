@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
+    [SerializeField] bool isBoss = false;
     [Header("Health")]
     [SerializeField] float maxHealth = 100;
     [SerializeField] float currentHealth;
@@ -100,6 +101,15 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
+        if (isBoss)
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject enemy in enemies)
+            {
+                enemy.GetComponent<EnemyHealth>().TakeDamage(100000);
+            }
+            GameObject.FindGameObjectWithTag("EndScreenManager").GetComponent<EndScreenFader>().ShowWinScreen();
+        }
         AudioPlayer.Current.PlaySfxAtPoint("BloodExplosion", transform.position, 0.5f);
         if (bloodExplosion) { Instantiate(bloodExplosion, transform.position, quaternion.identity); }; // Blood splatter
         if (bloodPuddles.Length > 0) 
