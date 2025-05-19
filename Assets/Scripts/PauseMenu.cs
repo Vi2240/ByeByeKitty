@@ -11,18 +11,28 @@ public class PauseMenu : MonoBehaviour
     [Header("Settings")]
     [Tooltip("Name of your Main Menu scene. Leave empty if you only want to quit.")]
     [SerializeField] private string mainMenuSceneName = "MainMenu"; // Change this to your actual main menu scene name
+    [SerializeField] bool pauseTimeAtStart = false;
 
     void Start()
     {
-        // Ensure the pause menu is hidden at the start
-        if (pauseMenuUI != null)
+        if (pauseTimeAtStart)
         {
-            pauseMenuUI.SetActive(false);
+            Time.timeScale = 0f;
+            AudioListener.pause = true;
+            GameIsPaused = true;
         }
-        // Ensure game is not paused at start (in case of scene reloads while paused)
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-        GameIsPaused = false;
+        else
+        {
+            // Ensure the pause menu is hidden at the start
+            if (pauseMenuUI != null)
+            {
+                pauseMenuUI.SetActive(false);
+            }
+            // Ensure game is not paused at start (in case of scene reloads while paused)
+            Time.timeScale = 1f;
+            AudioListener.pause = false;
+            GameIsPaused = false;
+        }
     }
 
     void Update()

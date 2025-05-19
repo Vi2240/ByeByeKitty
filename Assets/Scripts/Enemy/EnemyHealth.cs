@@ -8,10 +8,13 @@ public class EnemyHealth : MonoBehaviour
     [Header("Health")]
     [SerializeField] float maxHealth = 100;
     [SerializeField] float currentHealth;
+    [SerializeField] Enemy_HealthBar healthBar;
+
+    [Header("Healing")]
+    [SerializeField] bool passiveHealing = true;
     [SerializeField, Tooltip("Healing starts after X seconds out of combat.")] float timeToHeal = 3;
     [SerializeField] int healPerTick = 2;
     [SerializeField] float timeBetweenHealingTicks = 0.5f;
-    [SerializeField] Enemy_HealthBar healthBar;
 
     [Header("Blood")]
     [SerializeField] GameObject bloodExplosion;
@@ -37,16 +40,19 @@ public class EnemyHealth : MonoBehaviour
 
     void FixedUpdate()
     {
-        timer += Time.deltaTime;
-        if (timer >= timeToHeal)
+        if (passiveHealing)
         {
-            timer = 0;
-            outOfCombat = true;
-        }
+            timer += Time.deltaTime;
+            if (timer >= timeToHeal)
+            {
+                timer = 0;
+                outOfCombat = true;
+            }
 
-        if (outOfCombat && currentHealth < maxHealth)
-        {
-            Heal();
+            if (outOfCombat && currentHealth < maxHealth)
+            {
+                Heal();
+            }
         }
 
         if (currentHealth <= 0)

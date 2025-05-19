@@ -17,9 +17,6 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
     int targetRestriction = 0;
 
-    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] 
-    int attackType = 0;
-
     [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
     float nearObjectCheckRadius = 5;
 
@@ -64,12 +61,6 @@ public class EnemyMovement : MonoBehaviour
         savedPositions = new Vector2[checkIfStuckFrequency];
         walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
-        // If it's a melee enemy it should go all the way to the player
-        if (attackType == 0)
-        {
-            stopDistanceFromPlayer = 0.2f;
-        }
-        
         // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
@@ -147,7 +138,10 @@ public class EnemyMovement : MonoBehaviour
         }
         else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
         {
-            MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            if (nearestPlayer)
+            {
+                MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            }
             return true;
         }
 

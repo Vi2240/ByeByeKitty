@@ -31,7 +31,7 @@ public class EnemyAttack : MonoBehaviour
 
         if (nearestPlayer && movementScript.DistanceTo(nearestPlayer) > attackRange) { return; } // Return if it's too far away to skip code below
 
-        if (timer >= attackCooldown)
+        if (timer >= attackCooldown/InventoryAndBuffs.enemyAttackSpeedMultiplier)
         {
             if (attackType == 0)
             {
@@ -55,6 +55,7 @@ public class EnemyAttack : MonoBehaviour
         //direction.Normalize(); // Normalize the direction vector to get a unit vector (magnitude of 1)
 
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPos.position, Quaternion.identity);
+        bullet.GetComponent<EnemyBullet>().SetDamage(attackDamage*InventoryAndBuffs.enemyDamageMultiplier);
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         bullet.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
 

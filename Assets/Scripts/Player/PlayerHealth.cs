@@ -92,6 +92,7 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         // Death stuff
+        GameObject.FindGameObjectWithTag("DeathScreenManager").GetComponent<DeathScreenFader>().ShowDeathScreen();
         this.gameObject.SetActive(false);
                         
         if (blood == null) { print("Missing particle effect"); return; }
