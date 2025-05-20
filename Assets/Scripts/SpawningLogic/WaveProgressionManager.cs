@@ -1,11 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Make sure WaveType and SpawnType enums are accessible if they are defined elsewhere,
-// or define them here if they are only for this system.
-// public enum WaveType { WaveType0, WaveType1 /*, ... */ }
-// public enum SpawnType { Fixed, AreaAroundPosition, AreaAroundPlayers }
-
 [System.Serializable]
 public struct WaveProgressionEntry
 {
@@ -15,10 +10,13 @@ public struct WaveProgressionEntry
     [Tooltip("The difficulty level for this specific wave.")]
     public int difficulty;
 
-    // Optional: Override other parameters per wave if needed
-    // public float spawnRateOverride = -1f; // -1 to use WaveManager's default
-    // public SpawnType spawnTypeOverride = SpawnType.AreaAroundPosition; // Or some indicator to use WaveManager's default
-    // public float delayAfterThisWave = -1f; // -1 to use WaveManager's default delayBetweenWaves
+    [Tooltip("The LootTable that should become the default in LootManager AFTER this wave completes. Assign if desired.")]
+    public LootTable lootTableForNextPeriod;
+
+    // Optional: You could still have overrides here if a specific wave in the sequence
+    // needs to deviate from the WaveManager's 'continuousWaveSpawnType' or 'delayBetweenWaves'
+    // public SpawnType? overrideSpawnType = null; // Use nullable if you want to check if it's set
+    // public float? overrideDelayAfterThisWave = null;
 }
 
 public class WaveProgressionManager : MonoBehaviour
@@ -32,21 +30,15 @@ public class WaveProgressionManager : MonoBehaviour
     [Tooltip("If loopSequence is false, and this is true, the last wave in the sequence will be repeated indefinitely.")]
     public bool repeatLastWaveWhenNotLooping = true;
 
+    [Tooltip("If true, and loopSequence is true, the difficulty of all waves will increment by 1 each time the sequence loops.")]
+    [SerializeField] bool incrementDifficultyOnLoop = true;
+    private int currentLoopDifficultyAmplifier = 0; // Stores the added difficulty from looping
 
     private int currentWaveIndex = 0; // Tracks the current position in the waveProgressionSequence
 
-    /// <summary>
-    /// Gets the parameters for the next wave in the progression.
-    /// Advances the progression index.
-    /// </summary>
-    /// <param name="waveType">Output: The type of the next wave.</param>
-    /// <param name="difficulty">Output: The difficulty of the next wave.</param>
-    /// <returns>True if a wave was successfully retrieved, false if the sequence is empty or finished (and not looping/repeating).</returns>
-    public bool GetNextWaveParameters(out WaveType waveType, out int difficulty)
+    public bool TryGetNextWaveEntry(out WaveProgressionEntry entry)
     {
-        // Set default out values
-        waveType = default(WaveType); // Or your most basic wave type
-        difficulty = 0;
+        entry = default;
 
         if (waveProgressionSequence == null || waveProgressionSequence.Count == 0)
         {
@@ -54,30 +46,47 @@ public class WaveProgressionManager : MonoBehaviour
             return false;
         }
 
-        if (currentWaveIndex >= waveProgressionSequence.Count)
+        int indexToUseForThisCall = currentWaveIndex;
+
+        if (indexToUseForThisCall >= waveProgressionSequence.Count)
         {
             if (loopSequence)
             {
-                currentWaveIndex = 0; // Loop back to the start
+                indexToUseForThisCall = 0;
+                currentLoopDifficultyAmplifier += incrementDifficultyOnLoop ? 1 : 0;
             }
             else if (repeatLastWaveWhenNotLooping)
             {
-                currentWaveIndex = waveProgressionSequence.Count - 1; // Stay on the last wave
+                indexToUseForThisCall = waveProgressionSequence.Count - 1;
+                // No difficulty increment if just repeating the last wave without a full loop
             }
             else
             {
                 Debug.Log("WaveProgressionManager: End of wave sequence reached and not looping/repeating.", this);
-                return false; // End of sequence
+                return false;
             }
         }
 
-        WaveProgressionEntry currentEntry = waveProgressionSequence[currentWaveIndex];
-        waveType = currentEntry.waveType;
-        difficulty = currentEntry.difficulty;
+        // Get the base entry
+        WaveProgressionEntry baseEntry = waveProgressionSequence[indexToUseForThisCall];
 
-        Debug.Log($"WaveProgressionManager: Providing Wave {currentWaveIndex + 1}/{waveProgressionSequence.Count} - Type: {waveType}, Difficulty: {difficulty}");
+        // Create a temporary entry to modify its difficulty for this call
+        entry = baseEntry; 
+        entry.difficulty = baseEntry.difficulty + currentLoopDifficultyAmplifier; // Apply the aplifier
 
-        currentWaveIndex++; // Advance for the next call
+        Debug.Log($"WaveProgressionManager: Providing Wave (index {indexToUseForThisCall}, base diff: {baseEntry.difficulty}, amplifier: {currentLoopDifficultyAmplifier}) " +
+                  $"Type: {entry.waveType}, Final Diff: {entry.difficulty}, " + // Log final difficulty
+                  $"LootAfter: {(entry.lootTableForNextPeriod != null ? entry.lootTableForNextPeriod.name : "None")}");
+
+        // Prepare currentWaveIndex for the NEXT call
+        if (repeatLastWaveWhenNotLooping && indexToUseForThisCall == waveProgressionSequence.Count - 1 && !loopSequence)
+        {
+            currentWaveIndex = waveProgressionSequence.Count - 1;
+        }
+        else
+        {
+            currentWaveIndex = indexToUseForThisCall + 1;
+        }
 
         return true;
     }
@@ -85,12 +94,7 @@ public class WaveProgressionManager : MonoBehaviour
     public void ResetProgression()
     {
         currentWaveIndex = 0;
-        Debug.Log("WaveProgressionManager: Progression reset.", this);
+        currentLoopDifficultyAmplifier = 0;
+        Debug.Log("WaveProgressionManager: Progression and difficulty bonus reset.", this);
     }
-
-    // Optional: Call this at the start if you want to ensure it's ready
-    // void Start()
-    // {
-    //     ResetProgression(); // Start from the beginning
-    // }
 }

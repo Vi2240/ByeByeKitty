@@ -20796,14 +20796,16 @@ MonoBehaviour:
   waveProgressionSequence:
   - waveType: 0
     difficulty: 0
-  - waveType: 0
+    lootTableForNextPeriod: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
+  - waveType: 1
     difficulty: 0
+    lootTableForNextPeriod: {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
   - waveType: 0
     difficulty: 1
-  - waveType: 0
-    difficulty: 1
-  - waveType: 0
-    difficulty: 2
+    lootTableForNextPeriod: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
+  - waveType: 2
+    difficulty: 0
+    lootTableForNextPeriod: {fileID: 11400000, guid: 35ea238f5e6a3b7c0a3ea0d65294d803, type: 2}
   loopSequence: 1
   repeatLastWaveWhenNotLooping: 1
 --- !u!1001 &2053467277
@@ -21302,6 +21304,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2740214739033955690, guid: 98911448f0e5561448c1d43f84432716, type: 3}
   m_PrefabInstance: {fileID: 2089275476}
   m_PrefabAsset: {fileID: 0}
+  incrementDifficultyOnLoop: 1
 --- !u!1001 &2099094555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31897,9 +31900,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1711951448831170931}
     - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: normalEnemyWave
+      value: 
+      objectReference: {fileID: 8424384453551456824, guid: 2b3f451f1bebdc44b88eb291ec5483ff, type: 3}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: rangedEnemyWave
+      value: 
+      objectReference: {fileID: 2920996626103714913, guid: e6e946dfdd8182554a0017145d287709, type: 3}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
       propertyPath: delayBetweenWaves
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: agressiveEnemyWave
+      value: 
+      objectReference: {fileID: 5934585518358585041, guid: 07ac09e96881e404eab9de63deed3369, type: 3}
     - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
       propertyPath: lootProgressionManager
       value: 
@@ -36769,20 +36784,20 @@ MonoBehaviour:
   waterEffect: {fileID: 1773202175}
   waterEffectTime: 2
   maxHp: 5000
-  healSpeed: 2
-  treeHeal: 15
+  healSpeed: 4
+  treeHeal: 25
   enemyKillzone: 0
   canFireBeExtinguished: 1
   maxFireHp: 500
-  fireHeal: 1
-  fireHealSpeed: 25
+  fireHeal: 0.5
+  fireHealSpeed: 10
   burningDmg: 5
   burnSpeed: 10
   BurnEffectScaleMult: 1.5
   scaleDownDuration: 4
   maxShaderBurnValue: 0.99
   spriteRenderer: {fileID: 2862106568488952950}
-  delayFireGrowthAfterExtinguishTime: 1.5
+  delayFireGrowthAfterExtinguishTime: 2.5
   delayFireGrowthAfterExtinguish: 1
   burnEffect: {fileID: 30291362}
   rekindleFireDelay: 5

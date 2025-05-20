@@ -52,7 +52,6 @@ public class Objective : MonoBehaviour
 
     bool playersInZone;
     Wrapper<bool> isBurning;
-    bool canRekindleFire = true;
     bool gameWon;
 
     WaveManager waveManager;
@@ -119,11 +118,12 @@ public class Objective : MonoBehaviour
         fireHealSpeed = (fireHealSpeed == 0) ? 0 : 1 / fireHealSpeed;
     }
 
+    float rekindleFireTimer = 0f;
     void Update()
     {
         if (!treeAlive) return;
 
-        if (!playersInZone || isBurning.value || !Input.GetKey(KeyCode.E) || !canRekindleFire)
+        if (!playersInZone || isBurning.value || !Input.GetKey(KeyCode.E) || rekindleFireTimer > Time.time)
         {
             holdTimer = 0f;
             if (fireCircle != null) fireCircle.localScale = Vector3.zero;
@@ -143,7 +143,7 @@ public class Objective : MonoBehaviour
             isBurning.value = true;
             fireHP = maxFireHp / 4;
             if (waveManager != null) waveManager.StartContinuousWaves(gameObject.transform, isBurning);
-            StartCoroutine(RekindleFireTimmer());
+            rekindleFireTimer = Time.time + rekindleFireDelay;
             holdTimer = 0f;
             if (fireCircle != null) fireCircle.localScale = Vector3.zero;
         }
@@ -259,11 +259,9 @@ public class Objective : MonoBehaviour
             healthBar.SetHealth(currentHp, maxHp);
             UpdateBurnVisuals();
 
-            if (numberEffect != null)
-            {
-                var healnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
-                healnr.GetComponent<FloatingHealthNumber>()?.SetText(treeHeal.ToString(), 2);
-            }
+            if (numberEffect == null) return;            
+            var healnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
+            healnr.GetComponent<FloatingHealthNumber>()?.SetText(treeHeal.ToString(), 2);            
         }
     }
 
@@ -435,12 +433,5 @@ public class Objective : MonoBehaviour
         if (winCanvas != null) winCanvas.SetActive(true);
         yield return new WaitForSeconds(5);
         // Loader.LoadNetwork(Loader.Scene.MenuScene);
-    }
-
-    IEnumerator RekindleFireTimmer()
-    {
-        canRekindleFire = false;
-        yield return new WaitForSeconds(rekindleFireDelay);
-        canRekindleFire = true;
     }
 }
