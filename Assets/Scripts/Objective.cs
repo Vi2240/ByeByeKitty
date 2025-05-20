@@ -199,7 +199,6 @@ public class Objective : MonoBehaviour
 
         while (growthTimer >= fireHealSpeed)
         {
-            Debug.Log($"FireHP: {fireHP}");
             growthTimer -= fireHealSpeed;
             fireHP += fireHeal;
             fireHP = Mathf.Clamp(fireHP, 0, maxFireHp);
