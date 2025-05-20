@@ -6622,6 +6622,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 878423932}
     - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: delayBetweenWaves
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
       propertyPath: lootProgressionManager
       value: 
       objectReference: {fileID: 1844300514}
