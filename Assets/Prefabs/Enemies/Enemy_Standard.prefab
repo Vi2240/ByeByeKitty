@@ -752,11 +752,11 @@ MonoBehaviour:
   movePauseMin: 2
   movePauseMax: 5
   checkIfStuckFrequency: 5
-  stopDistanceFromPlayer: 0
+  stopDistanceFromPlayer: 0.5
   targetRestriction: 0
-  nearObjectCheckRadius: 0
+  nearObjectCheckRadius: 7
   randomWander: 1
-  canAttackPlayers: 0
+  canAttackPlayers: 1
 --- !u!114 &-2921794130836257963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -801,7 +801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableAttacking: 0
   attackType: 0
-  attackRange: 0.5
+  attackRange: 1
   bulletForce: 20
   attackCooldown: 0.5
   attackDamage: 5

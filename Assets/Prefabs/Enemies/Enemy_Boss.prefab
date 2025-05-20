@@ -803,7 +803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableAttacking: 0
   shootProjectiles: 1
-  projectiles: 8
+  projectiles: 18
   projectileAttackCooldown: 2
   projectileAttackDamage: 50
   bulletForce: 10
@@ -827,7 +827,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isBoss: 1
-  maxHealth: 2000
+  maxHealth: 5000
   currentHealth: 0
   healthBar: {fileID: 235728362966786466}
   passiveHealing: 0

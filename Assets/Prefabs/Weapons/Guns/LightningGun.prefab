@@ -78,9 +78,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnLocation: {fileID: 5401358535718712645}
   weaponSpriteTransform: {fileID: 731755398564547471}
-  fireCooldown: 0.05
+  fireCooldown: 0.08
   reloadTime: 0
-  damagePerHit: 2
+  damagePerHit: 3
   magazineSizeMax: 10
   currentMagAmmoCount: 10
   requiredMouseDistanceFromPlayer: 1.5

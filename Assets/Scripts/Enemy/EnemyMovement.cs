@@ -12,7 +12,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
     [SerializeField] int checkIfStuckFrequency = 5;
-    [SerializeField] float stopDistanceFromPlayer = 5;
+    [SerializeField] float stopDistanceFromPlayer = 1;
+    [SerializeField] float stopDistanceFromObjective = 2f;
 
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
     int targetRestriction = 0;
@@ -83,7 +84,6 @@ public class EnemyMovement : MonoBehaviour
                 }
                 else
                 {
-                    // What to do if random wander is on but no walkable area?
                     // Option: Stay put, or log error and disable movement.
                     Debug.LogWarning("Cannot random wander: WalkableArea is missing.", this);
                     agent.isStopped = true;
@@ -129,8 +129,19 @@ public class EnemyMovement : MonoBehaviour
         RandomWanderCheck();
     }
 
-    bool BehaviourChecks() // Returns true if the update function should return to skip code below
+    bool BehaviourChecks() // Returns true if the update function should return to random wander
     {
+        if (targetRestriction == 0 && isNearObjective && isNearPlayer)
+        {
+            MoveToDestination(nearestPlayer.transform.position);
+            return true;
+        }
+
+        if (targetRestriction == 0 && !nearestObjective)
+        {
+            MoveToDestination(nearestPlayer.transform.position);
+        }
+
         // If it's not resticted to players, it should prioritize the objective over the player if both are in range.
         if (isNearObjective && targetRestriction != 1)
         {
@@ -138,13 +149,13 @@ public class EnemyMovement : MonoBehaviour
 
             Temporary script = nearestObjective.GetComponent<Temporary>();
 
-            if (DistanceTo(nearestObjective) <= 5f)
+            if (DistanceTo(nearestObjective) <= stopDistanceFromObjective)
             {
                 agent.isStopped = true;
                 //print("Stopped");
                 // Do fire extinguish stuff
             }
-            return true; // Return true so it doesn't access the code below.
+            return true; // Return true to skip random wander
         }
 
         // Go to objective if it's not near a player and not restricted to players, or if it's restricted to objectves. Only works if the objective is under attack
