@@ -1,3 +1,5 @@
+// Wave.cs (Abstract base class) - Minor changes if any, ensure it's compatible.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,11 +9,18 @@ using UnityEngine;
 /// </summary>
 public abstract class Wave : MonoBehaviour
 {
+    [Header("Enemy Prefabs")]
+    public GameObject normalEnemy;
+    public GameObject speedEnemy;
+    public GameObject slowEnemy;
+    public GameObject rangeEnemy;
+    public GameObject bossEnemy;
+
     public GameObject enemyParent;
     public int difficulty = 1;        // e.g., 0, 1, 2, etc.
-    public float spawnRate = 3;       // How frequently enemies spawn.
+    public float spawnRate = 3;       // How frequently enemies spawn (interpreted by concrete wave).
     public Transform[] players;       // List of all players (used for distance validation).
-    public Transform[] positions_tmp; // Temporary variable for setting a position 
+    public Transform[] positions_tmp; // Temporary variable for setting a position array by WaveManager
 
     // The radius used when spawning enemies around a reference point.
     public float? spawnRadius = 20f;
@@ -22,6 +31,7 @@ public abstract class Wave : MonoBehaviour
 
     /// <summary>
     /// Every concrete wave must implement its execution logic.
+    /// This coroutine should yield until the wave is considered complete.
     /// </summary>
     public abstract IEnumerator ExecuteWave();
 
@@ -31,100 +41,139 @@ public abstract class Wave : MonoBehaviour
     /// For AreaAroundPosition, it returns a random point within a circle around a randomly chosen reference point.
     /// For AreaAroundPlayers, it does the same but uses the players list.
     /// </summary>
-    /// <param name="spawnType">The spawn mode to use.</param>
-    /// <param name="referencePoints">An array of reference points (for Fixed or AreaAroundPosition).</param>
+    /// <param name="spawnTypeToUse">The spawn mode to use.</param>
+    /// <param name="referencePoints">An array of reference points (for Fixed or AreaAroundPosition). If null for AreaAroundPlayers, uses 'this.players'.</param>
     /// <param name="_minDistanceFromPoint">(Optional) Minimum distance from the reference point (for area spawning).</param>
     /// <param name="_minDistanceFromPlayer">(Optional) Minimum distance from players area spawning can spawn (if fails 10 times it spawns anyways).</param>
     /// <param name="_spawnRadius">(Optional) The radius for the cirle that confines the spawning area around a point.</param>
     /// <returns>A valid spawn position.</returns>
-    protected Vector3 GetValidSpawnPosition(SpawnType spawnType, Transform[] referencePoints = null, float? _minDistanceFromPoint = null, float? _minDistanceFromPlayer = null, float? _spawnRadius = null)
+    protected Vector3 GetValidSpawnPosition(SpawnType spawnTypeToUse, Transform[] referencePoints = null, float? _minDistanceFromPoint = null, float? _minDistanceFromPlayer = null, float? _spawnRadius = null)
     {
-        // Make sure minDistanceFrom Point and Player are set to a value in priority order of, input to function, this functions value, 0f.
-        float minDistanceFromPoint    = _minDistanceFromPoint  ?? (float?)this.minDistanceFromPoint    ?? 0f;
-        float minDistanceFromPlayer   = _minDistanceFromPlayer ?? (float?)this.minDistanceFromPlayer   ?? 0f;
-        float spawnRadius             = _spawnRadius           ?? (float?)this.spawnRadius             ?? 0f;
+        float currentMinDistanceFromPoint = _minDistanceFromPoint ?? this.minDistanceFromPoint ?? 0f;
+        float currentMinDistanceFromPlayer = _minDistanceFromPlayer ?? this.minDistanceFromPlayer ?? 0f;
+        float currentSpawnRadius = _spawnRadius ?? this.spawnRadius ?? 0f;
 
-        minDistanceFromPoint    = Mathf.Abs(minDistanceFromPoint);
-        spawnRadius             = Mathf.Abs(spawnRadius);
+        currentMinDistanceFromPoint = Mathf.Abs(currentMinDistanceFromPoint);
+        currentSpawnRadius = Mathf.Abs(currentSpawnRadius);
 
-        spawnRadius             = (minDistanceFromPoint >= spawnRadius) ? minDistanceFromPoint : spawnRadius;
-
-        // If no reference points are provided, use the temporary positions.
-        if (referencePoints == null || referencePoints.Length == 0)
-            referencePoints = positions_tmp;
-
-        // If no reference points are still provided, return Vector3.zero.
-        if (referencePoints == null || referencePoints.Length == 0)
-            return Vector3.zero;
-    
-        // For Fixed spawn type, directly return a random fixed position without validation.
-        if (spawnType == SpawnType.Fixed && referencePoints != null && referencePoints.Length > 0)
+        // Ensure spawn radius is at least as large as min distance from point if both are positive
+        if (currentMinDistanceFromPoint > 0 && currentSpawnRadius > 0 && currentMinDistanceFromPoint >= currentSpawnRadius)
         {
-            return referencePoints[Random.Range(0, referencePoints.Length)].position;
+            currentSpawnRadius = currentMinDistanceFromPoint + 1f; // Ensure radius is slightly larger
         }
-        
-        // Spawn area type, a bit more complicated logic
-        Vector3 spawnPos = Vector3.zero;
-        int attempts = 10;
-        while (attempts-- > 0)
+
+
+        Transform[] effectiveReferencePoints = referencePoints;
+        if (spawnTypeToUse == SpawnType.AreaAroundPlayers)
         {
-            switch (spawnType)
+            effectiveReferencePoints = this.players; // AreaAroundPlayers always uses the 'players' array
+        }
+        else if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0)
+        {
+            effectiveReferencePoints = this.positions_tmp; // Fallback for Fixed/AreaAroundPosition if specific not given
+        }
+
+
+        if (effectiveReferencePoints == null || effectiveReferencePoints.Length == 0)
+        {
+            Debug.LogWarning($"GetValidSpawnPosition: No reference points available for spawn type {spawnTypeToUse}. Returning Vector3.zero.");
+            return Vector3.zero;
+        }
+
+        if (spawnTypeToUse == SpawnType.Fixed)
+        {
+            return effectiveReferencePoints[Random.Range(0, effectiveReferencePoints.Length)].position;
+        }
+
+        Vector3 spawnPos = Vector3.zero;
+        int attempts = 10; // Max attempts to find a valid position
+        bool foundValid = false;
+
+        for (int i = 0; i < attempts; i++)
+        {
+            Transform refPoint = effectiveReferencePoints[Random.Range(0, effectiveReferencePoints.Length)];
+            if (refPoint == null) continue; // Skip if a reference point is null
+
+            switch (spawnTypeToUse)
             {
                 case SpawnType.AreaAroundPosition:
-                    // Choose a random reference point and then add a random offset.
-                    if (referencePoints != null && referencePoints.Length > 0)
-                    {
-                        Transform refPoint = referencePoints[Random.Range(0, referencePoints.Length)];
-                        
-                        Vector2 randomDirection = Random.insideUnitCircle.normalized;
-                        float randomDistance = Random.Range(minDistanceFromPoint, spawnRadius);
-                        Vector2 randomOffset = randomDirection * randomDistance;
-
-                        spawnPos = new Vector3(refPoint.position.x + randomOffset.x,
-                                               refPoint.position.y + randomOffset.y,
-                                               refPoint.position.z);
+                case SpawnType.AreaAroundPlayers: // Both use similar circular area logic
+                    Vector2 randomDirection = Random.insideUnitCircle.normalized;
+                    // Ensure minDistance < spawnRadius for Random.Range to be valid
+                    float actualMinDistance = (spawnTypeToUse == SpawnType.AreaAroundPosition) ? currentMinDistanceFromPoint : 0f; // Players don't need min distance from *themselves* as the center
+                    if (actualMinDistance >= currentSpawnRadius && currentSpawnRadius > 0)
+                    { // If min dist is too large for radius
+                        actualMinDistance = currentSpawnRadius * 0.5f; // Adjust to be within radius
+                        Debug.LogWarning($"MinDistanceFromPoint ({currentMinDistanceFromPoint}) was >= SpawnRadius ({currentSpawnRadius}). Adjusted for random range.");
                     }
-                    break;
-
-                case SpawnType.AreaAroundPlayers:
-                    // Choose a random player from the players list and then add a random offset.
-                    if (players != null && players.Length > 0)
-                    {
-                        Transform player = players[Random.Range(0, players.Length)];
-                        Vector2 offset = Random.insideUnitCircle * spawnRadius;
-                        spawnPos = new Vector3(player.position.x + offset.x,
-                                               player.position.y + offset.y,
-                                               player.position.z);
+                    else if (currentSpawnRadius <= 0)
+                    { // If radius is zero or negative, just use the point
+                        spawnPos = refPoint.position;
+                        break;
                     }
+
+                    float randomDistance = Random.Range(actualMinDistance, currentSpawnRadius);
+                    Vector2 randomOffset = randomDirection * randomDistance;
+
+                    spawnPos = new Vector3(refPoint.position.x + randomOffset.x,
+                                           refPoint.position.y + randomOffset.y,
+                                           refPoint.position.z); // Assuming 2D, keep Z
                     break;
-                default:
-                    // Default to fixed spawn type if edge case is reatched.
-                    if (referencePoints != null && referencePoints.Length > 0)
-                        spawnPos = referencePoints[Random.Range(0, referencePoints.Length)].position;
-                    break;
+                default: // Should have been caught by Fixed or earlier checks
+                    Debug.LogError("GetValidSpawnPosition: Unexpected spawnType in loop: " + spawnTypeToUse);
+                    return refPoint.position; // Failsafe
             }
 
-            // For non-Fixed types, validate the spawn position.
-            if (spawnType == SpawnType.Fixed || IsSpawnValid(spawnPos, minDistanceFromPlayer))
+            if (IsSpawnValid(spawnPos, currentMinDistanceFromPlayer))
+            {
+                foundValid = true;
                 break;
+            }
         }
-        return spawnPos; // Returns the randomized spawnPos, if all iterations failed it'll spawn the latest attempt anyway.
+
+        if (!foundValid)
+        {
+            //Debug.LogWarning($"Could not find a spawn position respecting minDistanceFromPlayer ({currentMinDistanceFromPlayer}u) after {attempts} attempts for spawn type {spawnTypeToUse}. Using last attempt.");
+        }
+        return spawnPos;
     }
 
     /// <summary>
     /// Checks that the provided position is not too close to any player.
     /// </summary>
-    /// <param name="pos">The potential spawn position.</param>
-    /// <returns>True if valid, otherwise false.</returns>
-    protected bool IsSpawnValid(Vector3 pos, float? minDistanceFromPlayer = null)
+    protected bool IsSpawnValid(Vector3 pos, float? minDistance = null)
     {
-        minDistanceFromPlayer = minDistanceFromPlayer ?? (float?)this.minDistanceFromPlayer ?? 0f;
+        float currentMinDistance = minDistance ?? this.minDistanceFromPlayer ?? 0f;
+        if (currentMinDistance <= 0) return true; // No validation needed if distance is zero or negative
+
+        if (players == null || players.Length == 0)
+        {
+            //Debug.LogWarning("IsSpawnValid: No players assigned to Wave, cannot validate distance. Assuming valid.");
+            return true; // Or false, depending on desired behavior
+        }
 
         foreach (Transform player in players)
         {
-            if (Vector3.Distance(pos, player.position) < minDistanceFromPlayer)
+            if (player == null) continue;
+            if (Vector3.Distance(pos, player.position) < currentMinDistance)
                 return false;
         }
         return true;
+    }
+    
+    public void SpawnBossEnemy(Vector3 spawnPos)
+    {
+        if (bossEnemy != null)
+        {
+            GameObject enemyInstance = Instantiate(bossEnemy, spawnPos, Quaternion.identity);
+            if (enemyParent != null)
+            {
+                enemyInstance.transform.SetParent(enemyParent.transform, true);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Boss enemy prefab is not assigned or is null.");
+        }
     }
 }

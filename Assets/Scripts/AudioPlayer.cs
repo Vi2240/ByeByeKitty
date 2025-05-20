@@ -62,11 +62,10 @@ public class AudioPlayer : MonoBehaviour
             case "Manager":
                 break;
             case "MenuScene":
-                PlayMusic("MenuMusic");
+                PlayMusic("MenuMusic", true, 0.8f);
                 break;
             case "GamePlay":
-                PlayMusic("Forest_sound");
-                //PlayMusic("GameplayMusic");
+                PlayMusic("Forest_Sound", true, 0.1f);
                 break; ;
             default:
                 StopMusic();
@@ -94,22 +93,25 @@ public class AudioPlayer : MonoBehaviour
         }
     }
 
-    public void PlayMusic(string musicName, bool loop = true)
+    public void PlayMusic(string musicName, bool loop = true, float volumeScale = 1.0f)
     {
         if (musicSource == null) { Debug.LogError("AudioPlayer: MusicSource not assigned!"); return; }
         if (_musicLibrary.TryGetValue(musicName, out AudioClip clipToPlay))
         {
-            // Check if the same music is already playing and looping.
-            // If you want to force a restart even if it's the same, remove this check.
-            if (musicSource.clip == clipToPlay && musicSource.isPlaying && musicSource.loop == loop)
+            // Check if the same music is already playing, looping, and at roughly the same volume.
+            if (musicSource.clip == clipToPlay &&
+                musicSource.isPlaying &&
+                musicSource.loop == loop &&
+                Mathf.Approximately(musicSource.volume, Mathf.Clamp01(volumeScale)))
             {
-                Debug.Log($"AudioPlayer: Music '{musicName}' is already playing with the same loop setting.");
+                Debug.Log($"AudioPlayer: Music '{musicName}' is already playing with the same settings (loop: {loop}, volume: {musicSource.volume}).");
                 return;
             }
             musicSource.clip = clipToPlay;
             musicSource.loop = loop;
+            musicSource.volume = Mathf.Clamp01(volumeScale); // Set the volume for this playback
             musicSource.Play();
-            Debug.Log($"AudioPlayer: Playing music '{musicName}'.");
+            Debug.Log($"AudioPlayer: Playing music '{musicName}' (loop: {loop}, volume: {musicSource.volume}).");
         }
         else Debug.LogWarning($"AudioPlayer: Music clip '{musicName}' not found.");
     }
@@ -149,7 +151,7 @@ public class AudioPlayer : MonoBehaviour
         Transform a = sourceTransform;
     }
 
-    public AudioSource PlayLoopingSfx(string sfxName, Vector3 position, float volumeScale = 1.0f, Transform parentTo = null)
+    public AudioSource PlayLoopingSfx(string sfxName, Vector3 position, float volumeScale = 1.0f, Transform parentTo = null, bool shouldLoop = true) // Added 'shouldLoop' parameter with a default
     {
         if (!_sfxLibrary.TryGetValue(sfxName, out AudioClip clipToPlay))
         {
@@ -157,7 +159,7 @@ public class AudioPlayer : MonoBehaviour
             return null;
         }
 
-        GameObject sfxObject = new GameObject($"LoopingSFX_{sfxName}");
+        GameObject sfxObject = new GameObject($"LoopingSFX_{sfxName}"); // Consider renaming if not always looping, e.g., "ManagedSFX_"
         sfxObject.transform.position = position;
         if (parentTo != null) sfxObject.transform.SetParent(parentTo);
         else sfxObject.transform.SetParent(_loopingSfxContainer);
@@ -165,7 +167,7 @@ public class AudioPlayer : MonoBehaviour
         AudioSource audioSource = sfxObject.AddComponent<AudioSource>();
         audioSource.clip = clipToPlay;
         audioSource.volume = GetSfxVolume() * volumeScale;
-        audioSource.loop = true;
+        audioSource.loop = shouldLoop;
         audioSource.spatialBlend = 1.0f;
         audioSource.minDistance = loopingSfxMinDistance;
         audioSource.maxDistance = loopingSfxMaxDistance;

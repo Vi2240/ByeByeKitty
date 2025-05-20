@@ -17,9 +17,6 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
     int targetRestriction = 0;
 
-    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] 
-    int attackType = 0;
-
     [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
     float nearObjectCheckRadius = 5;
 
@@ -50,36 +47,60 @@ public class EnemyMovement : MonoBehaviour
     NavMeshAgent agent;
     GameObject walkableArea;
 
+    Wrapper<bool> agroFlag;
+
     void Start()
     {
+        agroFlag = transform.parent.GetComponent<AgroFlag>().agroFlag;
+
         canMove = true;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        agent.speed = speed;
+        agent.speed = speed; // Make sure speed is set before any potential SetDestination
         savedPositions = new Vector2[checkIfStuckFrequency];
         walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
-        // If it's a melee enemy it should go all the way to the player
-        if (attackType == 0)
+        if (walkableArea == null)
         {
-            stopDistanceFromPlayer = 0.2f;
+            Debug.LogError("WalkableArea not found! Random wandering will not work correctly.", this);
         }
-        
+
         // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
             canAttackPlayers = false;
         }
 
-        if (randomWander && canMove && !disableMovement)
+        if (!disableMovement) // Only attempt to move if not disabled
         {
-            SetNewRandomDestination();
-            MoveToDestination(randomDestination);
+            if (randomWander && canMove) // canMove is true by default
+            {
+                if (walkableArea != null) // Only set random destination if walkable area exists
+                {
+                    SetNewRandomDestination();
+                    MoveToDestination(randomDestination);
+                }
+                else
+                {
+                    // What to do if random wander is on but no walkable area?
+                    // Option: Stay put, or log error and disable movement.
+                    Debug.LogWarning("Cannot random wander: WalkableArea is missing.", this);
+                    agent.isStopped = true;
+                }
+            }
+            else if (!randomWander)
+            {
+                // If not random wandering, the enemy should probably wait for Update()
+                // to find a player/objective, or be assigned a target by another system.
+                // Don't move to the uninitialized 'target' (0,0).
+                agent.isStopped = true; // Start stationary
+                Debug.Log(gameObject.name + " is not random wandering and will wait for a target.", this);
+            }
         }
         else
         {
-            MoveToDestination(target);
+            agent.isStopped = true;
         }
     }
 
@@ -143,7 +164,10 @@ public class EnemyMovement : MonoBehaviour
         }
         else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
         {
-            MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            if (nearestPlayer)
+            {
+                MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            }
             return true;
         }
 
@@ -254,7 +278,7 @@ public class EnemyMovement : MonoBehaviour
                 GameObject _object = objects[i];
                 Objective script = _object.GetComponent<Objective>(); // Change to objective class later
 
-                if (!script.GetIsBurning())
+                if (!script.GetIsBurningState())
                 {
                     objects.Remove(_object);
                 }

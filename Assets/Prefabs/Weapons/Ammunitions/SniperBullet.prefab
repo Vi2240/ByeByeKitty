@@ -58,7 +58,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 640
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -168,16 +168,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 2
-  damage: 5
   maxPenetration: 3
   maxRayDistance: 100
   bloodHitEffect: {fileID: 3429003930983919446, guid: b58752065c93b56449ae9127f34b598a, type: 3}
   sparksHitEffect: {fileID: 3429003930983919446, guid: 391949acb693a5e4c86a9c47beb5207e, type: 3}
   damageNumber: {fileID: 6509593360542762755, guid: bd69952a302ffc8438699c617cb5cd6b, type: 3}
-  tracerEffect: {fileID: 0}
   ignoredLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
   hittableLayers:
     serializedVersion: 2
     m_Bits: 64

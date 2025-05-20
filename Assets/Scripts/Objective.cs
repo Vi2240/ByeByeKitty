@@ -1,104 +1,197 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Objective : MonoBehaviour
 {
+
+    [Header("Tree Variables")]
+    [SerializeField] GameObject numberEffect;
+    [SerializeField] GameObject healingEffect;
+    [SerializeField] GameObject waterEffect;
+    [SerializeField] float waterEffectTime = 2.0f;
     [SerializeField] float maxHp;
+    [SerializeField] float healSpeed;
+    [SerializeField] float treeHeal;
+    [SerializeField] bool enemyKillzone;
+    float currentHp;
+    bool treeAlive = true;
+
+    [Header("Fire Variables")]
+    [SerializeField] bool canFireBeExtinguished = true;
     [SerializeField] float maxFireHp;
     [SerializeField] float fireHeal;
+    [SerializeField] float fireHealSpeed;
     [SerializeField] float burningDmg;
-    [SerializeField] float healSpeed;
-    [SerializeField] float burnSpeed;   
-    [SerializeField] bool enemyKillzone;
+    [SerializeField] float burnSpeed;
+    [SerializeField] float BurnEffectScaleMult = 1;
+    float fireIntensityPercentageFactor;
+    float fireHP;
+    Vector3 maxBurnEffectScale_Vec;
 
+    [Header("Fire Activation Variables")]
     [SerializeField] GameObject burnEffect;
-    [SerializeField] GameObject healingEffect;
+    [SerializeField] float rekindleFireDelay = 5f;
 
     [SerializeField] GameObject winCanvas;
 
     [SerializeField] GameObject waveManagerObject;
-    [SerializeField] float delay = 5;
-
-    public bool CanSpawn => isBurning;
-
-    float currentHp;
-    float fireHP;
-    float fireTickHeal;
-    float fireIntensityPercentageFactor;
-
-    Vector3 maxBurnEffectScale;
 
     bool playersInZone;
-    bool playerIn;
-    bool enemyIn;
-    bool isTakingBurningDmg;
-    bool isHealing;
-    bool isBurning;
+    Wrapper<bool> isBurning;
+    bool canRekindleFire = true;
+    bool gameWon;
 
-    AudioPlayer audioPlayer;
+    [Header("Fire Activation Variables")]
+    [SerializeField] UnityEngine.Transform fireCircle;
+    [SerializeField] float maxScale = 1f;
+    [SerializeField] float requiredHoldTime = 5.0f;
+    float holdTimer = 0f;
+
     WaveManager waveManager;
+    AudioSource burningAudioSource;
 
     void Start()
-    {        
+    {
         winCanvas.SetActive(false);
 
         fireHP = 0;
-        fireTickHeal = 0.1f;
         currentHp = maxHp;
+        isBurning = new Wrapper<bool>(false);
+        fireIntensityPercentageFactor = 0f;
+        gameWon = false;
+        treeAlive = true;
         waveManager = waveManagerObject.GetComponent<WaveManager>();
-        audioPlayer = FindAnyObjectByType<AudioPlayer>();
-        
+
         if (burnEffect != null)
-            maxBurnEffectScale = burnEffect.transform.localScale * 1.5f;
-        else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);        
+        {
+            burnEffect.SetActive(false);
+            maxBurnEffectScale_Vec = burnEffect.transform.localScale * BurnEffectScaleMult;
+        }
+        else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);
+
+        // flip all timers -- set to TPS instead of SPT
+        healSpeed = (healSpeed == 0) ? 0 : 1 / healSpeed;
+        burnSpeed = (burnSpeed == 0) ? 0 : 1 / burnSpeed;
+        fireHealSpeed = (fireHealSpeed == 0) ? 0 : 1 / fireHealSpeed;
+
     }
 
     void Update()
     {
-        if(playersInZone)
+        if (!treeAlive) return;
+
+        if (!playersInZone || isBurning.value || !Input.GetKey(KeyCode.E) || !canRekindleFire)
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isBurning)
-            {
-                isBurning = true;
-                fireHP = maxFireHp/4;
-                waveManager.StartWaveWithDelay(WaveType.WaveType0, SpawnType.AreaAroundPosition, 1, gameObject.transform, delay);
-            }
+            holdTimer = 0f;
+            fireCircle.localScale = Vector3.zero;
+            return;
+        }
+
+        holdTimer += Time.deltaTime;
+        Debug.Log(holdTimer);
+        float scale = Mathf.Clamp01(holdTimer / requiredHoldTime) * maxScale;
+        fireCircle.localScale = new Vector3(scale, scale, scale);
+
+        if (holdTimer >= requiredHoldTime)
+        {
+            burningAudioSource = AudioPlayer.Current.PlayLoopingSfx("Fire_Sound", transform.position);
+            isBurning.value = true;
+            fireHP = maxFireHp / 4;
+            waveManager.StartContinuousWaves(gameObject.transform, isBurning);
+            StartCoroutine(RekindleFireTimmer());
         }
     }
 
     void FixedUpdate()
     {
-        if (!isBurning)
+        if (!treeAlive) return;
+
+        if (isBurning.value)
         {
-            if (currentHp < maxHp && !isHealing)
-            {
-                StartCoroutine(HealingHealth());
-            }
-            
-            if (burnEffect != null && burnEffect.activeSelf)
-            {
-                burnEffect.SetActive(false);
-            }
+            healingEffect.SetActive(false);
+            fireIntensityPercentageFactor = fireHP / maxFireHp;
+            HandleBurningDamage(Time.fixedDeltaTime);
+            HandleFireGrowth(Time.fixedDeltaTime);
+            //DebugShowHP(Time.fixedDeltaTime)
             return;
         }
 
-        if (burnEffect != null && !burnEffect.activeSelf)
+        waterEffect.SetActive(false);
+        burnEffect.SetActive(false);
+
+        if (currentHp < maxHp)
+        {
+            HandleHealing(Time.fixedDeltaTime);
+            return;
+        }
+
+        healingEffect.SetActive(false);
+    }
+
+    // float debugShowHPTimer = 0f;
+    // void DebugShowHP(float dt)
+    // {
+    //     debugShowHPTimer += dt;
+    //     if (debugShowHPTimer <= 0.5f) return;
+    //     debugShowHPTimer = 0f;
+    //     Debug.Log("Current HP: " + currentHp + "\tFireHP: " + fireHP);        
+    // }
+
+    float burnDMGTimer = 0f;
+    void HandleBurningDamage(float dt)
+    {
+        burnDMGTimer += dt;
+        float curBurnSpeed = burnSpeed / fireIntensityPercentageFactor;
+        while (burnDMGTimer >= curBurnSpeed)
+        {
+            burnDMGTimer -= curBurnSpeed;
+            currentHp -= burningDmg;
+            var dmgnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
+            dmgnr.GetComponent<FloatingHealthNumber>().SetText(burningDmg.ToString(), 1);
+            if (currentHp <= 0 && treeAlive)
+            {
+                treeAlive = false;
+                waveManager.StartBossWave();
+            }
+        }
+    }
+
+    float growthTimer = 0f;
+    void HandleFireGrowth(float dt)
+    {
+        growthTimer += dt;
+        while (growthTimer >= fireHealSpeed)
+        {
+            growthTimer -= fireHealSpeed;
+            fireHP += fireHeal;
+            fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
+        }
+        UpdateBurnEffectScale();
+    }
+
+    float healTimer = 0f;
+    void HandleHealing(float dt)
+    {
+        healTimer += dt;
+        healingEffect.SetActive(true);
+        while (healTimer >= healSpeed)
+        {
+            healTimer -= healSpeed;
+            float tmpHp = currentHp + treeHeal;
+            currentHp = (tmpHp < maxHp) ? tmpHp : maxHp;
+
+            var healnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
+            healnr.GetComponent<FloatingHealthNumber>().SetText(treeHeal.ToString(), 2);
+        }
+    }
+
+    void UpdateBurnEffectScale()
+    {
+        if (burnEffect == null || !burnEffect.activeSelf)
         {
             burnEffect.SetActive(true);
         }
-
-        fireHP += fireTickHeal;
-        fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
-        fireIntensityPercentageFactor = fireHP/maxFireHp;
-
-        burnEffect.transform.localScale = maxBurnEffectScale * fireIntensityPercentageFactor;
-        
-        if (isTakingBurningDmg) return;
-        StartCoroutine(BurningTickDmg());
-        //audioPlayer.SfxPlayer("Fire_Sound");        
+        burnEffect.transform.localScale = maxBurnEffectScale_Vec * fireIntensityPercentageFactor;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -111,7 +204,7 @@ public class Objective : MonoBehaviour
         {
             other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(true, this.gameObject);
         }
-        if(other.tag == "Enemy" && enemyKillzone == true) 
+        if (other.tag == "Enemy" && enemyKillzone == true)
         {
             Destroy(other.gameObject);
         }
@@ -123,59 +216,58 @@ public class Objective : MonoBehaviour
         {
             playersInZone = false;
         }
-    }
-
-    IEnumerator BurningTickDmg()
-    {
-        isTakingBurningDmg = true;
-        burnEffect.SetActive(true);
-
-        if (currentHp > 0)
-        {        
-            currentHp -= burningDmg * fireIntensityPercentageFactor;            
-        }
-        else
+        if (other.tag == "Enemy")
         {
-            //Debug.Log("Died");
-            StartCoroutine(WinGame());
-            isTakingBurningDmg = false;
-            if (burnEffect != null) burnEffect.SetActive(false);
-            yield break; // Exit the coroutine
+            other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(false, this.gameObject);
         }
-
-        yield return new WaitForSeconds(burnSpeed);
-
-        isTakingBurningDmg = false;
-        burnEffect.SetActive(false);
     }
 
-    IEnumerator HealingHealth()
+    public Wrapper<bool> GetIsBurning()
     {
-        isHealing = true;
-        healingEffect.SetActive(true);
-
-        currentHp += fireHeal;
-
-        yield return new WaitForSeconds(healSpeed);
-
-        isHealing = false;
-        healingEffect.SetActive(false);
-    }
-
-    public bool GetIsBurning()
-    { 
         return isBurning;
     }
 
-    public void StopFire(float fireStoppingPower){
+    public bool GetIsBurningState()
+    {
+        return isBurning.value;
+    }
+
+    public void FireExtinguish(float fireStoppingPower)
+    {
+        if (!canFireBeExtinguished) return;
+
+        StartCoroutine(WaterEffectTimer());
         fireHP -= fireStoppingPower;
-        fireHP = (fireHP < 0) ? 0 : fireHP;
+        if (fireHP <= 0)
+        {
+            isBurning.value = false;
+            if (burningAudioSource)
+            {
+                AudioPlayer.Current.StopLoopingSfx(burningAudioSource);
+            }
+        }
     }
 
     IEnumerator WinGame()
     {
+        if (gameWon) yield break;
+        gameWon = true;
         winCanvas.SetActive(true);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(5);
         Loader.LoadNetwork(Loader.Scene.MenuScene);
+    }
+
+    IEnumerator RekindleFireTimmer()
+    {
+        canRekindleFire = false;
+        yield return new WaitForSeconds(rekindleFireDelay);
+        canRekindleFire = true;
+    }
+
+    IEnumerator WaterEffectTimer()
+    {
+        waterEffect.SetActive(true);
+        yield return new WaitForSeconds(waterEffectTime);
+        waterEffect.SetActive(false);
     }
 }

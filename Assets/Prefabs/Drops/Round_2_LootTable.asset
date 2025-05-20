@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174831224002e8141b731ba29751e0cb, type: 3}
+  m_Name: Round_2_LootTable
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 8125233738006395700, guid: 6f66846bb42323c44b0c4daf16129298, type: 3}
+    weight: 20
+  - itemPrefab: {fileID: 8125233738006395700, guid: 2c8a15aed957c04489944eed7d165c23, type: 3}
+    weight: 20
+  - itemPrefab: {fileID: 5896259601204447925, guid: 3fb5c422f63688707a4af91a18fcad01, type: 3}
+    weight: 1
+  - itemPrefab: {fileID: 8125233738006395700, guid: 1d9ad28aaa52eb8478aa08f04ae2b583, type: 3}
+    weight: 1
+  - itemPrefab: {fileID: 8125233738006395700, guid: 95252f8252779014089729e065b1f41c, type: 3}
+    weight: 5

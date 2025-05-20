@@ -26,7 +26,7 @@ RectTransform:
   m_GameObject: {fileID: 553116780606167888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7368928493268631142}
@@ -116,7 +116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.6, z: 0}
-  m_LocalScale: {x: 1.5, y: 0.75, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8523370411644743543}
@@ -165,8 +165,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.95703983, g: 0, b: 1, a: 0.6862745}
+  m_Sprite: {fileID: 21300000, guid: 9f962a7a583c0c34b9581569fb16f262, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6862745}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -524,10 +524,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -567,7 +567,7 @@ MonoBehaviour:
   slider: {fileID: 3420866165055609091}
   low: {r: 0.7735849, g: 0, b: 0, a: 1}
   high: {r: 0.27286032, g: 0.7169812, b: 0.18600929, a: 1}
-  offset: {x: 0, y: 1.5, z: 0}
+  offset: {x: 0, y: 0.3, z: 0}
 --- !u!1 &9205428136142299004
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,16 +747,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableMovement: 0
-  speed: 3
-  movePauseMin: 2
-  movePauseMax: 5
+  speed: 8.5
+  movePauseMin: 1
+  movePauseMax: 2
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 0
-  targetRestriction: 0
-  attackType: 1
-  nearObjectCheckRadius: 0
+  targetRestriction: 1
+  nearObjectCheckRadius: 2
   randomWander: 1
-  canAttackPlayers: 0
+  canAttackPlayers: 1
 --- !u!114 &-2921794130836257963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -771,10 +770,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 75
   currentHealth: 0
-  timeToHeal: 3
-  healPerTick: 2
-  timeBetweenHealingTicks: 0.25
   healthBar: {fileID: 235728362966786466}
+  passiveHealing: 1
+  timeToHeal: 2
+  healPerTick: 5
+  timeBetweenHealingTicks: 0.25
   bloodExplosion: {fileID: 2779123398762705581, guid: 62adf3775c5aaffdf953623d5f8437d2, type: 3}
   bloodPuddles:
   - {fileID: 8868525059811836440, guid: 12028bc235d1f0b9b925a9b9550818ff, type: 3}
@@ -802,6 +802,7 @@ MonoBehaviour:
   attackRange: 2
   bulletForce: 0
   attackCooldown: 0.75
+  attackDamage: 5
   bulletSpawnPos: {fileID: 0}
   bulletPrefab: {fileID: 0}
 --- !u!114 &4201214158487945568
@@ -832,4 +833,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireStoppingPower: 2.5
-  stopFireCooldown: 5
+  extinguishCooldownTime: 0
+  initialCooldownTime: 0

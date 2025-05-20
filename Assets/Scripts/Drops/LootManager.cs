@@ -15,7 +15,7 @@ public class LootManager : MonoBehaviour
         else
         {
             Instance = this;
-            // Optional: DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -30,7 +30,7 @@ public class LootManager : MonoBehaviour
     [Header("Global Drop Style")]
     [SerializeField] private bool useRandomOffset = true;
     [SerializeField] private Vector2 dropOffsetRange = new Vector2(0.5f, 0.5f);
-    // --- Public property/method to change the default table externally ---
+
     public LootTable CurrentDefaultLootTable
     {
         get { return defaultLootTable; }
@@ -47,7 +47,24 @@ public class LootManager : MonoBehaviour
             }
         }
     }
-    // ---
+    
+
+    /// <summary>
+    /// Updates the default loot table used by the LootManager.
+    /// </summary>
+    /// <param name="newLootTable">The LootTable Scriptable Object to set as the new default.</param>
+    public void UpdateLootTable(LootTable newLootTable)
+    {
+        if (newLootTable != null)
+        {
+            defaultLootTable = newLootTable;
+            Debug.Log($"LootManager default loot table updated to: {newLootTable.name}");
+        }
+        else
+        {
+            Debug.LogWarning("LootManager: Attempted to update default loot table with a null LootTable.");
+        }
+    }
 
     /// <summary>
     /// Centralized method called by enemies (or other sources) to request loot drops.
