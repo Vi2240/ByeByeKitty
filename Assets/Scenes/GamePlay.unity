@@ -17079,11 +17079,13 @@ MonoBehaviour:
   enemyKillzone: 0
   canFireBeExtinguished: 1
   maxFireHp: 500
-  fireHeal: 5
-  fireHealSpeed: 5
+  fireHeal: 1
+  fireHealSpeed: 25
   burningDmg: 5
   burnSpeed: 10
   BurnEffectScaleMult: 1.5
+  delayFireGrowthAfterExtinguishTime: 1.5
+  delayFireGrowthAfterExtinguish: 1
   burnEffect: {fileID: 30291362}
   rekindleFireDelay: 5
   fireCircle: {fileID: 632687887}
