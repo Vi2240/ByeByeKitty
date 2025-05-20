@@ -13,8 +13,9 @@ public abstract class WeaponBase : MonoBehaviour
     //[SerializeField] protected int magazineReservesMax;
     [SerializeField] protected int currentMagAmmoCount;
     [SerializeField] float requiredMouseDistanceFromPlayer = 1.5f;
-
-
+    [SerializeField] protected bool nerfMovementDuringAction = true;
+    
+    protected Movement playerMovement;
     protected Vector3 mousePos;
     protected Camera mainCam;
     protected bool canFire = true;
@@ -25,6 +26,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void Start() // Kept as Start, ensure mainCam is set appropriately for children
     {
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement>();
         mainCam = Camera.main;
         if (mainCam == null)
         {
@@ -34,6 +36,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        playerMovement.DisableNerfedMovement();
         canFire = true; // Ensure weapon is ready to fire when enabled
         if (_shootCooldownCoroutineRef != null)
         {
@@ -44,6 +47,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void OnDisable()
     {
+        playerMovement.DisableNerfedMovement();
         if (_shootCooldownCoroutineRef != null)
         {
             StopCoroutine(_shootCooldownCoroutineRef);

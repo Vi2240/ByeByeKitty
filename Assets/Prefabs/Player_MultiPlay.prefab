@@ -175,7 +175,7 @@ MonoBehaviour:
   - Name: LightningGun
     WeaponObject: {fileID: 3817111896344598929}
     PickupPrefab: {fileID: 8125233738006395700, guid: 1d9ad28aaa52eb8478aa08f04ae2b583, type: 3}
-  startWithFirstWeapon: 0
+  startWithFirstWeapon: 1
   collectAllWeaponsOnStartForTesting: 0
 --- !u!114 &7342326090686955952
 MonoBehaviour:
@@ -487,7 +487,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6600473513433018646, guid: 7d8a435ad8256ca548f6e0e0a3762a28, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

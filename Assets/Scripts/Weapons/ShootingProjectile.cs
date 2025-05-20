@@ -13,7 +13,6 @@ public class ShootingProjectile : WeaponBase
     [SerializeField] bool isMachineGun, isSniper, isPistol;
     Coroutine saveReloadCoroutine;
     bool canPlayEmptySFX = true;
-
     private Coroutine playEmptySFXCoroutine;
 
     private void Start()
@@ -123,7 +122,7 @@ public class ShootingProjectile : WeaponBase
         }
 
         currentMagAmmoCount--;
-        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
+        UpdateUI();
     }
 
     private void Reload()
@@ -137,16 +136,25 @@ public class ShootingProjectile : WeaponBase
     private IEnumerator ReloadDelay()
     {
         isReloading = true;
+        playerMovement.EnableNerfedMovement();
         AudioPlayer.Current.PlaySfxAtPoint("Eject_Magazine", transform.position);
         StartCoroutine(InsertMagazine());
 
         yield return new WaitForSeconds(reloadTime);
+        if (isPistol)
+        {
+            currentMagAmmoCount = magazineSizeMax;
+        }
+        else
+        {
+            int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, InventoryAndBuffs.ammo);
+            currentMagAmmoCount += bulletsToReload;
+            InventoryAndBuffs.ammo -= bulletsToReload;
+        }
 
-        int bulletsToReload = Mathf.Min(magazineSizeMax - currentMagAmmoCount, InventoryAndBuffs.ammo);
-        currentMagAmmoCount += bulletsToReload;
-        InventoryAndBuffs.ammo -= bulletsToReload;
         UpdateUI();
         isReloading = false;
+        playerMovement.DisableNerfedMovement();
 
         if (isMachineGun) AudioPlayer.Current.PlaySfxAtPoint("Cock_MachineGun", transform.position);
         if (isSniper) AudioPlayer.Current.PlaySfxAtPoint("Cock_MachineGun", transform.position);
@@ -161,7 +169,15 @@ public class ShootingProjectile : WeaponBase
 
     private void UpdateUI()
     {
-        magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
-        inventoryAmmoText.SetText(InventoryAndBuffs.ammo.ToString());
+        if (isPistol)
+        {
+            magCapacityText.SetText(currentMagAmmoCount + " / inf");
+            inventoryAmmoText.SetText(" ");
+        }
+        else
+        {
+            magCapacityText.SetText(currentMagAmmoCount + " / " + magazineSizeMax);
+            inventoryAmmoText.SetText(InventoryAndBuffs.ammo.ToString());
+        }
     }
 }

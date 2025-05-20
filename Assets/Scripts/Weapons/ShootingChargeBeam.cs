@@ -73,7 +73,7 @@ public class ShootingChargeBeam : WeaponBase
 
     private void OnDisable()
     {
-        ResetState(); // Clean up when disabled (e.g., weapon switch)
+        ResetState();
     }
 
     protected override void Update()
@@ -129,12 +129,14 @@ public class ShootingChargeBeam : WeaponBase
 
         if (isCharging && Input.GetMouseButton(0))
         {
+            playerMovement.EnableNerfedMovement();
             currentChargeTime += Time.deltaTime;
             currentChargeTime = Mathf.Min(currentChargeTime, chargeUpTime);
         }
 
         if (isCharging && Input.GetMouseButtonUp(0))
         {
+            playerMovement.DisableNerfedMovement();
             if (currentChargeTime >= chargeUpTime)
             {
                 if (InventoryAndBuffs.energyAmmo >= ammoCostPerShot)

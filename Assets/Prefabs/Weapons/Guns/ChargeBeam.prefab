@@ -377,10 +377,11 @@ MonoBehaviour:
   magazineSizeMax: 0
   currentMagAmmoCount: 0
   requiredMouseDistanceFromPlayer: 1.5
+  nerfMovementDuringAction: 1
   maxBeamLength: 20
   beamDuration: 0.4
   damageTickInterval: 0.1
-  ammoCostPerShot: 5
+  ammoCostPerShot: 10
   chargeUpTime: 1.5
   chargeVisualSprite: {fileID: 8365657705312574158}
   initialChargeScale: {x: 0, y: 0, z: 0}
