@@ -4,17 +4,18 @@ using System.Collections.Generic; // List
 
 public class EnemyStopFire : MonoBehaviour
 {
-    class Zone
+    public class Zone
     {
         public bool isInZone;
-        public GameObject targetGameObject;
+        public Objective targetObjective;
         public bool onCooldown = false;
         public bool initialCooldownDone = false;
+        public Wrapper<bool> isBurning;
 
-        public Zone(bool isInZone, GameObject targetGameObject)
+        public Zone(bool isInZone, Objective targetObjective)
         {
             this.isInZone = isInZone;
-            this.targetGameObject = targetGameObject;
+            this.targetObjective = targetObjective;
         }
 
         public IEnumerator StartCooldown(float extinguishTime, float initialTime)
@@ -35,50 +36,31 @@ public class EnemyStopFire : MonoBehaviour
         }
     }
 
-    List<Zone> zones = new List<Zone>();
+    public Zone zone = new Zone(false, null);
     [SerializeField] float fireStoppingPower;
     [SerializeField] float extinguishCooldownTime;
     [SerializeField] float initialCooldownTime;
 
-    void FixedUpdate() { ExtinguishFire(); }
-
-    public void SetInObjectiveZone(bool isInZone, GameObject targetGameObject){
-        foreach (Zone zone in zones)
-            if (zone.targetGameObject == targetGameObject) { zone.isInZone = isInZone; zone.initialCooldownDone = false; return; }            
-        zones.Add(new Zone(isInZone, targetGameObject));            
+    void FixedUpdate()
+    {        
+        ExtinguishFire();
     }
 
-    // private void ExtinguishFire()
-    // {
-    //     foreach (Zone zone in zones)
-    //         if (zone.isInZone && !zone.onCooldown)
-    //         {
-    //             zone.targetGameObject.GetComponent<Objective>().FireExtinguish(fireStoppingPower);
-    //             StartCoroutine(zone.StartCooldown(extinguishCooldownTime, initialCooldownTime));
-    //         }
-    // }
+    public void SetInObjectiveZone(bool isInZone, GameObject targetObjectiveObj)
+    {
+        zone.isInZone = isInZone;
+        zone.initialCooldownDone = false;
+        try { zone.targetObjective = targetObjectiveObj.GetComponent<Objective>(); }
+        catch { Debug.Log($"GameObject {targetObjectiveObj} dosn't contain any component \"Objective\""); }
+        if (zone.targetObjective != null)
+            zone.isBurning = zone.targetObjective.GetIsBurning();
+    }
 
     private void ExtinguishFire()
     {
-        for (int i = zones.Count - 1; i >= 0; i--)
-        {
-            Zone zone = zones[i];
-
-            if (zone.targetGameObject == null)
-            {
-                zones.RemoveAt(i); // Clean up if target was destroyed
-                continue;
-            }
-
-            if (zone.isInZone && !zone.onCooldown)
-            {
-                Objective objectiveScript = zone.targetGameObject.GetComponent<Objective>();
-                if (objectiveScript != null && objectiveScript.GetIsBurningState())
-                {
-                    objectiveScript.FireExtinguish(fireStoppingPower);
-                    StartCoroutine(zone.StartCooldown(extinguishCooldownTime, initialCooldownTime));
-                }
-            }
-        }
+        if (!zone.isInZone || zone.onCooldown || zone.targetObjective == null) return;
+        
+        zone.targetObjective.FireExtinguish(fireStoppingPower);
+        StartCoroutine(zone.StartCooldown(extinguishCooldownTime, initialCooldownTime));                
     }
 }

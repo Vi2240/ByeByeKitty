@@ -29,6 +29,11 @@ public class Objective : MonoBehaviour
     float fireHP;
     Vector3 maxBurnEffectScale_Vec;
 
+    [Tooltip("How long (in seconds) after a fire is extinguished before it can start growing its HP again.")]
+    [SerializeField] float delayFireGrowthAfterExtinguishTime = 1.5f;
+    [SerializeField] bool delayFireGrowthAfterExtinguish = true;
+    float fireGrowthDelayedUntil;
+
     [Header("Fire Activation Variables")]
     [SerializeField] GameObject burnEffect;
     [SerializeField] float rekindleFireDelay = 5f;
@@ -65,6 +70,8 @@ public class Objective : MonoBehaviour
         fireIntensityPercentageFactor = 0f;
         gameWon = false;
         treeAlive = true;
+        delayFireGrowthAfterExtinguish = true;
+        fireGrowthDelayedUntil = 0f;
 
         if (waveManagerObject != null)
         {
@@ -185,11 +192,14 @@ public class Objective : MonoBehaviour
     float growthTimer = 0f;
     void HandleFireGrowth(float dt)
     {
+        if (delayFireGrowthAfterExtinguish && Time.time < fireGrowthDelayedUntil) return;        
+
         growthTimer += dt;
         if (fireHealSpeed <= 0) return;
 
         while (growthTimer >= fireHealSpeed)
         {
+            Debug.Log($"FireHP: {fireHP}");
             growthTimer -= fireHealSpeed;
             fireHP += fireHeal;
             fireHP = Mathf.Clamp(fireHP, 0, maxFireHp);
@@ -286,6 +296,7 @@ public class Objective : MonoBehaviour
         if (!canFireBeExtinguished || !isBurning.value) return;
 
         fireHP -= fireStoppingPower;
+        fireGrowthDelayedUntil = Time.time + delayFireGrowthAfterExtinguishTime;
 
         // --- Visual Water Effect Logic ---
         if (waterEffect != null)

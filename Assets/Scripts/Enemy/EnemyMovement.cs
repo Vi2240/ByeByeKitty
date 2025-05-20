@@ -13,6 +13,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float movePauseMax = 6;
     [SerializeField] int checkIfStuckFrequency = 5;
     [SerializeField] float stopDistanceFromPlayer = 5;
+    [SerializeField] float stopDistanceFromObjective = 3;
+
 
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
     int targetRestriction = 0;
@@ -138,7 +140,7 @@ public class EnemyMovement : MonoBehaviour
 
             Temporary script = nearestObjective.GetComponent<Temporary>();
 
-            if (DistanceTo(nearestObjective) <= 5f)
+            if (DistanceTo(nearestObjective) <= stopDistanceFromObjective)
             {
                 agent.isStopped = true;
                 //print("Stopped");
