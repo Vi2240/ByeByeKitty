@@ -83,11 +83,10 @@ public class NormalEnemyWave : Wave // Ensure Wave.cs exists and is the base cla
 
                 // This logic needs to pick from available counts, not decrement global counts for choice
                 List<GameObject> availableEnemyTypesForSpawn = new List<GameObject>();
-                if (normalEnemyChance > 0 && normalEnemy != null) availableEnemyTypesForSpawn.Add(normalEnemy);
-                if (slowEnemyChance > 0 && slowEnemy != null) availableEnemyTypesForSpawn.Add(slowEnemy);
-                // Add speed and range if they were to be used and had prefabs
-                // if (speedEnemyChance > 0 && speedEnemy != null) availableEnemyTypesForSpawn.Add(speedEnemy);
-                // if (rangeEnemyChance > 0 && rangeEnemy != null) availableEnemyTypesForSpawn.Add(rangeEnemy);
+                if (normalEnemyChance   > 0 && normalEnemy  != null) availableEnemyTypesForSpawn.Add(normalEnemy);
+                if (slowEnemyChance     > 0 && slowEnemy    != null) availableEnemyTypesForSpawn.Add(slowEnemy);
+                if (meleeEnemyChance    > 0 && meleeEnemy   != null) availableEnemyTypesForSpawn.Add(meleeEnemy);
+                if (rangeEnemyChance    > 0 && rangeEnemy   != null) availableEnemyTypesForSpawn.Add(rangeEnemy);
 
                 GameObject enemyToSpawn = null;
 
@@ -104,10 +103,10 @@ public class NormalEnemyWave : Wave // Ensure Wave.cs exists and is the base cla
                 enemyToSpawn = availableEnemyTypesForSpawn[choiceIndex];
                 
                 // Decrement the count for the chosen type
-                if (enemyToSpawn == normalEnemy) normalEnemyChance--;
-                else if (enemyToSpawn == slowEnemy) slowEnemyChance--;
-                // else if (enemyToSpawn == speedEnemy) speedEnemyChance--;
-                // else if (enemyToSpawn == rangeEnemy) rangeEnemyChance--;
+                if      (enemyToSpawn == normalEnemy)   --normalEnemyChance;
+                else if (enemyToSpawn == slowEnemy)     --slowEnemyChance;
+                else if (enemyToSpawn == meleeEnemy)    --meleeEnemyChance;
+                else if (enemyToSpawn == rangeEnemy)    --rangeEnemyChance;
 
 
                 // Determine the spawn position based on the selected spawn type.

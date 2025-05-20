@@ -14,14 +14,14 @@ public class WaveManager : MonoBehaviour
     [SerializeField] GameObject bossPrefab;
     [SerializeField] Transform bossSpawnPoint;
 
-    [Header("Wave Settings")]
+    [Header("Wave Prefabs")]
     public NormalEnemyWave normalEnemyWave;  // Prefab with the WaveType0 component.
     public RangedEnemyWave rangedEnemyWave;
     public AgressiveEnemyWave agressiveEnemyWave;
     // public List<WaveBasePrefabMapping> wavePrefabs; // Example: struct WaveBasePrefabMapping { WaveType type; Wave prefab; }
 
     [Header("Continuous Wave Cycle Settings")]
-    public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalEnemyWave }; // Default with WaveType0
+public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalEnemyWave };
     public List<int> availableDifficulties = new List<int> { 0, 1, 2 }; // Default difficulties
     public SpawnType continuousWaveSpawnType = SpawnType.AreaAroundPosition;
     public float delayBetweenWaves = 5.0f;
@@ -59,6 +59,7 @@ public class WaveManager : MonoBehaviour
     public Coroutine StartWave(WaveType waveType, SpawnType spawnType, int difficulty, float spawnRateToUse, Transform[] positions)
     {
         Wave waveInstance = null;
+
         switch (waveType)
         {
             case WaveType.NormalEnemyWave:
@@ -75,55 +76,45 @@ public class WaveManager : MonoBehaviour
                 return null;
         }
 
-        if (waveInstance != null)
+        if (waveInstance == null)
         {
-            waveInstance.enemyParent = enemyParent;
-            waveInstance.difficulty = difficulty;
-            waveInstance.spawnRate = spawnRateToUse;
-            waveInstance.players = players;
-            // Specific setup for WaveType0 if needed, or rely on Wave base class for these
-            if (waveInstance is NormalEnemyWave normalEnemyWaveInstance)
-            {
-                normalEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
-                normalEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
-            }
-            else if (waveInstance is RangedEnemyWave rangedEnemyWaveInstance)
-            {
-                rangedEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
-                rangedEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
-            }
-            else if (waveInstance is AgressiveEnemyWave agressiveEnemyWaveInstance)
-            {
-                agressiveEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
-                agressiveEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
-            }            
-            waveInstance.positions_tmp = positions;
-
-            // Set the desired spawn type (Fixed, AreaAroundPosition, or AreaAroundPlayers).
-            // This assumes the Wave script itself has a public spawnType field that its ExecuteWave uses.
-            // If WaveType0.cs is the only one with 'spawnType', this needs adjustment or ensure Wave.cs has it.
-            // For now, assuming WaveType0 specifically handles its spawnType.
-            // Let's ensure the specific wave instance (like WaveType0) has its spawnType set if it's a field on it.
-            if (waveInstance is NormalEnemyWave specificWave) // Example if WaveType0 has its own spawnType field
-            {
-                specificWave.spawnType = spawnType;
-            }
-            // Else, if spawnType is a general property on the abstract Wave class that GetValidSpawnPosition uses, it's more complex.
-            // Given WaveType0.cs: public SpawnType spawnType = SpawnType.AreaAroundPlayers;
-            // We should set this:
-            // waveInstance.spawnType = spawnType; // This line would require 'spawnType' to be a field on the 'Wave' abstract class or all its children.
-            // For WaveType0, it has its own public field:
-            if (waveInstance is NormalEnemyWave NW) NW.spawnType = spawnType;
-            if (waveInstance is RangedEnemyWave RW) RW.spawnType = spawnType;
-            if (waveInstance is AgressiveEnemyWave AW) AW.spawnType = spawnType;
-
-
-            Debug.Log($"Starting Wave: {waveType}, Difficulty: {difficulty}, SpawnType: {spawnType}, SpawnRate: {spawnRateToUse}");
-            Coroutine c = StartCoroutine(waveInstance.ExecuteWave());
-            runningWaves.Add(c);
-            return c;
+            Debug.LogError($"Failed to instantiate wave for type {waveType}. Check prefab assignment.");
+            return null;
         }
-        return null;
+
+
+        
+        waveInstance.enemyParent = enemyParent;
+        waveInstance.difficulty = difficulty;
+        waveInstance.spawnRate = spawnRateToUse;
+        waveInstance.players = players;
+        waveInstance.positions_tmp = positions;
+
+        // --- TYPE-SPECIFIC SETUP ---
+        if (waveInstance is NormalEnemyWave normalEnemyWaveInstance)
+        {
+            normalEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+            normalEnemyWaveInstance.objectivePositions = objectivePositions;
+            normalEnemyWaveInstance.spawnType = spawnType;
+        }
+        else if (waveInstance is RangedEnemyWave rangedEnemyWaveInstance)
+        {
+            rangedEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+            rangedEnemyWaveInstance.objectivePositions = objectivePositions;
+            rangedEnemyWaveInstance.spawnType = spawnType;
+        }
+        else if (waveInstance is AgressiveEnemyWave agressiveEnemyWaveInstance)
+        {
+            agressiveEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+            agressiveEnemyWaveInstance.objectivePositions = objectivePositions;
+            agressiveEnemyWaveInstance.spawnType = spawnType;
+        }
+        // ---END OF TYPE-SPECIFIC SETUP ---
+
+        Debug.Log($"Starting Wave: {waveType}, Difficulty: {difficulty}, SpawnType: {spawnType}, SpawnRate: {spawnRateToUse}");
+        Coroutine c = StartCoroutine(waveInstance.ExecuteWave());
+        runningWaves.Add(c);
+        return c;        
     }
 
     /// <summary>
@@ -234,6 +225,9 @@ public class WaveManager : MonoBehaviour
             waveProgressionManager.ResetProgression();
         }
 
+        WaveProgressionEntry entryForCurrentWave = default;
+        LootTable lootTableToSetAfterThisWave = null;
+
         while (refrenceFlag.value)
         {
             WaveType selectedWaveType;
@@ -242,9 +236,11 @@ public class WaveManager : MonoBehaviour
             // --- GET WAVE PARAMETERS FROM PROGRESSION MANAGER OR FALLBACK ---
             if (waveProgressionManager != null)
             {
-                if (waveProgressionManager.GetNextWaveParameters(out selectedWaveType, out selectedDifficulty))
+                if (waveProgressionManager.TryGetNextWaveEntry(out entryForCurrentWave))
                 {
-                    // Parameters successfully retrieved from progression manager
+                    selectedWaveType = entryForCurrentWave.waveType;
+                    selectedDifficulty = entryForCurrentWave.difficulty;
+                    lootTableToSetAfterThisWave = entryForCurrentWave.lootTableForNextPeriod;
                 }
                 else
                 {
@@ -254,20 +250,17 @@ public class WaveManager : MonoBehaviour
                     break; // Exit while loop
                 }
             }
-            else // Fallback to random selection if no progression manager is assigned
+            else
             {
-                Debug.LogWarning("RunWaveCycle: WaveProgressionManager not assigned. Falling back to random wave selection.");
-                if (availableWaveTypes.Count == 0 || availableDifficulties.Count == 0)
-                {
-                    Debug.LogError("Wave cycle cannot continue: available wave types or difficulties are empty for random selection.");
-                    yield break;
-                }
+                if (availableWaveTypes.Count <= 0) { /* error */ yield break; }
                 selectedWaveType = availableWaveTypes[Random.Range(0, availableWaveTypes.Count)];
                 selectedDifficulty = availableDifficulties[Random.Range(0, availableDifficulties.Count)];
+                lootTableToSetAfterThisWave = null;
             }
             // --- END OF GETTING WAVE PARAMETERS ---
 
             Transform[] positionsToUse;
+
             switch (continuousWaveSpawnType)
             {
                 case SpawnType.AreaAroundPosition:
@@ -297,7 +290,11 @@ public class WaveManager : MonoBehaviour
             Debug.Log($"Continuous Cycle: Starting new wave - Type: {selectedWaveType}, Difficulty: {selectedDifficulty}, SpawnType: {continuousWaveSpawnType}");
             activeContinuousWaveInstance = StartWave(selectedWaveType, continuousWaveSpawnType, selectedDifficulty, defaultSpawnRate, positionsToUse);
 
-            if (activeContinuousWaveInstance != null)
+            if (activeContinuousWaveInstance == null)
+            {
+                Debug.LogWarning("Continuous Cycle: Failed to start a wave instance. Will retry after delay.");
+            }
+            else
             {
                 yield return activeContinuousWaveInstance; // Wait for the wave to complete
 
@@ -308,20 +305,15 @@ public class WaveManager : MonoBehaviour
 
                 // -- THIS IS WHERE THE LOOT TABLES ARE UPDATED --
                 Debug.Log("Continuous Cycle: Wave finished.");
-                if (lootProgressionManager != null)
+                if (lootTableToSetAfterThisWave != null && LootManager.Instance != null)
                 {
-                    lootProgressionManager.OnContinuousWaveCompleted();
-                    // The OnContinuousWaveCompleted will internally call LootManager.Instance.UpdateLootTable
+                    LootManager.Instance.UpdateLootTable(lootTableToSetAfterThisWave);
                 }
                 else
                 {
                     Debug.LogWarning("WaveManager: LootProgressionManager not assigned. Loot tables will not be updated automatically after waves.");
                 }
                 // -- END OF LOOT TABLES UPDATE --
-            }
-            else
-            {
-                Debug.LogWarning("Continuous Cycle: Failed to start a wave instance. Will retry after delay.");
             }
 
             activeContinuousWaveInstance = null; // Clear the active instance
