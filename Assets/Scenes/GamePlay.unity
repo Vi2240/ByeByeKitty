@@ -52885,22 +52885,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f4f3a4ff08103b44a992f859b77dc32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveProgressionSequence:
-  - waveType: 0
-    difficulty: 0
-    lootTableForNextPeriod: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
-  - waveType: 1
-    difficulty: 0
-    lootTableForNextPeriod: {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
-  - waveType: 0
-    difficulty: 1
-    lootTableForNextPeriod: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
-  - waveType: 2
-    difficulty: 0
-    lootTableForNextPeriod: {fileID: 11400000, guid: 35ea238f5e6a3b7c0a3ea0d65294d803, type: 2}
-  loopSequence: 1
-  repeatLastWaveWhenNotLooping: 1
-  incrementDifficultyOnLoop: 1
+  availableLootTables:
+  - {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
+  - {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
+  - {fileID: 11400000, guid: 35ea238f5e6a3b7c0a3ea0d65294d803, type: 2}
+  gamePhases:
+  - phaseName: Introduction Phase / Warmup
+    waveEntriesInPhase:
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    runPhaseCount: 1
+    incrementDifficultyOnPhaseRepeat: 0
+    maxDifficultyAmplifierForPhase: 0
+    resetAmplifierOnPhaseStart: 1
+  - phaseName: Main Phase
+    waveEntriesInPhase:
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 1
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 2
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 1
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 1
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 1
+      lootTableIndexForNextPeriod: 0
+    - waveType: 1
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    - waveType: 2
+      difficulty: 0
+      lootTableIndexForNextPeriod: 0
+    runPhaseCount: -1
+    incrementDifficultyOnPhaseRepeat: 1
+    maxDifficultyAmplifierForPhase: 10
+    resetAmplifierOnPhaseStart: 1
+  - phaseName: Boss Phase
+    waveEntriesInPhase: []
+    runPhaseCount: -1
+    incrementDifficultyOnPhaseRepeat: 1
+    maxDifficultyAmplifierForPhase: 5
+    resetAmplifierOnPhaseStart: 0
+  loopAllPhases: 1
+  incrementDifficultyOnGlobalLoop: 1
 --- !u!1001 &2053467277
 PrefabInstance:
   m_ObjectHideFlags: 0
