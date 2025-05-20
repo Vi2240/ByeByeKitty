@@ -5,6 +5,7 @@ public class Objective : MonoBehaviour
 {
     // ... (Keep all your existing Header variables and other fields) ...
     [Header("Tree Variables")]
+    [SerializeField] Enemy_HealthBar healthBar;
     [SerializeField] GameObject numberEffect;
     [SerializeField] GameObject healingEffect;
     [SerializeField] GameObject waterEffect;
@@ -59,6 +60,7 @@ public class Objective : MonoBehaviour
 
         fireHP = 0;
         currentHp = maxHp;
+        healthBar.SetHealth(currentHp, maxHp);
         isBurning = new Wrapper<bool>(false);
         fireIntensityPercentageFactor = 0f;
         gameWon = false;
@@ -163,6 +165,9 @@ public class Objective : MonoBehaviour
         {
             burnDMGTimer -= currentBurnTickRate;
             currentHp -= burningDmg;
+
+            healthBar.SetHealth(currentHp, maxHp);
+
             if (numberEffect != null)
             {
                 var dmgnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
@@ -204,6 +209,8 @@ public class Objective : MonoBehaviour
             healTimer -= healSpeed;
             currentHp += treeHeal;
             currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+
+            healthBar.SetHealth(currentHp, maxHp);
 
             if (numberEffect != null)
             {

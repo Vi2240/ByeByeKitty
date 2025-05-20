@@ -402,8 +402,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_AnchoredPosition: {x: 0.361, y: 0}
+  m_SizeDelta: {x: -9.278, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6225171391024906503
 GameObject:
@@ -438,7 +438,7 @@ RectTransform:
   m_Father: {fileID: 5478782900731326769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -596,6 +596,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 3420866165055609091}
+  fillArea: {fileID: 0}
   low: {r: 0.7735849, g: 0, b: 0, a: 1}
   high: {r: 0.27286032, g: 0.7169812, b: 0.18600929, a: 1}
   offset: {x: 0, y: 0.6, z: 0}
@@ -800,6 +801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61c1d283d7cdd4d4a800b8a96185e1fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBoss: 0
   maxHealth: 75
   currentHealth: 0
   healthBar: {fileID: 235728362966786466}
