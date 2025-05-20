@@ -785,6 +785,7 @@ MonoBehaviour:
   movePauseMax: 5
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 1
+  stopDistanceFromObjective: 2
   targetRestriction: 1
   nearObjectCheckRadius: 20
   randomWander: 0
@@ -871,6 +872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed55d8d754aae5df8144e4b12a1079b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canExtinguish: 0
   fireStoppingPower: 7.5
   extinguishCooldownTime: 5
   initialCooldownTime: 10

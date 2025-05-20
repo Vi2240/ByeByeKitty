@@ -133,13 +133,13 @@ public class EnemyMovement : MonoBehaviour
     {
         if (targetRestriction == 0 && isNearObjective && isNearPlayer)
         {
-            MoveToDestination(nearestPlayer.transform.position);
+            if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
             return true;
         }
 
         if (targetRestriction == 0 && !nearestObjective)
         {
-            MoveToDestination(nearestPlayer.transform.position);
+            if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
         }
 
         // If it's not resticted to players, it should prioritize the objective over the player if both are in range.

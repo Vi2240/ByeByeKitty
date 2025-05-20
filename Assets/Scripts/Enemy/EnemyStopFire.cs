@@ -37,6 +37,7 @@ public class EnemyStopFire : MonoBehaviour
     }
 
     public Zone zone = new Zone(false, null);
+    [SerializeField] bool canExtinguish = true;
     [SerializeField] float fireStoppingPower;
     [SerializeField] float extinguishCooldownTime;
     [SerializeField] float initialCooldownTime;
@@ -58,7 +59,7 @@ public class EnemyStopFire : MonoBehaviour
 
     private void ExtinguishFire()
     {
-        if (!zone.isInZone || zone.onCooldown || zone.targetObjective == null) return;
+        if (!zone.isInZone || zone.onCooldown || zone.targetObjective == null || !canExtinguish) return;
         
         zone.targetObjective.FireExtinguish(fireStoppingPower);
         StartCoroutine(zone.StartCooldown(extinguishCooldownTime, initialCooldownTime));                

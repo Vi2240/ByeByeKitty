@@ -753,6 +753,7 @@ MonoBehaviour:
   movePauseMax: 2
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 0
+  stopDistanceFromObjective: 2
   targetRestriction: 1
   nearObjectCheckRadius: 2
   randomWander: 1
@@ -801,7 +802,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableAttacking: 0
   attackType: 0
-  attackRange: 2
+  attackRange: 0.8
   bulletForce: 0
   attackCooldown: 0.75
   attackDamage: 5
@@ -834,6 +835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed55d8d754aae5df8144e4b12a1079b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canExtinguish: 0
   fireStoppingPower: 2.5
   extinguishCooldownTime: 0
   initialCooldownTime: 0
