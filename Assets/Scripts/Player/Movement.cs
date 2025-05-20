@@ -30,13 +30,21 @@ public class Movement : MonoBehaviour
     [SerializeField] private string walkingSfxName = "Walk_Grass";
     private AudioSource _walkingSfxSource;
 
+    [Header("Nerfed Movement")]
+    [SerializeField, Tooltip("Speed gets multiplied with this during actions like reloading.")] 
+    float speedMultiplier = 0.5f;
+    bool nerfMovement = false;
+    float baseMoveSpeed;
     private void Start()
     {
         playerCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        nerfMovement = false;
+        baseMoveSpeed = moveSpeed;
     }
 
     void Update()
     {
+        HandleNerfedMovement();
         if (dashing.value)
         {
             if (_walkingSfxSource != null)
@@ -95,7 +103,7 @@ public class Movement : MonoBehaviour
         }
 
 
-        if (allowDashInput && Input.GetKeyDown(KeyCode.Space) && !dashOnCooldown)
+        if (!nerfMovement && allowDashInput && Input.GetKeyDown(KeyCode.Space) && !dashOnCooldown)
         {
             if (_walkingSfxSource != null)
             {
@@ -125,5 +133,19 @@ public class Movement : MonoBehaviour
         dashOnCooldown = true;
         yield return new WaitForSeconds(dashCooldownTime);
         dashOnCooldown = false;
+    }
+
+    public void EnableNerfedMovement() { nerfMovement = true; }
+    public void DisableNerfedMovement() { nerfMovement = false; }
+    private void HandleNerfedMovement()
+    {
+        if (nerfMovement)
+        {
+            moveSpeed = baseMoveSpeed * speedMultiplier;
+        }
+        else
+        {
+            moveSpeed = baseMoveSpeed;
+        }
     }
 }
