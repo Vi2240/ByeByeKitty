@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class Objective : MonoBehaviour
 {
-
+    // ... (Keep all your existing Header variables and other fields) ...
     [Header("Tree Variables")]
     [SerializeField] GameObject numberEffect;
     [SerializeField] GameObject healingEffect;
     [SerializeField] GameObject waterEffect;
-    [SerializeField] float waterEffectTime = 2.0f;
+    [SerializeField] float waterEffectTime = 2.0f; // Linger time for visual, and interval for sound
     [SerializeField] float maxHp;
     [SerializeField] float healSpeed;
     [SerializeField] float treeHeal;
@@ -31,9 +31,12 @@ public class Objective : MonoBehaviour
     [Header("Fire Activation Variables")]
     [SerializeField] GameObject burnEffect;
     [SerializeField] float rekindleFireDelay = 5f;
+    [SerializeField] UnityEngine.Transform fireCircle;
+    [SerializeField] float maxScale = 1f;
+    [SerializeField] float requiredHoldTime = 5.0f;
+    float holdTimer = 0f;
 
     [SerializeField] GameObject winCanvas;
-
     [SerializeField] GameObject waveManagerObject;
 
     bool playersInZone;
@@ -41,14 +44,14 @@ public class Objective : MonoBehaviour
     bool canRekindleFire = true;
     bool gameWon;
 
-    [Header("Fire Activation Variables")]
-    [SerializeField] UnityEngine.Transform fireCircle;
-    [SerializeField] float maxScale = 1f;
-    [SerializeField] float requiredHoldTime = 5.0f;
-    float holdTimer = 0f;
-
     WaveManager waveManager;
     AudioSource burningAudioSource;
+
+    // --- Variables for improved water effect & sound ---
+    bool isWaterEffectVisuallyActive = false;
+    Coroutine waterVisualLingerCoroutine = null;
+    Coroutine waterSoundLoopCoroutine = null; // New coroutine for sound
+    // --- End new variables ---
 
     void Start()
     {
@@ -60,7 +63,15 @@ public class Objective : MonoBehaviour
         fireIntensityPercentageFactor = 0f;
         gameWon = false;
         treeAlive = true;
-        waveManager = waveManagerObject.GetComponent<WaveManager>();
+
+        if (waveManagerObject != null)
+        {
+            waveManager = waveManagerObject.GetComponent<WaveManager>();
+            if (waveManager == null)
+                Debug.LogError("WaveManager component not found on waveManagerObject!", this);
+        }
+        else Debug.LogError("waveManagerObject is not assigned in the Inspector!", this);
+
 
         if (burnEffect != null)
         {
@@ -69,11 +80,22 @@ public class Objective : MonoBehaviour
         }
         else Debug.LogError("BurnEffect GameObject is not assigned in the Inspector!", this);
 
-        // flip all timers -- set to TPS instead of SPT
+        if (waterEffect != null)
+        {
+            waterEffect.SetActive(false); // Ensure it's off at start
+        }
+        else Debug.LogError("WaterEffect GameObject is not assigned in the Inspector!", this);
+
+        if (healingEffect != null)
+        {
+            healingEffect.SetActive(false);
+        }
+        else Debug.LogError("HealingEffect GameObject is not assigned in the Inspector!", this);
+
+
         healSpeed = (healSpeed == 0) ? 0 : 1 / healSpeed;
         burnSpeed = (burnSpeed == 0) ? 0 : 1 / burnSpeed;
         fireHealSpeed = (fireHealSpeed == 0) ? 0 : 1 / fireHealSpeed;
-
     }
 
     void Update()
@@ -83,22 +105,26 @@ public class Objective : MonoBehaviour
         if (!playersInZone || isBurning.value || !Input.GetKey(KeyCode.E) || !canRekindleFire)
         {
             holdTimer = 0f;
-            fireCircle.localScale = Vector3.zero;
+            if (fireCircle != null) fireCircle.localScale = Vector3.zero;
             return;
         }
 
         holdTimer += Time.deltaTime;
-        Debug.Log(holdTimer);
         float scale = Mathf.Clamp01(holdTimer / requiredHoldTime) * maxScale;
-        fireCircle.localScale = new Vector3(scale, scale, scale);
+        if (fireCircle != null) fireCircle.localScale = new Vector3(scale, scale, scale);
 
         if (holdTimer >= requiredHoldTime)
         {
-            burningAudioSource = AudioPlayer.Current.PlayLoopingSfx("Fire_Sound", transform.position);
+            if (AudioPlayer.Current != null)
+            {
+                burningAudioSource = AudioPlayer.Current.PlayLoopingSfx("Fire_Sound", transform.position);
+            }
             isBurning.value = true;
             fireHP = maxFireHp / 4;
-            waveManager.StartContinuousWaves(gameObject.transform, isBurning);
+            if (waveManager != null) waveManager.StartContinuousWaves(gameObject.transform, isBurning);
             StartCoroutine(RekindleFireTimmer());
+            holdTimer = 0f;
+            if (fireCircle != null) fireCircle.localScale = Vector3.zero;
         }
     }
 
@@ -108,50 +134,45 @@ public class Objective : MonoBehaviour
 
         if (isBurning.value)
         {
-            healingEffect.SetActive(false);
+            if (healingEffect != null && healingEffect.activeSelf) healingEffect.SetActive(false);
             fireIntensityPercentageFactor = fireHP / maxFireHp;
             HandleBurningDamage(Time.fixedDeltaTime);
             HandleFireGrowth(Time.fixedDeltaTime);
-            //DebugShowHP(Time.fixedDeltaTime)
             return;
         }
 
-        waterEffect.SetActive(false);
-        burnEffect.SetActive(false);
-
+        if (burnEffect != null && burnEffect.activeSelf) burnEffect.SetActive(false);
         if (currentHp < maxHp)
         {
             HandleHealing(Time.fixedDeltaTime);
-            return;
         }
-
-        healingEffect.SetActive(false);
+        else
+        {
+            if (healingEffect != null && healingEffect.activeSelf) healingEffect.SetActive(false);
+        }
     }
-
-    // float debugShowHPTimer = 0f;
-    // void DebugShowHP(float dt)
-    // {
-    //     debugShowHPTimer += dt;
-    //     if (debugShowHPTimer <= 0.5f) return;
-    //     debugShowHPTimer = 0f;
-    //     Debug.Log("Current HP: " + currentHp + "\tFireHP: " + fireHP);        
-    // }
 
     float burnDMGTimer = 0f;
     void HandleBurningDamage(float dt)
     {
         burnDMGTimer += dt;
-        float curBurnSpeed = burnSpeed / fireIntensityPercentageFactor;
-        while (burnDMGTimer >= curBurnSpeed)
+        float currentBurnTickRate = (fireIntensityPercentageFactor > 0.01f) ? burnSpeed / fireIntensityPercentageFactor : burnSpeed * 100f;
+        if (currentBurnTickRate <= 0) currentBurnTickRate = float.MaxValue;
+
+        while (burnDMGTimer >= currentBurnTickRate)
         {
-            burnDMGTimer -= curBurnSpeed;
+            burnDMGTimer -= currentBurnTickRate;
             currentHp -= burningDmg;
-            var dmgnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
-            dmgnr.GetComponent<FloatingHealthNumber>().SetText(burningDmg.ToString(), 1);
+            if (numberEffect != null)
+            {
+                var dmgnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
+                dmgnr.GetComponent<FloatingHealthNumber>()?.SetText(burningDmg.ToString(), 1);
+            }
             if (currentHp <= 0 && treeAlive)
             {
                 treeAlive = false;
-                waveManager.StartBossWave();
+                currentHp = 0;
+                if (waveManager != null) waveManager.StartBossWave();
             }
         }
     }
@@ -160,11 +181,13 @@ public class Objective : MonoBehaviour
     void HandleFireGrowth(float dt)
     {
         growthTimer += dt;
+        if (fireHealSpeed <= 0) return;
+
         while (growthTimer >= fireHealSpeed)
         {
             growthTimer -= fireHealSpeed;
             fireHP += fireHeal;
-            fireHP = (fireHP > maxFireHp) ? maxFireHp : fireHP;
+            fireHP = Mathf.Clamp(fireHP, 0, maxFireHp);
         }
         UpdateBurnEffectScale();
     }
@@ -172,53 +195,71 @@ public class Objective : MonoBehaviour
     float healTimer = 0f;
     void HandleHealing(float dt)
     {
+        if (healSpeed <= 0) return;
+
         healTimer += dt;
-        healingEffect.SetActive(true);
+        if (healingEffect != null && !healingEffect.activeSelf) healingEffect.SetActive(true);
         while (healTimer >= healSpeed)
         {
             healTimer -= healSpeed;
-            float tmpHp = currentHp + treeHeal;
-            currentHp = (tmpHp < maxHp) ? tmpHp : maxHp;
+            currentHp += treeHeal;
+            currentHp = Mathf.Clamp(currentHp, 0, maxHp);
 
-            var healnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
-            healnr.GetComponent<FloatingHealthNumber>().SetText(treeHeal.ToString(), 2);
+            if (numberEffect != null)
+            {
+                var healnr = Instantiate(numberEffect, transform.position, Quaternion.identity);
+                healnr.GetComponent<FloatingHealthNumber>()?.SetText(treeHeal.ToString(), 2);
+            }
         }
     }
 
     void UpdateBurnEffectScale()
     {
-        if (burnEffect == null || !burnEffect.activeSelf)
+        if (burnEffect == null) return;
+
+        if (fireIntensityPercentageFactor > 0 && !burnEffect.activeSelf)
         {
             burnEffect.SetActive(true);
         }
-        burnEffect.transform.localScale = maxBurnEffectScale_Vec * fireIntensityPercentageFactor;
+        else if (fireIntensityPercentageFactor <= 0 && burnEffect.activeSelf)
+        {
+            burnEffect.SetActive(false);
+        }
+
+        if (burnEffect.activeSelf)
+        {
+            burnEffect.transform.localScale = maxBurnEffectScale_Vec * fireIntensityPercentageFactor;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             playersInZone = true;
         }
-        if (other.tag == "Enemy" && enemyKillzone == false)
+        if (other.CompareTag("Enemy"))
         {
-            other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(true, this.gameObject);
-        }
-        if (other.tag == "Enemy" && enemyKillzone == true)
-        {
-            Destroy(other.gameObject);
+            if (enemyKillzone)
+            {
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                other.gameObject.GetComponent<EnemyStopFire>()?.SetInObjectiveZone(true, this.gameObject);
+            }
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             playersInZone = false;
         }
-        if (other.tag == "Enemy")
+        if (other.CompareTag("Enemy") && !enemyKillzone)
         {
-            other.gameObject.GetComponent<EnemyStopFire>().SetInObjectiveZone(false, this.gameObject);
+            other.gameObject.GetComponent<EnemyStopFire>()?.SetInObjectiveZone(false, this.gameObject);
         }
     }
 
@@ -232,29 +273,89 @@ public class Objective : MonoBehaviour
         return isBurning.value;
     }
 
+
     public void FireExtinguish(float fireStoppingPower)
     {
-        if (!canFireBeExtinguished) return;
+        if (!canFireBeExtinguished || !isBurning.value) return;
 
-        StartCoroutine(WaterEffectTimer());
         fireHP -= fireStoppingPower;
+
+        // --- Visual Water Effect Logic ---
+        if (waterEffect != null)
+        {
+            if (!isWaterEffectVisuallyActive) // Only activate visuals if they are off
+            {
+                waterEffect.SetActive(true);
+                isWaterEffectVisuallyActive = true;
+
+                // Start the sound loop when visual effect first activates
+                if (waterSoundLoopCoroutine == null)
+                {
+                    waterSoundLoopCoroutine = StartCoroutine(WaterSoundLoopRoutine());
+                }
+            }
+
+            // Always refresh the visual linger timer
+            if (waterVisualLingerCoroutine != null)
+            {
+                StopCoroutine(waterVisualLingerCoroutine);
+            }
+            waterVisualLingerCoroutine = StartCoroutine(WaterVisualLingerRoutine());
+        }
+        // --- End Visual Water Effect Logic ---
+
         if (fireHP <= 0)
         {
+            fireHP = 0;
             isBurning.value = false;
-            if (burningAudioSource)
+            if (burningAudioSource != null && AudioPlayer.Current != null)
             {
                 AudioPlayer.Current.StopLoopingSfx(burningAudioSource);
+                burningAudioSource = null;
             }
+            // The visual water effect will turn off via its linger coroutine.
+            // The sound loop will stop because isWaterEffectVisuallyActive will become false.
         }
     }
 
+    IEnumerator WaterVisualLingerRoutine()
+    {
+        yield return new WaitForSeconds(waterEffectTime);
+        // This routine will only complete if not restarted by another FireExtinguish call
+        if (waterEffect != null) waterEffect.SetActive(false);
+        isWaterEffectVisuallyActive = false; // Signal that visuals are off
+        waterVisualLingerCoroutine = null;
+
+        // If the visual effect is turning off, ensure the sound loop also stops
+        if (waterSoundLoopCoroutine != null)
+        {
+            StopCoroutine(waterSoundLoopCoroutine);
+            waterSoundLoopCoroutine = null;
+        }
+    }
+
+    IEnumerator WaterSoundLoopRoutine()
+    {
+        while (isWaterEffectVisuallyActive) // Loop as long as the visual effect is supposed to be active
+        {
+            if (AudioPlayer.Current != null)
+            {
+                AudioPlayer.Current.PlaySfxAtPoint("ExtinguishSound", transform.position);
+            }
+            yield return new WaitForSeconds(waterEffectTime); // Wait for the interval
+        }
+        waterSoundLoopCoroutine = null; // Clear reference when loop ends
+    }
+
+    // ... WinGame, RekindleFireTimmer ...
+    // (These methods remain unchanged)
     IEnumerator WinGame()
     {
         if (gameWon) yield break;
         gameWon = true;
-        winCanvas.SetActive(true);
+        if (winCanvas != null) winCanvas.SetActive(true);
         yield return new WaitForSeconds(5);
-        Loader.LoadNetwork(Loader.Scene.MenuScene);
+        // Loader.LoadNetwork(Loader.Scene.MenuScene);
     }
 
     IEnumerator RekindleFireTimmer()
@@ -262,12 +363,5 @@ public class Objective : MonoBehaviour
         canRekindleFire = false;
         yield return new WaitForSeconds(rekindleFireDelay);
         canRekindleFire = true;
-    }
-
-    IEnumerator WaterEffectTimer()
-    {
-        waterEffect.SetActive(true);
-        yield return new WaitForSeconds(waterEffectTime);
-        waterEffect.SetActive(false);
     }
 }

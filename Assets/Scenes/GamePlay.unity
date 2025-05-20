@@ -2590,7 +2590,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: maxHp
-      value: 1000
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 4868506519002121604, guid: c6deafc1f3e2f1744a0844a684a52b27, type: 3}
       propertyPath: firePH
@@ -5428,8 +5428,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 5.6683}
-  m_SizeDelta: {x: 1920, y: 1092}
+  m_AnchoredPosition: {x: 0.6784, y: 5.6683}
+  m_SizeDelta: {x: 1921.3569, y: 1092}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1836543121
 CanvasGroup:
