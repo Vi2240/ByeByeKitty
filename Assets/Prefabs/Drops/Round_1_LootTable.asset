@@ -18,6 +18,8 @@ MonoBehaviour:
   - itemPrefab: {fileID: 8125233738006395700, guid: 2c8a15aed957c04489944eed7d165c23, type: 3}
     weight: 5
   - itemPrefab: {fileID: 8125233738006395700, guid: 33d97976791e58642908626726d68b6a, type: 3}
-    weight: 1
+    weight: 5
+  - itemPrefab: {fileID: 5896259601204447925, guid: 3fb5c422f63688707a4af91a18fcad01, type: 3}
+    weight: 3
   - itemPrefab: {fileID: 8125233738006395700, guid: 95252f8252779014089729e065b1f41c, type: 3}
     weight: 5

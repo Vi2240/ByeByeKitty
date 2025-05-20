@@ -172,6 +172,7 @@ MonoBehaviour:
   magazineSizeMax: 30
   currentMagAmmoCount: 30
   requiredMouseDistanceFromPlayer: 1.5
+  nerfMovementDuringAction: 1
   bulletPrefab: {fileID: 4570218590493495106, guid: e65b240545e8df346a579aeef13561d2, type: 3}
   automaticShooting: 1
   bulletForce: 50

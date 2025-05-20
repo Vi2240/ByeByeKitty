@@ -168,10 +168,11 @@ MonoBehaviour:
   weaponSpriteTransform: {fileID: 1395401081620193373}
   fireCooldown: 0.2
   reloadTime: 1.2
-  damagePerHit: 15
+  damagePerHit: 20
   magazineSizeMax: 12
   currentMagAmmoCount: 12
   requiredMouseDistanceFromPlayer: 1.5
+  nerfMovementDuringAction: 1
   bulletPrefab: {fileID: 4570218590493495106, guid: 79f50b112df027f4aa7a2c300cab8ce4, type: 3}
   automaticShooting: 0
   bulletForce: 50

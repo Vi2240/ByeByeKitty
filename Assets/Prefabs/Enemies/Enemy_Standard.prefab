@@ -753,6 +753,7 @@ MonoBehaviour:
   movePauseMax: 5
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 0.5
+  stopDistanceFromObjective: 2
   targetRestriction: 0
   nearObjectCheckRadius: 7
   randomWander: 1
@@ -804,7 +805,7 @@ MonoBehaviour:
   attackRange: 1
   bulletForce: 20
   attackCooldown: 0.5
-  attackDamage: 5
+  attackDamage: 15
   bulletSpawnPos: {fileID: 0}
   bulletPrefab: {fileID: 0}
 --- !u!114 &4201214158487945568
@@ -834,6 +835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed55d8d754aae5df8144e4b12a1079b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canExtinguish: 1
   fireStoppingPower: 4
   extinguishCooldownTime: 3
   initialCooldownTime: 5

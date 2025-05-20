@@ -5,9 +5,9 @@ using UnityEngine;
 public static class InventoryAndBuffs
 {
     // -- Inventory --
-    public static int ammo = 500;
+    public static int ammo = 0;
     public static int maxAmmo = 1000;
-    public static int energyAmmo = 500;
+    public static int energyAmmo = 0;
     public static int maxEnergyAmmo = 1000;
 
 

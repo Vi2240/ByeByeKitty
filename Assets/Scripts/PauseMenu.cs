@@ -15,6 +15,7 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
+        pauseMenuUI.SetActive(true);
         if (pauseTimeAtStart)
         {
             Time.timeScale = 0f;
@@ -56,6 +57,7 @@ public class PauseMenu : MonoBehaviour
         {
             pauseMenuUI.SetActive(true);
         }
+        else { print("pauseMenuUI is null"); }
         Time.timeScale = 0f;
         AudioListener.pause = true;
         GameIsPaused = true;
