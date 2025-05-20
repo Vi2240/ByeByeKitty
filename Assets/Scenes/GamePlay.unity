@@ -6331,14 +6331,12 @@ MonoBehaviour:
   waveProgressionSequence:
   - waveType: 0
     difficulty: 0
-  - waveType: 0
+  - waveType: 1
     difficulty: 0
   - waveType: 0
-    difficulty: 1
-  - waveType: 0
-    difficulty: 1
-  - waveType: 0
-    difficulty: 2
+    difficulty: 0
+  - waveType: 2
+    difficulty: 0
   loopSequence: 1
   repeatLastWaveWhenNotLooping: 1
 --- !u!1001 &2099094555
@@ -17084,7 +17082,7 @@ MonoBehaviour:
   burningDmg: 5
   burnSpeed: 10
   BurnEffectScaleMult: 1.5
-  delayFireGrowthAfterExtinguishTime: 1.5
+  delayFireGrowthAfterExtinguishTime: 2
   delayFireGrowthAfterExtinguish: 1
   burnEffect: {fileID: 30291362}
   rekindleFireDelay: 5

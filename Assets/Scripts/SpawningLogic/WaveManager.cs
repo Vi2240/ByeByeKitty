@@ -15,12 +15,13 @@ public class WaveManager : MonoBehaviour
     [SerializeField] Transform bossSpawnPoint;
 
     [Header("Wave Settings")]
-    public WaveType0 waveType0Prefab;  // Prefab with the WaveType0 component.
-    // TODO: Consider a more generic way to handle prefabs if more WaveTypes are added
+    public NormalEnemyWave normalEnemyWave;  // Prefab with the WaveType0 component.
+    public RangedEnemyWave rangedEnemyWave;
+    public AgressiveEnemyWave agressiveEnemyWave;
     // public List<WaveBasePrefabMapping> wavePrefabs; // Example: struct WaveBasePrefabMapping { WaveType type; Wave prefab; }
 
     [Header("Continuous Wave Cycle Settings")]
-    public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.WaveType0 }; // Default with WaveType0
+    public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalEnemyWave }; // Default with WaveType0
     public List<int> availableDifficulties = new List<int> { 0, 1, 2 }; // Default difficulties
     public SpawnType continuousWaveSpawnType = SpawnType.AreaAroundPosition;
     public float delayBetweenWaves = 5.0f;
@@ -60,13 +61,15 @@ public class WaveManager : MonoBehaviour
         Wave waveInstance = null;
         switch (waveType)
         {
-            case WaveType.WaveType0:
-                waveInstance = Instantiate(waveType0Prefab, transform);
+            case WaveType.NormalEnemyWave:
+                waveInstance = Instantiate(normalEnemyWave, transform);
                 break;
-            // Extend with other wave types as needed.
-            // case WaveType.WaveType1:
-            //     waveInstance = Instantiate(waveType1Prefab, transform);
-            //     break;
+            case WaveType.RangedEnemyWave:
+                waveInstance = Instantiate(rangedEnemyWave, transform);
+                break;
+            case WaveType.AgressiveEnemyWave:
+                waveInstance = Instantiate(agressiveEnemyWave, transform);
+                break;
             default:
                 Debug.LogError("Wave type " + waveType + " not supported or prefab not assigned.");
                 return null;
@@ -79,11 +82,21 @@ public class WaveManager : MonoBehaviour
             waveInstance.spawnRate = spawnRateToUse;
             waveInstance.players = players;
             // Specific setup for WaveType0 if needed, or rely on Wave base class for these
-            if (waveInstance is WaveType0 waveType0Instance)
+            if (waveInstance is NormalEnemyWave normalEnemyWaveInstance)
             {
-                waveType0Instance.fixedSpawnPoints = fixedSpawnPoints;
-                waveType0Instance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
+                normalEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+                normalEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
             }
+            else if (waveInstance is RangedEnemyWave rangedEnemyWaveInstance)
+            {
+                rangedEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+                rangedEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
+            }
+            else if (waveInstance is AgressiveEnemyWave agressiveEnemyWaveInstance)
+            {
+                agressiveEnemyWaveInstance.fixedSpawnPoints = fixedSpawnPoints;
+                agressiveEnemyWaveInstance.objectivePositions = objectivePositions; // These might be redundant if GetValidSpawnPosition primarily uses positions_tmp
+            }            
             waveInstance.positions_tmp = positions;
 
             // Set the desired spawn type (Fixed, AreaAroundPosition, or AreaAroundPlayers).
@@ -91,7 +104,7 @@ public class WaveManager : MonoBehaviour
             // If WaveType0.cs is the only one with 'spawnType', this needs adjustment or ensure Wave.cs has it.
             // For now, assuming WaveType0 specifically handles its spawnType.
             // Let's ensure the specific wave instance (like WaveType0) has its spawnType set if it's a field on it.
-            if (waveInstance is WaveType0 specificWave) // Example if WaveType0 has its own spawnType field
+            if (waveInstance is NormalEnemyWave specificWave) // Example if WaveType0 has its own spawnType field
             {
                 specificWave.spawnType = spawnType;
             }
@@ -100,7 +113,9 @@ public class WaveManager : MonoBehaviour
             // We should set this:
             // waveInstance.spawnType = spawnType; // This line would require 'spawnType' to be a field on the 'Wave' abstract class or all its children.
             // For WaveType0, it has its own public field:
-            if (waveInstance is WaveType0 wt0) wt0.spawnType = spawnType;
+            if (waveInstance is NormalEnemyWave NW) NW.spawnType = spawnType;
+            if (waveInstance is RangedEnemyWave RW) RW.spawnType = spawnType;
+            if (waveInstance is AgressiveEnemyWave AW) AW.spawnType = spawnType;
 
 
             Debug.Log($"Starting Wave: {waveType}, Difficulty: {difficulty}, SpawnType: {spawnType}, SpawnRate: {spawnRateToUse}");

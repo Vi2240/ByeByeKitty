@@ -4,5 +4,7 @@
 /// </summary>
 public enum WaveType : int
 {
-    WaveType0              // The first type of wave
+    NormalEnemyWave,
+    RangedEnemyWave,
+    AgressiveEnemyWave
 }

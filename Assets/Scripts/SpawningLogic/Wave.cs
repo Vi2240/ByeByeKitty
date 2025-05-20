@@ -11,7 +11,7 @@ public abstract class Wave : MonoBehaviour
 {
     [Header("Enemy Prefabs")]
     public GameObject normalEnemy;
-    public GameObject speedEnemy;
+    public GameObject meleeEnemy;
     public GameObject slowEnemy;
     public GameObject rangeEnemy;
     public GameObject bossEnemy;
