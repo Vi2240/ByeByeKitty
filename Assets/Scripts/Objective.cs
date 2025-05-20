@@ -340,7 +340,7 @@ public class Objective : MonoBehaviour
         {
             if (AudioPlayer.Current != null)
             {
-                AudioPlayer.Current.PlaySfxAtPoint("ExtinguishSound", transform.position);
+                AudioPlayer.Current.PlaySfxAtPoint("ExtinguishSound", transform.position, 0.5f);
             }
             yield return new WaitForSeconds(waterEffectTime); // Wait for the interval
         }

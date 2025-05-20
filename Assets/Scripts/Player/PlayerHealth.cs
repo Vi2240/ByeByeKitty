@@ -73,6 +73,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
+        AudioPlayer.Current.PlaySfxAtPoint("PlayerDamage", transform.position);
         inCombat = true;
         currentHealth -= damageAmount;
         if (currentHealth < 0) { currentHealth = 0; }
