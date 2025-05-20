@@ -29,11 +29,124 @@ public abstract class Wave : MonoBehaviour
     // Minimum allowed distance from point.
     public float? minDistanceFromPoint = 7.5f;
 
+    protected struct EnemyComposition
+    {
+        public int normalCount;
+        public int meleeCount;
+        public int slowCount;
+        public int rangeCount;
+    }
+
+    protected abstract EnemyComposition GetEnemyCompositionForDifficulty(int currentDifficulty);
+
     /// <summary>
     /// Every concrete wave must implement its execution logic.
     /// This coroutine should yield until the wave is considered complete.
     /// </summary>
     public abstract IEnumerator ExecuteWave();
+
+    protected virtual IEnumerator SpawnEnemyLoop(string waveTypeName, SpawnType effectiveSpawnType, Transform[] fixedSpawns, Transform[] objectiveSpawnsForArea) // Added parameters for spawn points
+    {
+        // Get the composition from the child class
+        EnemyComposition composition = GetEnemyCompositionForDifficulty(this.difficulty);
+
+        int normalEnemyChance = composition.normalCount; // Use local mutable copies for spawning
+        int meleeEnemyChance = composition.meleeCount;
+        int slowEnemyChance = composition.slowCount;
+        int rangeEnemyChance = composition.rangeCount;
+
+        int totalEnemiesToSpawnThisWave = normalEnemyChance + meleeEnemyChance + slowEnemyChance + rangeEnemyChance;
+        int enemiesSpawnedThisWave = 0;
+
+        if (totalEnemiesToSpawnThisWave == 0) {
+            Debug.LogWarning($"{waveTypeName}: No enemies defined for difficulty {this.difficulty}. Wave will complete immediately.");
+            yield break; // Exit if no enemies to spawn
+        }
+
+        Debug.Log($"{waveTypeName}: Total enemies to spawn this wave: {totalEnemiesToSpawnThisWave} for difficulty {this.difficulty}");
+
+        // Determine waitTime (you had this logic, keep it or adjust)
+        float waitTime = 10f; // Default or from spawnRate
+        if (this.spawnRate <= 0)
+        {
+            Debug.LogWarning("SpawnRate is zero or negative, defaulting waitTime to 1 second.");
+            waitTime = 1f;
+        }
+        // else if (this.difficulty + 1 > 0 && this.spawnRate > 0) {
+        //     waitTime = this.spawnRate / (this.difficulty + 1);
+        // }
+
+
+        while (enemiesSpawnedThisWave < totalEnemiesToSpawnThisWave)
+        {
+            int spawnsPerLoop = Mathf.Max(1, 5 + 5 * this.difficulty);
+            spawnsPerLoop = Mathf.Min(spawnsPerLoop, totalEnemiesToSpawnThisWave - enemiesSpawnedThisWave);
+
+            for (int i = 0; i < spawnsPerLoop; i++)
+            {
+                if (enemiesSpawnedThisWave >= totalEnemiesToSpawnThisWave) break;
+
+                List<GameObject> availableEnemyTypesForSpawn = new List<GameObject>();
+                if (normalEnemyChance > 0 && normalEnemy != null) availableEnemyTypesForSpawn.Add(normalEnemy);
+                if (meleeEnemyChance > 0 && meleeEnemy != null) availableEnemyTypesForSpawn.Add(meleeEnemy);
+                if (slowEnemyChance > 0 && slowEnemy != null) availableEnemyTypesForSpawn.Add(slowEnemy);
+                if (rangeEnemyChance > 0 && rangeEnemy != null) availableEnemyTypesForSpawn.Add(rangeEnemy);
+
+                if (availableEnemyTypesForSpawn.Count == 0)
+                {
+                    // This should ideally not happen if totalEnemiesToSpawnThisWave > 0
+                    // and initial chances are positive. It means we ran out of specific types.
+                    // To prevent infinite loops, we might need to break or adjust logic.
+                    // For now, count as spawned to ensure loop termination.
+                    Debug.LogWarning($"{waveTypeName}: Ran out of specific enemy types to spawn, but more were expected. Check composition logic.");
+                    enemiesSpawnedThisWave++;
+                    continue;
+                }
+
+                int choiceIndex = Random.Range(0, availableEnemyTypesForSpawn.Count);
+                GameObject enemyToSpawn = availableEnemyTypesForSpawn[choiceIndex];
+
+                if (enemyToSpawn == normalEnemy) normalEnemyChance--;
+                else if (enemyToSpawn == meleeEnemy) meleeEnemyChance--;
+                else if (enemyToSpawn == slowEnemy) slowEnemyChance--;
+                else if (enemyToSpawn == rangeEnemy) rangeEnemyChance--;
+
+                Vector3 spawnPos = Vector3.zero;
+                // Use the 'effectiveSpawnType' passed to this method.
+                // Also, pass the correct spawn point arrays.
+                switch (effectiveSpawnType)
+                {
+                    case SpawnType.Fixed:
+                        spawnPos = GetValidSpawnPosition(SpawnType.Fixed, fixedSpawns);
+                        break;
+                    case SpawnType.AreaAroundPosition:
+                        // 'positions_tmp' is the general one from WaveManager,
+                        // but we passed 'objectiveSpawnsForArea' which might be specific
+                        spawnPos = GetValidSpawnPosition(SpawnType.AreaAroundPosition, objectiveSpawnsForArea ?? this.positions_tmp);
+                        break;
+                    case SpawnType.AreaAroundPlayers:
+                    default:
+                        spawnPos = GetValidSpawnPosition(SpawnType.AreaAroundPlayers, this.players); // 'this.players' is fine here
+                        break;
+                }
+
+                if (enemyToSpawn != null)
+                {
+                    GameObject enemyInstance = Instantiate(enemyToSpawn, spawnPos, Quaternion.identity);
+                    if (this.enemyParent != null)
+                    {
+                        enemyInstance.transform.SetParent(this.enemyParent.transform, true);
+                    }
+                    enemiesSpawnedThisWave++;
+                }
+            }
+            if (enemiesSpawnedThisWave < totalEnemiesToSpawnThisWave)
+            {
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+        Debug.Log($"{waveTypeName} finished spawning {enemiesSpawnedThisWave} enemies.");
+    }
 
     /// <summary>
     /// Gets a valid spawn position based on the provided spawn type and an array of reference points.

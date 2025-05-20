@@ -6336,11 +6336,11 @@ MonoBehaviour:
     difficulty: 0
     lootTableForNextPeriod: {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
   - waveType: 0
-    difficulty: 0
-    lootTableForNextPeriod: {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
+    difficulty: 1
+    lootTableForNextPeriod: {fileID: 11400000, guid: 0f08f8c85a12eb59cb56c575735c4c7d, type: 2}
   - waveType: 2
     difficulty: 0
-    lootTableForNextPeriod: {fileID: 11400000, guid: 6ccbcfe373921c546b9aa6ca206faf2f, type: 2}
+    lootTableForNextPeriod: {fileID: 11400000, guid: 35ea238f5e6a3b7c0a3ea0d65294d803, type: 2}
   loopSequence: 1
   repeatLastWaveWhenNotLooping: 1
   incrementDifficultyOnLoop: 1
