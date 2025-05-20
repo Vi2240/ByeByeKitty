@@ -752,8 +752,9 @@ MonoBehaviour:
   movePauseMax: 5
   checkIfStuckFrequency: 5
   stopDistanceFromPlayer: 0
+  stopDistanceFromObjective: 2
   targetRestriction: 2
-  nearObjectCheckRadius: 0.3
+  nearObjectCheckRadius: 7
   randomWander: 1
   canAttackPlayers: 0
 --- !u!114 &4737058632888830376

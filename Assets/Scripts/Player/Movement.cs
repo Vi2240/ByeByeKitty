@@ -117,7 +117,10 @@ public class Movement : MonoBehaviour
             mousePos = (Vector2)playerCamera.ScreenToWorldPoint(Input.mousePosition);
 
             StartCoroutine(GeneralizedDash2D.Dash2D(dashDistance, dashTime, dashChargeUpTime, movement, gameObject, dashing));
-            if (dashing.value) { StartCoroutine(DashCooldown()); }
+            if (dashing.value) { 
+                StartCoroutine(DashCooldown()); 
+                AudioPlayer.Current.PlaySfxAtPoint("DodgeSwoosh", transform.position); 
+            }
         }
     }
 

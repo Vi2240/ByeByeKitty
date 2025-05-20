@@ -25,6 +25,11 @@ public class Objective : MonoBehaviour
     [SerializeField] float burningDmg;
     [SerializeField] float burnSpeed;
     [SerializeField] float BurnEffectScaleMult = 1;
+    [SerializeField] float scaleDownDuration = 4f;
+    [SerializeField, Tooltip("1.0 is completely black.")] float maxShaderBurnValue = 0.99f;
+    [SerializeField] SpriteRenderer spriteRenderer;
+    Material materialInstance;
+    private static readonly int BurnAmountPropertyID = Shader.PropertyToID("_BurnAmount");
     float fireIntensityPercentageFactor;
     float fireHP;
     Vector3 maxBurnEffectScale_Vec;
@@ -63,15 +68,22 @@ public class Objective : MonoBehaviour
     {
         winCanvas.SetActive(false);
 
+        // HP and health bar
         fireHP = 0;
         currentHp = maxHp;
         healthBar.SetHealth(currentHp, maxHp);
+
+        // Burning
+        materialInstance = spriteRenderer.material;
+        UpdateBurnVisuals();
         isBurning = new Wrapper<bool>(false);
         fireIntensityPercentageFactor = 0f;
-        gameWon = false;
-        treeAlive = true;
         delayFireGrowthAfterExtinguish = true;
         fireGrowthDelayedUntil = 0f;
+
+        // Other
+        gameWon = false;
+        treeAlive = true;
 
         if (waveManagerObject != null)
         {
@@ -174,6 +186,7 @@ public class Objective : MonoBehaviour
             currentHp -= burningDmg;
 
             healthBar.SetHealth(currentHp, maxHp);
+            UpdateBurnVisuals();
 
             if (numberEffect != null)
             {
@@ -184,9 +197,33 @@ public class Objective : MonoBehaviour
             {
                 treeAlive = false;
                 currentHp = 0;
+                StartCoroutine(ScaleDownBurnEffect(scaleDownDuration));
                 if (waveManager != null) waveManager.StartBossWave();
             }
         }
+    }
+
+    private void UpdateBurnVisuals()
+    {
+        if (materialInstance == null)
+        {
+            // This check is important if Awake had an issue
+            Debug.LogWarning("Material instance not found, cannot update burn visuals for " + gameObject.name);
+            return;
+        }
+        if (maxHp <= 0) // Prevent division by zero or nonsensical values
+        {
+            materialInstance.SetFloat(BurnAmountPropertyID, 0f);
+            return;
+        }
+
+        // Calculate the proportion of health lost (0 = full health, 1 = no health)
+        float healthLostProportion = 1.0f - (Mathf.Clamp(currentHp, 0f, maxHp) / maxHp);
+
+        // Scale this proportion to our desired shader burn range [0, maxShaderBurnValue]
+        float targetBurnAmount = healthLostProportion * maxShaderBurnValue;
+
+        materialInstance.SetFloat(BurnAmountPropertyID, targetBurnAmount);
     }
 
     float growthTimer = 0f;
@@ -220,6 +257,7 @@ public class Objective : MonoBehaviour
             currentHp = Mathf.Clamp(currentHp, 0, maxHp);
 
             healthBar.SetHealth(currentHp, maxHp);
+            UpdateBurnVisuals();
 
             if (numberEffect != null)
             {
@@ -292,7 +330,7 @@ public class Objective : MonoBehaviour
 
     public void FireExtinguish(float fireStoppingPower)
     {
-        if (!canFireBeExtinguished || !isBurning.value) return;
+        if (!canFireBeExtinguished || !isBurning.value || !treeAlive) return;
 
         fireHP -= fireStoppingPower;
         fireGrowthDelayedUntil = Time.time + delayFireGrowthAfterExtinguishTime;
@@ -333,6 +371,30 @@ public class Objective : MonoBehaviour
             // The visual water effect will turn off via its linger coroutine.
             // The sound loop will stop because isWaterEffectVisuallyActive will become false.
         }
+    }
+
+    // Add this new coroutine
+    IEnumerator ScaleDownBurnEffect(float duration)
+    {
+        if (burnEffect == null || !burnEffect.activeSelf)
+        {
+            if (burnEffect != null) burnEffect.SetActive(false); // Ensure it's off if not already
+            yield break; // Exit if no effect or it's already inactive
+        }
+
+        Vector3 initialScale = burnEffect.transform.localScale;
+        Vector3 targetScale = Vector3.zero; // Or a very small scale like new Vector3(0.01f, 0.01f, 0.01f)
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            burnEffect.transform.localScale = Vector3.Lerp(initialScale, targetScale, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+
+        burnEffect.transform.localScale = targetScale; // Ensure it reaches the target scale
+        burnEffect.SetActive(false); // Finally, deactivate it
     }
 
     IEnumerator WaterVisualLingerRoutine()
