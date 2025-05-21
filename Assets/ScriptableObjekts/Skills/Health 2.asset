@@ -20,7 +20,7 @@ MonoBehaviour:
   SkillName: Health 2
   overWriteDescription: 0
   SkillDescription: Health 2 increases health by 5%.
-  SkillIcon: {fileID: 0}
+  SkillIcon: {fileID: 8230488904728474184, guid: a5a7e1b6bb373b74886b124cf371f739, type: 3}
   SkillRequisit:
   - {fileID: 11400000, guid: c114d8460f7a7a4429ea963bc60089a3, type: 2}
   skillTier: 2

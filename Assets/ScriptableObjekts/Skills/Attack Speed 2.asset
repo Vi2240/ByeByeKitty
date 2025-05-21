@@ -20,7 +20,7 @@ MonoBehaviour:
   SkillName: Attack Speed 2
   overWriteDescription: 0
   SkillDescription: Attack Speed 2 increases attack_speed by 3%.
-  SkillIcon: {fileID: 0}
+  SkillIcon: {fileID: 21300000, guid: b68fb8ba8ccfcd547bf6c816e209e43a, type: 3}
   SkillRequisit: []
   skillTier: 3
   cost: 3

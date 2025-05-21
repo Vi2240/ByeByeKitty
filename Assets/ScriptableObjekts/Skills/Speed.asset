@@ -20,7 +20,7 @@ MonoBehaviour:
   SkillName: Speed
   overWriteDescription: 0
   SkillDescription: Speed increases speed by 5%.
-  SkillIcon: {fileID: 0}
+  SkillIcon: {fileID: 21300000, guid: c68bfe462851e0b82a723d49a8113168, type: 3}
   SkillRequisit: []
   skillTier: 1
   cost: 1
