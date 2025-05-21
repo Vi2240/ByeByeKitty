@@ -36,9 +36,9 @@ public class ShootingChargeBeam : WeaponBase
 
     private AudioSource chargeUpSoundSource; // To store the charging sound AudioSource
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         lineRenderer = GetComponentInChildren<LineRenderer>();
         if (lineRenderer == null)

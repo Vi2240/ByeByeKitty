@@ -15,7 +15,7 @@ public class Objective : MonoBehaviour
     [SerializeField] float treeHeal;
     [SerializeField] bool enemyKillzone;
     float currentHp;
-    bool treeAlive = true;
+    bool treeAlive = true;    
 
     [Header("Fire Variables")]
     [SerializeField] bool canFireBeExtinguished = true;
@@ -113,9 +113,9 @@ public class Objective : MonoBehaviour
         else Debug.LogError("HealingEffect GameObject is not assigned in the Inspector!", this);
 
 
-        healSpeed = (healSpeed == 0) ? 0 : 1 / healSpeed;
-        burnSpeed = (burnSpeed == 0) ? 0 : 1 / burnSpeed;
-        fireHealSpeed = (fireHealSpeed == 0) ? 0 : 1 / fireHealSpeed;
+        healSpeed       = (healSpeed == 0)      ? 0 : 1 / healSpeed;
+        burnSpeed       = (burnSpeed == 0)      ? 0 : 1 / burnSpeed;
+        fireHealSpeed   = (fireHealSpeed == 0)  ? 0 : 1 / fireHealSpeed;
     }
 
     float rekindleFireTimer = 0f;
@@ -325,12 +325,15 @@ public class Objective : MonoBehaviour
         return isBurning.value;
     }
 
+    public bool IsTreeAlive() { return treeAlive; }
 
     public void FireExtinguish(float fireStoppingPower)
     {
         if (!canFireBeExtinguished || !isBurning.value || !treeAlive) return;
 
         fireHP -= fireStoppingPower;
+        fireIntensityPercentageFactor = fireHP / maxFireHp;
+        UpdateBurnEffectScale();
         fireGrowthDelayedUntil = Time.time + delayFireGrowthAfterExtinguishTime;
 
         // --- Visual Water Effect Logic ---

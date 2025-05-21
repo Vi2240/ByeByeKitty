@@ -17,9 +17,9 @@ public class ShootingBeam : WeaponBase
     [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player", "Pickup" };
 
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         lineRenderer = GetComponentInChildren<LineRenderer>();
         if (lineRenderer != null)
         {

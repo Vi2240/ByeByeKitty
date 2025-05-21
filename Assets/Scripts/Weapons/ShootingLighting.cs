@@ -21,9 +21,9 @@ public class ShootingLightning : WeaponBase
     [SerializeField] GameObject damageNumber;
 
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         // Ensure lightningSpawnLocation is assigned
         if (lightningSpawnLocation == null)
