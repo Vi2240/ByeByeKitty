@@ -332,6 +332,8 @@ public class Objective : MonoBehaviour
         if (!canFireBeExtinguished || !isBurning.value || !treeAlive) return;
 
         fireHP -= fireStoppingPower;
+        fireIntensityPercentageFactor = fireHP / maxFireHp;
+        UpdateBurnEffectScale();
         fireGrowthDelayedUntil = Time.time + delayFireGrowthAfterExtinguishTime;
 
         // --- Visual Water Effect Logic ---
