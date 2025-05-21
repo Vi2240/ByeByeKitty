@@ -27,7 +27,7 @@ namespace _Scripts.Skill_System
 
         private void Awake()
         {
-            _skillPoints = 10;
+            _skillPoints = 0;
         }
 
         public void GainSkillPoint()
