@@ -805,7 +805,7 @@ MonoBehaviour:
   attackRange: 0.8
   bulletForce: 0
   attackCooldown: 0.75
-  attackDamage: 5
+  attackDamage: 20
   bulletSpawnPos: {fileID: 0}
   bulletPrefab: {fileID: 0}
 --- !u!114 &4201214158487945568

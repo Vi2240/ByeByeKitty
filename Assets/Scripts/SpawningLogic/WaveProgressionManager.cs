@@ -22,7 +22,6 @@ public struct WaveProgressionEntry
     public LootTable lootTableForNextPeriod;
 }
 
-
 [System.Serializable]
 public struct WaveProgressionPhase
 {
@@ -54,12 +53,13 @@ public class WaveProgressionManager : MonoBehaviour
 
     [Header("Game Progression Setup")]
     [Tooltip("Define the overall sequence of game phases. Each phase contains its own wave sequence.")]
-    public List<WaveProgressionPhase> gamePhases = new List<WaveProgressionPhase>();
+    public List<WaveProgressionPhase> gamePhases = new List<WaveProgressionPhase>();    
 
     // --- Overall Progression State ---
     private int currentPhaseIndex = 0;
     private int currentPhaseRepeatCounter = 0;
     private int currentWaveInPhaseIndex = 0;
+    
 
     // --- Difficulty Amplification State ---
     private int currentPhaseDifficultyAmplifier = 0;

@@ -285,7 +285,7 @@ MonoBehaviour:
   weaponSpriteTransform: {fileID: 1395401081620193373}
   fireCooldown: 0.1
   reloadTime: 1
-  damagePerHit: 15
+  damagePerHit: 20
   magazineSizeMax: 10
   currentMagAmmoCount: 10
   requiredMouseDistanceFromPlayer: 1.5

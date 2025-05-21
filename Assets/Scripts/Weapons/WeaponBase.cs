@@ -24,7 +24,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     private Coroutine _shootCooldownCoroutineRef; // To store and manage the cooldown
 
-    protected virtual void Start() // Kept as Start, ensure mainCam is set appropriately for children
+    protected virtual void Awake()
     {
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<Movement>();
         mainCam = Camera.main;

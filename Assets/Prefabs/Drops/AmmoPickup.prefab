@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammo:
     enabled: 1
-    amount: 50
+    amount: 60
   energyAmmo:
     enabled: 0
     amount: 0

@@ -130,7 +130,7 @@ public class EnemyMovement : MonoBehaviour
     }
 
     bool BehaviourChecks() // Returns true if the update function should return to random wander
-    {
+    {        
         if (targetRestriction == 0 && isNearObjective && isNearPlayer)
         {
             if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
@@ -289,10 +289,15 @@ public class EnemyMovement : MonoBehaviour
                 GameObject _object = objects[i];
                 Objective script = _object.GetComponent<Objective>(); // Change to objective class later
 
-                if (!script.GetIsBurningState())
+                if (!script.IsTreeAlive())
                 {
-                    objects.Remove(_object);
+                    targetRestriction = 1;
                 }
+
+                if (!script.GetIsBurningState())
+                    {
+                        objects.Remove(_object);
+                    }
             }
 
             if (objects.Count <= 0) // If there are no burning bjectives
