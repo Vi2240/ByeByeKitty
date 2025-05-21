@@ -159,7 +159,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      DamageBuff_Icon _0: -6744249175488526628
+      DamageBuff_Icon _1: 6327128036402391206
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
