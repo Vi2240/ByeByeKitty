@@ -362,8 +362,12 @@ public class Objective : MonoBehaviour
 
         if (fireHP <= 0)
         {
-            fireHP = 0;
+            fireHP = 0f;
+            healTimer = 0f;
+            growthTimer = 0f;
+            burnDMGTimer = 0f;
             isBurning.value = false;
+
             if (burningAudioSource != null && AudioPlayer.Current != null)
             {
                 AudioPlayer.Current.StopLoopingSfx(burningAudioSource);
