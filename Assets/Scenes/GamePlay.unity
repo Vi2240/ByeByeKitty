@@ -64069,6 +64069,14 @@ PrefabInstance:
       propertyPath: waveProgressionManager
       value: 
       objectReference: {fileID: 2043681958}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: lootProgressionIsPerCycle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2499444912373922678, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
+      propertyPath: waveProgressionIsPerCycle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6148110899767884369, guid: 4d6bebc62c08e7e4d92f76c697e0d380, type: 3}
       propertyPath: m_Name
       value: WaveManager
@@ -68929,7 +68937,7 @@ MonoBehaviour:
   healingEffect: {fileID: 6141978004015574452}
   waterEffect: {fileID: 1773202175}
   waterEffectTime: 2
-  maxHp: 5000
+  maxHp: 10000
   healSpeed: 4
   treeHeal: 25
   enemyKillzone: 0
@@ -68937,8 +68945,8 @@ MonoBehaviour:
   maxFireHp: 500
   fireHeal: 0.5
   fireHealSpeed: 10
-  burningDmg: 20
-  burnSpeed: 10
+  burningDmg: 5
+  burnSpeed: 20
   BurnEffectScaleMult: 1.5
   scaleDownDuration: 4
   maxShaderBurnValue: 0.99

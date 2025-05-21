@@ -18,13 +18,13 @@ public class NormalEnemyWave : Wave // Ensure Wave.cs exists and is the base cla
         {
             case 0: // Easy
                 composition.normalCount = 10;
-                composition.meleeCount  = 1;
+                composition.meleeCount  = 2;
                 composition.slowCount   = 5;
                 composition.rangeCount  = 0;
                 break;
             case 1: // Medium
                 composition.normalCount = 25;
-                composition.meleeCount  = 2;
+                composition.meleeCount  = 3;
                 composition.slowCount   = 15;
                 composition.rangeCount  = 0;
                 break;
@@ -36,7 +36,7 @@ public class NormalEnemyWave : Wave // Ensure Wave.cs exists and is the base cla
                 break;
             default: // Very Hard / Scaled
                 composition.normalCount = 55    + (currentDifficulty - 3) * 15;
-                composition.meleeCount  = 6     + (currentDifficulty - 3) * 2;
+                composition.meleeCount  = 5     + (currentDifficulty - 3) * 1;
                 composition.slowCount   = 25    + (currentDifficulty - 3) * 5;
                 composition.rangeCount  = 0; // + (currentDifficulty - 3) * 0;
                 break;
