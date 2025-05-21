@@ -68939,14 +68939,14 @@ MonoBehaviour:
   waterEffectTime: 2
   maxHp: 10000
   healSpeed: 4
-  treeHeal: 25
+  treeHeal: 20
   enemyKillzone: 0
   canFireBeExtinguished: 1
   maxFireHp: 500
   fireHeal: 0.5
   fireHealSpeed: 10
   burningDmg: 5
-  burnSpeed: 20
+  burnSpeed: 10
   BurnEffectScaleMult: 1.5
   scaleDownDuration: 4
   maxShaderBurnValue: 0.99
