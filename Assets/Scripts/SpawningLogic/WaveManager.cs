@@ -3,6 +3,8 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System.Linq;
+using Unity.VisualScripting;
 
 /// <summary>
 /// Manages waves and supports running multiple wave coroutines concurrently,
@@ -21,7 +23,7 @@ public class WaveManager : MonoBehaviour
     // public List<WaveBasePrefabMapping> wavePrefabs; // Example: struct WaveBasePrefabMapping { WaveType type; Wave prefab; }
 
     [Header("Continuous Wave Cycle Settings")]
-public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalEnemyWave };
+    public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalEnemyWave };
     public List<int> availableDifficulties = new List<int> { 0, 1, 2 }; // Default difficulties
     public SpawnType continuousWaveSpawnType = SpawnType.AreaAroundPosition;
     public float delayBetweenWaves = 5.0f;
@@ -41,7 +43,7 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
     private Coroutine continuousWaveCoroutine;
     private Coroutine activeContinuousWaveInstance; // The specific wave instance started by the continuous cycle
     private Transform currentContinuousWaveTarget;
-    
+
     [Header("Progression References")]
     [Tooltip("Optional: Assign a LootTableProgressionManager to update loot tables after waves.")]
     public LootTableProgressionManager lootProgressionManager;
@@ -83,7 +85,7 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
         }
 
 
-        
+
         waveInstance.enemyParent = enemyParent;
         waveInstance.difficulty = difficulty;
         waveInstance.spawnRate = spawnRateToUse;
@@ -114,7 +116,7 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
         Debug.Log($"Starting Wave: {waveType}, Difficulty: {difficulty}, SpawnType: {spawnType}, SpawnRate: {spawnRateToUse}");
         Coroutine c = StartCoroutine(waveInstance.ExecuteWave());
         runningWaves.Add(c);
-        return c;        
+        return c;
     }
 
     /// <summary>
@@ -184,13 +186,13 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
         currentContinuousWaveTarget = spawnTarget;
         if (currentContinuousWaveTarget == null && continuousWaveSpawnType != SpawnType.Fixed && continuousWaveSpawnType != SpawnType.AreaAroundPlayers)
         {
-             Debug.LogWarning("Continuous wave target is null, and spawn type might require it. Using objectivePositions or fixedSpawnPoints as fallback if available.");
+            Debug.LogWarning("Continuous wave target is null, and spawn type might require it. Using objectivePositions or fixedSpawnPoints as fallback if available.");
         }
 
         if (refrenceFlag == null)
         {
             Debug.Log("Reference flag must be set.");
-        }   
+        }
 
         if (continuousWaveCoroutine != null)
         {
@@ -199,7 +201,6 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
         Debug.Log("Starting continuous wave cycle.");
         continuousWaveCoroutine = StartCoroutine(RunWaveCycle(refrenceFlag));
     }
-
 
     private IEnumerator RunWaveCycle(Wrapper<bool> refrenceFlag)
     {
@@ -327,26 +328,25 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
             Debug.Log("Continuous Cycle: Wave finished. Waiting for next wave...");
             yield return new WaitForSeconds(delayBetweenWaves);
         }
-        
+
         Debug.Log("RunWaveCycle: Loop has exited.");
         continuousWaveCoroutine = null;
     }
 
     public void StartBossWave()
     {
-        if (bossPrefab != null && bossSpawnPoint != null)
-        {
-            Debug.Log("Starting boss wave.");
-            GameObject bossInstance = Instantiate(bossPrefab, bossSpawnPoint.position, Quaternion.identity);
-            if (enemyParent != null)
-            {
-                bossInstance.transform.SetParent(enemyParent.transform, true);
-            }
-        }
-        else
+        if (bossPrefab == null || bossSpawnPoint == null)
         {
             Debug.LogError("Boss prefab or spawn point is not assigned.");
-        }      
+            return;
+        }
+
+        Debug.Log("Starting boss wave.");
+        GameObject bossInstance = Instantiate(bossPrefab, bossSpawnPoint.position, Quaternion.identity);
+        if (enemyParent != null)
+        {
+            bossInstance.transform.SetParent(enemyParent.transform, true);
+        }
     }
 
     /// <summary>
@@ -367,7 +367,7 @@ public List<WaveType> availableWaveTypes = new List<WaveType> { WaveType.NormalE
             activeContinuousWaveInstance = null;
         }
     }
-    
+
     /// <summary>
     /// Stops all currently running wave coroutines, including the continuous cycle.
     /// </summary>

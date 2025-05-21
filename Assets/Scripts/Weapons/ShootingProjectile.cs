@@ -15,9 +15,9 @@ public class ShootingProjectile : WeaponBase
     bool canPlayEmptySFX = true;
     private Coroutine playEmptySFXCoroutine;
 
-    private void Start()
+    private void Awake()
     {
-        base.Start();
+        base.Awake();
         currentMagAmmoCount = magazineSizeMax;
         magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
         inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -83,7 +83,6 @@ public class ShootingProjectile : WeaponBase
                 else if (!isReloading) { AudioPlayer.Current.PlaySfxAtPoint("Empty_Chamber", transform.position); }
             }
         }
-
         if (Input.GetKeyDown(KeyCode.R)) { Reload(); }
     }
 
@@ -121,13 +120,13 @@ public class ShootingProjectile : WeaponBase
             AudioPlayer.Current.PlaySfxAtPoint("Shoot_Pistol", transform.position);
         }
 
-        currentMagAmmoCount--;
+        --currentMagAmmoCount;
         UpdateUI();
     }
 
     private void Reload()
     {
-        if (currentMagAmmoCount < magazineSizeMax && InventoryAndBuffs.ammo > 0 && !isReloading)
+        if (currentMagAmmoCount < magazineSizeMax && !isReloading)
         {
             StartCoroutine(ReloadDelay());
         }
