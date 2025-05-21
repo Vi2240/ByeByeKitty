@@ -19,8 +19,8 @@ MonoBehaviour:
   IsAbility: 0
   SkillName: Damage 3
   overWriteDescription: 0
-  SkillDescription: Damage 3  increasesDamage by 25%.
-  SkillIcon: {fileID: 2667589067915142571, guid: 6c49580691a670948916313de8a702ee, type: 3}
+  SkillDescription: Damage 3 increases damage by 25%.
+  SkillIcon: {fileID: -6744249175488526628, guid: c249bff4ecf8bfe46bfa62c75d08efe8, type: 3}
   SkillRequisit:
   - {fileID: 11400000, guid: ab9afa059152a98498f62391b90d960c, type: 2}
   skillTier: 3

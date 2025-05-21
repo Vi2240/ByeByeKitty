@@ -1,0 +1,377 @@
+fileFormatVersion: 2
+guid: 2a5283c02b04bf144a99bad7fa38107d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1539473261441775686
+    second: Title (ByeByeKitty)_0
+  - first:
+      213: 8867225137715270921
+    second: Title (ByeByeKitty)_1
+  - first:
+      213: -7031895476647756222
+    second: Title (ByeByeKitty)_2
+  - first:
+      213: -5072035138236432387
+    second: Title (ByeByeKitty)_3
+  - first:
+      213: 4370829920724979907
+    second: Title (ByeByeKitty)_4
+  - first:
+      213: 1309714364350376638
+    second: Title (ByeByeKitty)_5
+  - first:
+      213: -7058402979112465891
+    second: Title (ByeByeKitty)_6
+  - first:
+      213: 892071694543556850
+    second: Title (ByeByeKitty)_7
+  - first:
+      213: 5237187599857988877
+    second: Title (ByeByeKitty)_8
+  - first:
+      213: -8007544769774033667
+    second: Title (ByeByeKitty)_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 175
+        width: 71
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 648f27956ce4d5510800000000000000
+      internalID: 1539473261441775686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_1
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 170
+        width: 88
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 905deec3846be0b70800000000000000
+      internalID: 8867225137715270921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_2
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 176
+        width: 76
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24efbb01250b96e90800000000000000
+      internalID: -7031895476647756222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_3
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 175
+        width: 72
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dff3e112ae28c99b0800000000000000
+      internalID: -5072035138236432387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_4
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 170
+        width: 88
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0167eb7ae48ac30800000000000000
+      internalID: 4370829920724979907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_5
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 176
+        width: 75
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebaa454764a0d2210800000000000000
+      internalID: 1309714364350376638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_6
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 5
+        width: 80
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1a417433e38b0e90800000000000000
+      internalID: -7058402979112465891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_7
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 5
+        width: 44
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f01373da76416c00800000000000000
+      internalID: 892071694543556850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_8
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 5
+        width: 165
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d05bd9fcf5a3ea840800000000000000
+      internalID: 5237187599857988877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title (ByeByeKitty)_9
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 0
+        width: 95
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df4e49a257c7fd090800000000000000
+      internalID: -8007544769774033667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Title (ByeByeKitty)_0: 1539473261441775686
+      Title (ByeByeKitty)_1: 8867225137715270921
+      Title (ByeByeKitty)_2: -7031895476647756222
+      Title (ByeByeKitty)_3: -5072035138236432387
+      Title (ByeByeKitty)_4: 4370829920724979907
+      Title (ByeByeKitty)_5: 1309714364350376638
+      Title (ByeByeKitty)_6: -7058402979112465891
+      Title (ByeByeKitty)_7: 892071694543556850
+      Title (ByeByeKitty)_8: 5237187599857988877
+      Title (ByeByeKitty)_9: -8007544769774033667
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

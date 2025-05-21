@@ -1,209 +1,224 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Numerics;
 using TMPro;
 using UnityEngine;
 
-public class ShootingBeam : MonoBehaviour
+public class ShootingBeam : WeaponBase
 {
-    // Serialize fields
-    [SerializeField] Transform beamSpawnLocation;
-    [SerializeField] Transform weaponSpriteTransform;
-    [SerializeField] AudioSource gunshotFX;
-    [SerializeField] AudioSource reloadFX;
-
-    [SerializeField] float fireCooldown = 0.1f;
-    //[SerializeField] int splitAmount = 0;
-    [SerializeField] float reloadTime = 1f;
-    [SerializeField] float damagePerTick = 15f;
-    [SerializeField] float beamLength = 5f;
-
-    [SerializeField] int magazineSize;
-
-    UnityEngine.Vector3 mousePos;
-    Camera mainCam;
-    LineRenderer lineRenderer;
     TextMeshProUGUI magCapacityText;
-    CircleCollider2D shootRange;
-    RaycastHit2D hit;
-    //private PlayerMovement movementScript;
+    TextMeshProUGUI inventoryAmmoText;
+    [SerializeField] GameObject damageNumber;
+    [SerializeField] float maxBeamLength = 10f;
 
-    int magazine;
-    float timer;
-    float requiredMouseDistanceFromPlayer = 1.5f;
-    float savedBeamLength;
+    private LineRenderer lineRenderer;
+    private bool beamActive = false;
+    private AudioSource loopingLaser;
+    private List<EnemyHealth> enemiesToDamageThisTick = new List<EnemyHealth>();
 
-    bool canFire = true;
-    bool canReload = true;
-    bool isRealoding = false;
-    bool beamActive = false;
+    [SerializeField] private List<string> ignoreTags = new List<string> { "Objective", "Player", "Pickup" };
 
-    void Start()
+
+    protected override void Start()
     {
-        savedBeamLength = beamLength;
+        base.Start();
         lineRenderer = GetComponentInChildren<LineRenderer>();
-        mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        //shootRange = GameObject.FindGameObjectWithTag("ShootRange").GetComponent<CircleCollider2D>();
-        //weaponRotation = GetComponentInChildren<SpriteRenderer>();
-        //movementScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(Inventory.laserEnergy.ToString());
-    }
-
-    // Switch the text in UI to match this weapon when it is enabled in different scripts
-    private void OnEnable()
-    {
-        magCapacityText = GameObject.FindGameObjectWithTag("UI_AmmoCount").GetComponent<TextMeshProUGUI>();
-        magCapacityText.SetText(Inventory.laserEnergy.ToString());
-    }
-
-    void Update()
-    {
-        WeaponRotation();
-
-        if (beamActive) 
-        {
-            BeamLogic();
-            DrawBeam();
-        }
-
-        if (Input.GetMouseButtonDown(0) && MouseFarEnoughFromPlayer() == true)
-        {
-            lineRenderer.enabled = true;
-            beamActive = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
+        if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
-            beamActive = false;
         }
-    }
 
-    void WeaponRotation()
-    {
-        // Converts mouse position to rotation and applies it to the gameObject.
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        UnityEngine.Vector3 rotation = mousePos - transform.position;
-        float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-        transform.rotation = UnityEngine.Quaternion.Euler(0, 0, rotZ);
-
-        // Checks to tell if the sprite should be flipped when moving the weapon around the player.
-        UnityEngine.Vector3 saveScale = weaponSpriteTransform.localScale;
-        if (rotZ > 90 || rotZ < -90)
+        GameObject ammoCountObject = GameObject.FindGameObjectWithTag("UI_AmmoCount");
+        if (ammoCountObject != null)
         {
-            if (saveScale.y > 0)
+            magCapacityText = ammoCountObject.GetComponent<TextMeshProUGUI>();
+            if (magCapacityText != null && magCapacityText.transform.childCount > 0)
             {
-                saveScale.y *= -1;
-                weaponSpriteTransform.localScale = saveScale;
+                inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             }
         }
-        else
-        {
-            if (saveScale.y < 0)
-            {
-                saveScale.y *= -1;
-                weaponSpriteTransform.localScale = saveScale;
-            }
-        }
+        UpdateAmmoUI();
     }
 
-    void BeamLogic()
+    private void OnEnable()
     {
-        hit = Physics2D.Raycast(beamSpawnLocation.position, transform.right, beamLength); // Raycast used to know how long the beam length should be
-
-        if (hit.collider == null)
-        {
-            beamLength = savedBeamLength;
-        }
-        else if (hit.collider)
-        {
-            if (hit.collider.CompareTag("Enemy"))
-            {
-                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
-                if (canFire)
-                {
-                    // Handle fire cooldown so enemy doesn't take damage too fast
-                    HitEnemy();
-                }
-                return;
-            }
-
-            if (hit.collider.isTrigger == false)
-            {
-                beamLength = UnityEngine.Vector2.Distance(beamSpawnLocation.position, hit.transform.position);
-            }
-        }
-    }
-
-    void HitEnemy()
-    {
-        if (Inventory.laserEnergy > 0)
-        {
-            print("shot enemy");
-            canFire = false;
-            StartCoroutine(ShootDelay());
-
-            // Deal damage to the enemy hit
-            hit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(damagePerTick);
-            print(Time.deltaTime + ": Dealt " + damagePerTick + " damage to enemy hit.");
-
-            Inventory.laserEnergy--;
-            magCapacityText.SetText(Inventory.laserEnergy.ToString());
-            // Remove later (debugging)
-            //Debug.DrawRay(beamSpawnLocation.position, transform.right*beamLength, UnityEngine.Color.red, 5f);
-
-            //SplitTotargets(splitAmount);
-        }
-    }
-
-    // Work on more later if there's time
-    //void SplitTotargets(int amount)
-    //{
-    //    if (amount <= 0)
-    //    {
-    //        return;
-    //    }
-
-    //    // Find all GameObjects with the tag "Enemy" and sort the list based on distance to get the splitAmount closest enemies.
-    //    List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-    //    enemies.Sort((a, b) =>
-    //        UnityEngine.Vector2.Distance(transform.position, a.transform.position)
-    //        .CompareTo(UnityEngine.Vector2.Distance(transform.position, b.transform.position)));
-
-    //    for (int i = 0; i < splitAmount; i++)
-    //    {
-    //        if (enemies[i] != null)
-    //        {
-    //            enemies[i].SetActive(false);
-    //        }
-    //        print("Set to false");
-    //    }
-
-    //}
-
-    void DrawBeam()
-    {
-        lineRenderer.SetPosition(0, beamSpawnLocation.position);
-        lineRenderer.SetPosition(1, beamSpawnLocation.position + beamSpawnLocation.right * beamLength);
-    }
-
-    IEnumerator ShootDelay()
-    {
-        yield return new WaitForSeconds(fireCooldown);
+        AudioPlayer.Current.PlaySfxAtPoint("Equip_ElectricityGun", transform.position);
         canFire = true;
+        GameObject ammoCountObject = GameObject.FindGameObjectWithTag("UI_AmmoCount");
+        if (ammoCountObject != null)
+        {
+            magCapacityText = ammoCountObject.GetComponent<TextMeshProUGUI>();
+            if (magCapacityText != null && magCapacityText.transform.childCount > 0)
+            {
+                inventoryAmmoText = magCapacityText.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            }
+        }
+        UpdateAmmoUI();
+
+        // Reset state in case it was disabled mid-fire
+        if (beamActive)
+        {
+            beamActive = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
+        }
+        if (AudioPlayer.Current != null && loopingLaser != null)
+        {
+            AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+            loopingLaser = null;
+        }
     }
 
-    //Checks that the cursor isn't inside the Shoot Range collider
-    bool MouseFarEnoughFromPlayer()
+    private void OnDisable()
     {
-        if (UnityEngine.Vector2.Distance(gameObject.transform.position, mousePos) > requiredMouseDistanceFromPlayer)
+        if (beamActive)
         {
-            return true;
+            beamActive = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
         }
-        else
+        if (AudioPlayer.Current != null && loopingLaser != null)
         {
-            return false;
+            AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+            loopingLaser = null;
         }
     }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Input.GetMouseButtonDown(0) && !beamActive && InventoryAndBuffs.energyAmmo > 0)
+        {
+            if (AudioPlayer.Current != null)
+            {
+                AudioPlayer.Current.PlaySfxAtPoint("StartShootingLaser", transform.position);
+                if (loopingLaser == null) // Start looping sound only if not already playing
+                {
+                    loopingLaser = AudioPlayer.Current.PlayLoopingSfx("ShootingLaserLoop", transform.position);
+                }
+            }
+            beamActive = true;
+            if (lineRenderer != null) lineRenderer.enabled = true;
+        }
+        else if ((Input.GetMouseButtonUp(0) || InventoryAndBuffs.energyAmmo <= 0) && beamActive)
+        {
+            beamActive = false;
+            if (lineRenderer != null) lineRenderer.enabled = false;
+            if (AudioPlayer.Current != null && loopingLaser != null)
+            {
+                AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+                loopingLaser = null;
+            }
+        }
+        else if (Input.GetMouseButtonDown(0) && InventoryAndBuffs.energyAmmo <= 0) // Clicked with no ammo
+        {
+            if (AudioPlayer.Current != null)
+            {
+                AudioPlayer.Current.PlaySfxAtPoint("Empty_Chamber", transform.position);
+            }
+        }
+
+
+        if (beamActive)
+        {
+            ProcessBeamHits(out float effectiveBeamEndDistance, out enemiesToDamageThisTick);
+            DrawBeam(effectiveBeamEndDistance);
+
+            if (canFire)
+            {
+                if (InventoryAndBuffs.energyAmmo > 0)
+                {
+                    InventoryAndBuffs.energyAmmo--;
+                    UpdateAmmoUI();
+                    StartCoroutine(ShootCooldown());
+
+                    foreach (EnemyHealth enemy in enemiesToDamageThisTick)
+                    {
+                        if (enemy != null)
+                        {
+                            HitEnemy(enemy);
+                        }
+                    }
+                }
+                else
+                {
+                    beamActive = false;
+                    if (lineRenderer != null) lineRenderer.enabled = false;
+                    if (AudioPlayer.Current != null && loopingLaser != null)
+                    {
+                        AudioPlayer.Current.StopLoopingSfx(loopingLaser);
+                        loopingLaser = null;
+                    }
+                }
+            }
+        }
+    }
+
+    private void ProcessBeamHits(out float beamEndPointDistance, out List<EnemyHealth> enemiesFound)
+    {
+        enemiesToDamageThisTick.Clear();
+        enemiesFound = enemiesToDamageThisTick;
+
+        float firstObstructionDistance = maxBeamLength;
+        if (projectileSpawnLocation == null)
+        {
+            beamEndPointDistance = 0f;
+            return;
+        }
+        RaycastHit2D[] allHits = Physics2D.RaycastAll(projectileSpawnLocation.position, transform.right, maxBeamLength);
+
+        foreach (RaycastHit2D hit in allHits)
+        {
+            bool shouldIgnore = false;
+            foreach (string tag in ignoreTags)
+            {
+                if (hit.collider.CompareTag(tag))
+                {
+                    shouldIgnore = true;
+                    break;
+                }
+            }
+
+            if (!shouldIgnore)
+            {
+                firstObstructionDistance = Mathf.Min(firstObstructionDistance, hit.distance);
+            }
+        }
+
+        beamEndPointDistance = firstObstructionDistance;
+
+        foreach (RaycastHit2D hit in allHits)
+        {
+            if (hit.collider.CompareTag("Enemy") && hit.distance <= beamEndPointDistance)
+            {
+                EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+                if (enemyHealth != null && !enemiesFound.Contains(enemyHealth))
+                {
+                    enemiesFound.Add(enemyHealth);
+                }
+            }
+        }
+    }
+
+    private void HitEnemy(EnemyHealth enemy)
+    {
+        float finalDamage = Mathf.Round(damagePerHit * InventoryAndBuffs.playerDamageMultiplier);
+        enemy.TakeDamage(finalDamage);
+        if (damageNumber != null)
+        {
+            Instantiate(damageNumber, enemy.transform.position, Quaternion.identity).GetComponent<FloatingHealthNumber>().SetText(finalDamage.ToString());
+        }
+    }
+
+    private void DrawBeam(float currentLength)
+    {
+        if (lineRenderer == null || projectileSpawnLocation == null) return;
+        lineRenderer.SetPosition(0, projectileSpawnLocation.position);
+        lineRenderer.SetPosition(1, projectileSpawnLocation.position + (Vector3)transform.right * currentLength);
+    }
+
+    private void UpdateAmmoUI()
+    {
+        if (inventoryAmmoText != null) inventoryAmmoText.SetText("");
+        if (magCapacityText != null) magCapacityText.SetText(InventoryAndBuffs.energyAmmo.ToString());
+    }
+
+    protected override void Fire() { /* Not used in beam */ }
 }

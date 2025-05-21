@@ -9,6 +9,12 @@ TagManager:
   - WalkableArea
   - UI_AmmoCount
   - AudioManager
+  - UI_HealthBar
+  - LootManager
+  - Pickup
+  - EnemyBullet
+  - EndScreenManager
+  - PauseMenu
   layers:
   - Default
   - TransparentFX
@@ -17,9 +23,9 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - Objectiv
-  - 
-  - 
+  - Objective
+  - Pickup
+  - Bullet
   - 
   - 
   - 
@@ -46,8 +52,20 @@ TagManager:
   - name: Background
     uniqueID: 1944526929
     locked: 0
+  - name: Ground
+    uniqueID: 59655883
+    locked: 0
+  - name: BloodPuddles
+    uniqueID: 727785603
+    locked: 0
+  - name: Items
+    uniqueID: 3074402289
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Top
+    uniqueID: 926072109
     locked: 0
   m_RenderingLayers:
   - Default

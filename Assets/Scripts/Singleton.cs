@@ -30,7 +30,7 @@ public class Singleton<T> : MonoBehaviour where T : Component
     }
 }
 
-public class SingeltonPersistent<T> : MonoBehaviour where T : Component
+public class SingletonPersistent<T> : MonoBehaviour where T : Component
 {
     private static T _instance;
 

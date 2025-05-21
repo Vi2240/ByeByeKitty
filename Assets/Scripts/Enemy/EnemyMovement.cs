@@ -5,18 +5,18 @@ using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    // Serialize fields
-    [SerializeField] float speed = 2f;
-    [SerializeField] float maxDistance = 3;
+    // Accessable variables. The public ones are needed for the spawn script. 
+    public bool disableMovement = false;
+    [SerializeField] float speed = 0.5f;
+    //[SerializeField] float maxDistance = 3;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
-    [SerializeField] float stopDistanceFromPlayer = 5;
+    [SerializeField] int checkIfStuckFrequency = 5;
+    [SerializeField] float stopDistanceFromPlayer = 1;
+    [SerializeField] float stopDistanceFromObjective = 2f;
 
     [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
     int targetRestriction = 0;
-
-    [SerializeField, Tooltip("0 = Melee, 1 = Ranged")] 
-    int attackType = 0;
 
     [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
     float nearObjectCheckRadius = 5;
@@ -48,47 +48,75 @@ public class EnemyMovement : MonoBehaviour
     NavMeshAgent agent;
     GameObject walkableArea;
 
-    // Constructor
-    public EnemyMovement(bool wander)
-    {
-        this.randomWander = wander;
-    }
+    Wrapper<bool> agroFlag;
 
     void Start()
     {
+        agroFlag = transform.parent.GetComponent<AgroFlag>().agroFlag;
+
         canMove = true;
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        agent.speed = speed;
-        savedPositions = new Vector2[10];
+        agent.speed = speed; // Make sure speed is set before any potential SetDestination
+        savedPositions = new Vector2[checkIfStuckFrequency];
         walkableArea = GameObject.FindGameObjectWithTag("WalkableArea");
 
-        // If it's a melee enemy it should go all the way to the player
-        if (attackType == 0)
+        if (walkableArea == null)
         {
-            stopDistanceFromPlayer = 0.2f;
+            Debug.LogError("WalkableArea not found! Random wandering will not work correctly.", this);
         }
-        
+
         // Can't attack players if restrcted to objectives
         if (targetRestriction == 2)
         {
             canAttackPlayers = false;
         }
 
-        if (randomWander && canMove)
+        if (!disableMovement) // Only attempt to move if not disabled
         {
-            SetNewRandomDestination();
-            MoveToDestination(randomDestination);
+            if (randomWander && canMove) // canMove is true by default
+            {
+                if (walkableArea != null) // Only set random destination if walkable area exists
+                {
+                    SetNewRandomDestination();
+                    MoveToDestination(randomDestination);
+                }
+                else
+                {
+                    // Option: Stay put, or log error and disable movement.
+                    Debug.LogWarning("Cannot random wander: WalkableArea is missing.", this);
+                    agent.isStopped = true;
+                }
+            }
+            else if (!randomWander)
+            {
+                // If not random wandering, the enemy should probably wait for Update()
+                // to find a player/objective, or be assigned a target by another system.
+                // Don't move to the uninitialized 'target' (0,0).
+                agent.isStopped = true; // Start stationary
+                Debug.Log(gameObject.name + " is not random wandering and will wait for a target.", this);
+            }
         }
         else
         {
-            MoveToDestination(target);
+            agent.isStopped = true;
         }
     }
 
-    void FixedUpdate() // FixedUpdate because there's no need to update any quicker than the framerate
+    void Update()
     {
+        // Makes all code below temporarily unreachable
+        if (disableMovement) 
+        {
+            agent.isStopped = true;
+            return;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+
         nearestPlayer = FindNearestObject("Player");
         nearestObjective = FindNearestObject("Objective");
 
@@ -101,8 +129,19 @@ public class EnemyMovement : MonoBehaviour
         RandomWanderCheck();
     }
 
-    bool BehaviourChecks() // Returns true if the update function should return to skip code below
+    bool BehaviourChecks() // Returns true if the update function should return to random wander
     {
+        if (targetRestriction == 0 && isNearObjective && isNearPlayer)
+        {
+            if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
+            return true;
+        }
+
+        if (targetRestriction == 0 && !nearestObjective)
+        {
+            if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
+        }
+
         // If it's not resticted to players, it should prioritize the objective over the player if both are in range.
         if (isNearObjective && targetRestriction != 1)
         {
@@ -110,13 +149,13 @@ public class EnemyMovement : MonoBehaviour
 
             Temporary script = nearestObjective.GetComponent<Temporary>();
 
-            if (DistanceTo(nearestObjective) <= 5f)
+            if (DistanceTo(nearestObjective) <= stopDistanceFromObjective)
             {
                 agent.isStopped = true;
-                print("Stopped");
+                //print("Stopped");
                 // Do fire extinguish stuff
             }
-            return true; // Return true so it doesn't access the code below.
+            return true; // Return true to skip random wander
         }
 
         // Go to objective if it's not near a player and not restricted to players, or if it's restricted to objectves. Only works if the objective is under attack
@@ -128,7 +167,7 @@ public class EnemyMovement : MonoBehaviour
             }
         }
 
-        if (canAttackPlayers && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
+        if (canAttackPlayers && nearestPlayer != null && DistanceTo(nearestPlayer) <= stopDistanceFromPlayer) // If the distance is closer than the stop distance to the closest player
         {
             agent.isStopped = true;
             // Attack logic here
@@ -136,7 +175,10 @@ public class EnemyMovement : MonoBehaviour
         }
         else if ((canAttackPlayers && isNearPlayer) || (targetRestriction == 1))
         {
-            MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            if (nearestPlayer)
+            {
+                MoveToDestination(nearestPlayer.transform.position); // FindNearestlayerPosition returns a GameObject, which the enemy moves to.
+            }
             return true;
         }
 
@@ -154,7 +196,7 @@ public class EnemyMovement : MonoBehaviour
             arrayCount++;
             timer = 0f;
 
-            if (arrayCount < 10) // 0 to 9 (10 elements)
+            if (arrayCount < checkIfStuckFrequency) // 0 to 9 (10 elements)
             {
                 return; // Return if 10 positions haven't been saved yet
             }
@@ -185,7 +227,7 @@ public class EnemyMovement : MonoBehaviour
 
     void NearObjectChecks()
     {
-        if (DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
+        if (nearestPlayer && DistanceTo(nearestPlayer) <= nearObjectCheckRadius) { isNearPlayer = true; }
         else
         {
             isNearPlayer = false;
@@ -225,7 +267,7 @@ public class EnemyMovement : MonoBehaviour
         {
             canMove = false;
             float waitTime = Random.Range(movePauseMin, movePauseMax);
-            print($"Should move in {waitTime} seconds");
+            //print($"Should move in {waitTime} seconds");
             StartCoroutine(WaitThenMove(waitTime));
             return;
         }
@@ -247,7 +289,7 @@ public class EnemyMovement : MonoBehaviour
                 GameObject _object = objects[i];
                 Objective script = _object.GetComponent<Objective>(); // Change to objective class later
 
-                if (!script.GetIsBurning())
+                if (!script.GetIsBurningState())
                 {
                     objects.Remove(_object);
                 }

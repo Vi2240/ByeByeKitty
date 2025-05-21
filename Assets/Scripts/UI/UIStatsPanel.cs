@@ -40,8 +40,10 @@ public class UIStatsPanel : MonoBehaviour
     private void FillLabels()
     {
         //Stats
-        damage.text = "Damage - " + playerSkillManager.Damage.ToString();
-        health.text = "Health - " + playerSkillManager.Health.ToString();
+        damage.text = "Damage - " + InventoryAndBuffs.playerDamageMultiplier.ToString();
+        damage.text = "Damage - " + InventoryAndBuffs.playerFireRateMultiplier.ToString();
+        health.text = "Health - " + InventoryAndBuffs.playerHealthMultiplier.ToString();
+        health.text = "Health - " + InventoryAndBuffs.playerSpeedMultiplier.ToString();
 
         //Abilitys
         ability1.text = "Ability1 " + (playerSkillManager.Ability1 ? "Unlocked" : "Locked");
