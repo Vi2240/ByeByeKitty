@@ -11,12 +11,12 @@
             <engine:Label text="Ability1 - Locked" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AbilitysLabel_Ability1" class="StatsLabel" style="-unity-text-align: lower-center;" />
             <engine:Label text="Skill points - 0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SkillPointsLabel" class="HeadLaber" />
         </engine:VisualElement>
-        <engine:VisualElement name="SkillTree" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 40%;">
-            <engine:VisualElement name="Skill_RowOne" style="flex-grow: 1; justify-content: center; align-items: center;" />
-            <engine:VisualElement name="Skill_RowTwo" style="flex-grow: 1; justify-content: center; align-items: center;" />
-            <engine:VisualElement name="Skill_RowThree" style="flex-grow: 1; justify-content: center; align-items: center; width: auto;" />
-            <engine:VisualElement name="Skill_RowFour" style="flex-grow: 1; justify-content: center; align-items: center;" />
-            <engine:VisualElement name="Skill_RowFive" style="flex-grow: 1; justify-content: center; align-items: center;" />
+        <engine:VisualElement name="SkillTree" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 40%; white-space: normal; -unity-text-align: middle-center;">
+            <engine:VisualElement name="Skill_RowOne" style="flex-grow: 1; justify-content: center; align-items: flex-start; white-space: nowrap; width: 100%; height: 128px; flex-direction: row; margin-top: 50px; margin-right: 0; margin-bottom: 10px; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            <engine:VisualElement name="Skill_RowTwo" style="flex-grow: 1; justify-content: center; align-items: flex-start; white-space: nowrap; flex-direction: row; margin-top: 10px; margin-bottom: 10px; height: 128px;" />
+            <engine:VisualElement name="Skill_RowThree" style="flex-grow: 1; justify-content: center; align-items: center; width: auto; white-space: nowrap; flex-direction: row; margin-top: 10px; margin-bottom: 10px; height: 128px;" />
+            <engine:VisualElement name="Skill_RowFour" style="flex-grow: 1; justify-content: center; align-items: center; white-space: nowrap; flex-direction: row; margin-top: 10px; margin-bottom: 10px; height: 128px;" />
+            <engine:VisualElement name="Skill_RowFive" style="flex-grow: 1; justify-content: center; align-items: center; white-space: nowrap; flex-direction: row; margin-top: 10px; margin-bottom: 50px; height: 128px;" />
         </engine:VisualElement>
         <engine:VisualElement name="SkillDescription" style="flex-grow: 1; align-items: center; justify-content: flex-start; border-left-width: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); width: 30%;">
             <engine:VisualElement name="Icon" style="flex-grow: 1; width: 256px; height: 256px; align-items: center; flex-direction: column-reverse; align-self: center; align-content: auto; justify-content: flex-start; min-height: auto; max-height: 256px; top: 10%; background-image: url(&quot;project://database/Assets/Sprites/Weapons/Banana.png?fileID=2800000&amp;guid=3abc5d43e7fbebf4293b36c1219fade3&amp;type=3#Banana&quot;);" />

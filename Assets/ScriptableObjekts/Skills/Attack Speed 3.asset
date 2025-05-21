@@ -17,9 +17,9 @@ MonoBehaviour:
     skillIncreaseAmount: 5
     isPercentage: 1
   IsAbility: 0
-  SkillName: Attack Speed
+  SkillName: Attack Speed 3
   overWriteDescription: 0
-  SkillDescription: Attack Speed increases attack_speed by 5%.
+  SkillDescription: Attack Speed 3 increases attack_speed by 5%.
   SkillIcon: {fileID: 0}
   SkillRequisit:
   - {fileID: 11400000, guid: 3801fc3da5f57d742b80333e3d5bc442, type: 2}

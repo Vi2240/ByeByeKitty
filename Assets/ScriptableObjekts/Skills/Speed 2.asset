@@ -17,9 +17,9 @@ MonoBehaviour:
     skillIncreaseAmount: 5
     isPercentage: 1
   IsAbility: 0
-  SkillName: Health
+  SkillName: Speed 2
   overWriteDescription: 0
-  SkillDescription: Health increases speed by 5%.
+  SkillDescription: Speed 2 increases speed by 5%.
   SkillIcon: {fileID: 0}
   SkillRequisit: []
   skillTier: 2

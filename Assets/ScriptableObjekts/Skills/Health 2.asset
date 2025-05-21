@@ -17,9 +17,9 @@ MonoBehaviour:
     skillIncreaseAmount: 5
     isPercentage: 1
   IsAbility: 0
-  SkillName: Health
+  SkillName: Health 2
   overWriteDescription: 0
-  SkillDescription: Health increases health by 5%.
+  SkillDescription: Health 2 increases health by 5%.
   SkillIcon: {fileID: 0}
   SkillRequisit:
   - {fileID: 11400000, guid: c114d8460f7a7a4429ea963bc60089a3, type: 2}
