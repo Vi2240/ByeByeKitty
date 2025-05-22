@@ -15,7 +15,7 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
-        pauseMenuUI.SetActive(true);
+        if (pauseMenuUI) pauseMenuUI.SetActive(true);
         if (pauseTimeAtStart)
         {
             Time.timeScale = 0f;
@@ -25,10 +25,8 @@ public class PauseMenu : MonoBehaviour
         else
         {
             // Ensure the pause menu is hidden at the start
-            if (pauseMenuUI != null)
-            {
-                pauseMenuUI.SetActive(false);
-            }
+            if (pauseMenuUI) pauseMenuUI.SetActive(false);
+            
             // Ensure game is not paused at start (in case of scene reloads while paused)
             Time.timeScale = 1f;
             AudioListener.pause = false;
