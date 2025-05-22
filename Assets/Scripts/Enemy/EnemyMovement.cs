@@ -5,28 +5,33 @@ using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    // Accessable variables. The public ones are needed for the spawn script. 
+    [Header("Core Movement Settings")]
     public bool disableMovement = false;
     [SerializeField] float speed = 0.5f;
-    //[SerializeField] float maxDistance = 3;
+
+    [Header("Wandering Behavior")]
+    [SerializeField, Tooltip("Wander around before becoming aggressive.")]
+    bool randomWander = false;
     [SerializeField] float movePauseMin = 2;
     [SerializeField] float movePauseMax = 6;
-    [SerializeField] int checkIfStuckFrequency = 5;
+
+    [Header("Targeting & Engagement")]
+    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")]
+    int targetRestriction = 0;
+    [SerializeField, Tooltip("If it's able to attack players.")]
+    bool canAttackPlayers = true; // Should be private later
     [SerializeField] float stopDistanceFromPlayer = 1;
     [SerializeField] float stopDistanceFromObjective = 2f;
-
-    [SerializeField, Tooltip("0 = Nothing, 1 = Player, 2 = Objective")] 
-    int targetRestriction = 0;
-
-    [SerializeField, Tooltip("Radius around to check if near objective or player.")] 
+    [SerializeField, Tooltip("Radius around to check if near objective or player.")]
     float nearObjectCheckRadius = 5;
 
-    [SerializeField, Tooltip("Wander around before becomign agressive.")] 
-    bool randomWander = false;
+    [Header("Pathfinding & Stuck Resolution")]
+    [SerializeField] int checkIfStuckFrequency = 5;
 
-    //[SerializeField] bool followPlayer = false;
-    [SerializeField, Tooltip("If it's able to attack players.")] 
-    bool canAttackPlayers = true; // Should be private later
+    //[SerializeField] bool followPlayer = false; // This variable was commented out in the original code
+
+    [Header("Component References")]
+    [SerializeField] EnemyStopFire extinguishScript;
 
     // Private variables 
     float randomWanderPrecision = 1f; // How close it has to be to its random wander target before walking somewhere else.
@@ -130,11 +135,16 @@ public class EnemyMovement : MonoBehaviour
     }
 
     bool BehaviourChecks() // Returns true if the update function should return to random wander
-    {        
+    {
         if (targetRestriction == 0 && isNearObjective && isNearPlayer)
         {
             if (nearestPlayer) MoveToDestination(nearestPlayer.transform.position);
+            extinguishScript.canExtinguish = false; // Should not extinguish while chasing the player.
             return true;
+        }
+        else if (targetRestriction == 0)
+        {
+            extinguishScript.canExtinguish = true; // Shoule extinguish if not chasing the player
         }
 
         if (targetRestriction == 0 && !nearestObjective)

@@ -6,6 +6,7 @@ public class EndScreenFader : MonoBehaviour
     [Header("Screen Settings")]
     [SerializeField] private float fadeDuration = 2.0f; // How long the fade should take in seconds
     [SerializeField] private float delayBeforeFade = 1.0f; // Seconds to wait before starting the fade
+    [SerializeField] PauseMenu pauseMenuManager;
 
     [Header("Death Screen (Optional)")]
     [SerializeField] private CanvasGroup deathScreenCanvasGroup;
@@ -18,7 +19,6 @@ public class EndScreenFader : MonoBehaviour
 
     void Awake()
     {
-        // Initialize Death Screen (if assigned)
         if (deathScreenCanvasGroup != null && deathScreenRoot != null)
         {
             deathScreenCanvasGroup.alpha = 0f;
@@ -46,10 +46,10 @@ public class EndScreenFader : MonoBehaviour
         }
     }
 
-    // --- Public Methods to Trigger Screens ---
 
     public void ShowDeathScreen()
     {
+        if (pauseMenuManager) pauseMenuManager.PauseTime();
         if (deathScreenCanvasGroup == null || deathScreenRoot == null)
         {
             Debug.LogWarning("Attempted to show Death Screen, but it's not fully configured.", this);
@@ -64,19 +64,19 @@ public class EndScreenFader : MonoBehaviour
 
     public void ShowWinScreen()
     {
+        if (pauseMenuManager) pauseMenuManager.PauseTime();
         if (winScreenCanvasGroup == null || winScreenRoot == null)
         {
             Debug.LogWarning("Attempted to show Win Screen, but it's not fully configured.", this);
             return;
         }
         // Hide death screen if it's somehow active
-        HideDeathScreen(false); // false means no fade, just immediate hide
+        HideDeathScreen(false);
 
         winScreenRoot.SetActive(true);
         StartCoroutine(FadeInCanvasGroup(winScreenCanvasGroup));
     }
 
-    // --- Coroutine for Fading ---
 
     private IEnumerator FadeInCanvasGroup(CanvasGroup targetCanvasGroup)
     {

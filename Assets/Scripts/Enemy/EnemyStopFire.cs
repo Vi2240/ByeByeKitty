@@ -37,7 +37,7 @@ public class EnemyStopFire : MonoBehaviour
     }
 
     public Zone zone = new Zone(false, null);
-    [SerializeField] bool canExtinguish = true;
+    public bool canExtinguish = true;
     [SerializeField] float fireStoppingPower;
     [SerializeField] float extinguishCooldownTime;
     [SerializeField] float initialCooldownTime;

@@ -749,15 +749,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableMovement: 0
   speed: 1.25
+  randomWander: 1
   movePauseMin: 2
   movePauseMax: 5
-  checkIfStuckFrequency: 5
+  targetRestriction: 0
+  canAttackPlayers: 1
   stopDistanceFromPlayer: 0.5
   stopDistanceFromObjective: 2
-  targetRestriction: 0
   nearObjectCheckRadius: 7
-  randomWander: 1
-  canAttackPlayers: 1
+  checkIfStuckFrequency: 5
+  extinguishScript: {fileID: 7666606696232653905}
 --- !u!114 &-2921794130836257963
 MonoBehaviour:
   m_ObjectHideFlags: 0
