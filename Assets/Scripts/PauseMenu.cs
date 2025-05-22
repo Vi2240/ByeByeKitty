@@ -87,6 +87,7 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         AudioListener.pause = false;
+        AudioListener.volume = 1;
         GameIsPaused = false;
     }
 }
