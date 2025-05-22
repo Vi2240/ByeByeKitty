@@ -53629,7 +53629,7 @@ MonoBehaviour:
       lootTableIndexForNextPeriod: 0
     - waveType: 0
       difficulty: 0
-      lootTableIndexForNextPeriod: 0
+      lootTableIndexForNextPeriod: 1
     - waveType: 0
       difficulty: 0
       lootTableIndexForNextPeriod: 0
@@ -53641,37 +53641,37 @@ MonoBehaviour:
     waveEntriesInPhase:
     - waveType: 0
       difficulty: 0
-      lootTableIndexForNextPeriod: 0
+      lootTableIndexForNextPeriod: 1
     - waveType: 1
       difficulty: 0
+      lootTableIndexForNextPeriod: 1
+    - waveType: 0
+      difficulty: 0
+      lootTableIndexForNextPeriod: 2
+    - waveType: 2
+      difficulty: 0
+      lootTableIndexForNextPeriod: 2
+    - waveType: 0
+      difficulty: 3
       lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 1
+      lootTableIndexForNextPeriod: 0
+    - waveType: 0
+      difficulty: 1
+      lootTableIndexForNextPeriod: 1
+    - waveType: 1
+      difficulty: 0
+      lootTableIndexForNextPeriod: 2
     - waveType: 0
       difficulty: 0
       lootTableIndexForNextPeriod: 0
     - waveType: 2
       difficulty: 0
-      lootTableIndexForNextPeriod: 0
-    - waveType: 0
-      difficulty: 1
-      lootTableIndexForNextPeriod: 0
-    - waveType: 0
-      difficulty: 1
-      lootTableIndexForNextPeriod: 0
-    - waveType: 0
-      difficulty: 1
-      lootTableIndexForNextPeriod: 0
-    - waveType: 1
-      difficulty: 0
-      lootTableIndexForNextPeriod: 0
-    - waveType: 0
-      difficulty: 0
-      lootTableIndexForNextPeriod: 0
-    - waveType: 0
-      difficulty: 0
-      lootTableIndexForNextPeriod: 0
+      lootTableIndexForNextPeriod: 2
     - waveType: 2
       difficulty: 0
-      lootTableIndexForNextPeriod: 0
+      lootTableIndexForNextPeriod: 1
     runPhaseCount: -1
     incrementDifficultyOnPhaseRepeat: 1
     maxDifficultyAmplifierForPhase: 10

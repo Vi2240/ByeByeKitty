@@ -117,6 +117,13 @@ public class EndScreenFader : MonoBehaviour
         // Ensure audio is fully muted
         AudioListener.volume = 0f;
 
+        // Stop all active AudioSources in the scene
+        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+        foreach (AudioSource audioS in allAudioSources)
+        {
+            audioS.Stop();
+        }
+
         // Setting up the UI
         StartCoroutine(EnableObjectAfterDelay(buttonToEnable, delayToEnableButton));
     }
