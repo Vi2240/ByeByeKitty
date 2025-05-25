@@ -15,108 +15,79 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
-        pauseMenuUI.SetActive(true);
-        if (pauseTimeAtStart)
-        {
-            Time.timeScale = 0f;
-            //AudioListener.pause = true;
-            GameIsPaused = true;
-        }
-        else
-        {
-            // Ensure the pause menu is hidden at the start
-            if (pauseMenuUI != null)
-            {
-                pauseMenuUI.SetActive(false);
-            }
-            // Ensure game is not paused at start (in case of scene reloads while paused)
-            Time.timeScale = 1f;
+        if (pauseMenuUI) pauseMenuUI.SetActive(false);
+        if (pauseTimeAtStart) {
+            PauseTime();
             AudioListener.pause = false;
-            GameIsPaused = false;
+        }
+        else {
+            Resume();
         }
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) // Or any other key you prefer
-        {
-            if (GameIsPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (GameIsPaused) Resume();
+            else Pause();
         }
     }
 
     void Pause()
     {
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(true);
-        }
+        if (pauseMenuUI) pauseMenuUI.SetActive(true);
         else { print("pauseMenuUI is null"); }
-        Time.timeScale = 0f;
-        AudioListener.pause = true;
-        GameIsPaused = true;
+        PauseTime();
     }
 
     public void Resume()
     {
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(false);
-        }
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-        GameIsPaused = false;
+        if (pauseMenuUI != null) { pauseMenuUI.SetActive(false); }
+        ResumeTime();
     }
 
     public void LoadOptionsMenu()
     {
-        // For now, just a placeholder. You would typically load an options scene
-        // or activate an options panel.
         Debug.Log("Options Button Clicked - Implement Options Menu!");
-        // Example: if you have an options panel on the same canvas:
-        // optionsMenuUI.SetActive(true);
-        // pauseMenuUI.SetActive(false); // Hide pause menu if opening another panel
     }
 
     public void LoadMainMenu()
     {
-        if (!string.IsNullOrEmpty(mainMenuSceneName))
-        {
-            // IMPORTANT: Always unpause time before loading a new scene
-            // if the game was paused, otherwise the new scene might start paused.
-            Time.timeScale = 1f;
-            AudioListener.pause = false;
-            GameIsPaused = false; // Reset pause state
+        if (!string.IsNullOrEmpty(mainMenuSceneName)) {
+            ResumeTime();
 
             SceneManager.LoadScene(mainMenuSceneName);
             Debug.Log("Loading Main Menu: " + mainMenuSceneName);
         }
-        else
-        {
+        else {
             Debug.LogWarning("MainMenuSceneName is not set in PauseMenu script. Cannot load main menu.");
-            // If no main menu, you might just want this button to quit
-            // QuitGame();
         }
     }
 
     public void QuitGame()
     {
         Debug.Log("Quitting Game...");
-        // IMPORTANT: Always unpause time if quitting from a paused state
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
-
+        ResumeTime();
         Application.Quit();
 
         // If running in the Unity Editor
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public void PauseTime()
+    {
+        Time.timeScale = 0f;
+        AudioListener.pause = true;
+        GameIsPaused = true;
+    }
+
+    public void ResumeTime()
+    {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        AudioListener.volume = 1;
+        GameIsPaused = false;
     }
 }

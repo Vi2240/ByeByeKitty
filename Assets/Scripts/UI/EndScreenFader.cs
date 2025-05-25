@@ -6,19 +6,23 @@ public class EndScreenFader : MonoBehaviour
     [Header("Screen Settings")]
     [SerializeField] private float fadeDuration = 2.0f; // How long the fade should take in seconds
     [SerializeField] private float delayBeforeFade = 1.0f; // Seconds to wait before starting the fade
+    [SerializeField] private float delayToEnableButton = 2f;
+    [SerializeField] PauseMenu pauseMenuManager;
 
-    [Header("Death Screen (Optional)")]
+    [Header("Death Screen")]
     [SerializeField] private CanvasGroup deathScreenCanvasGroup;
     [SerializeField] private GameObject deathScreenRoot;
+    [SerializeField] private GameObject deathContinueButton;
 
-    [Header("Win Screen (Optional)")]
+    [Header("Win Screen")]
     [SerializeField] private CanvasGroup winScreenCanvasGroup;
     [SerializeField] private GameObject winScreenRoot;
+    [SerializeField] private GameObject winContinueButton;
+
 
 
     void Awake()
     {
-        // Initialize Death Screen (if assigned)
         if (deathScreenCanvasGroup != null && deathScreenRoot != null)
         {
             deathScreenCanvasGroup.alpha = 0f;
@@ -46,7 +50,6 @@ public class EndScreenFader : MonoBehaviour
         }
     }
 
-    // --- Public Methods to Trigger Screens ---
 
     public void ShowDeathScreen()
     {
@@ -59,7 +62,7 @@ public class EndScreenFader : MonoBehaviour
         HideWinScreen(false); // false means no fade, just immediate hide
 
         deathScreenRoot.SetActive(true);
-        StartCoroutine(FadeInCanvasGroup(deathScreenCanvasGroup));
+        StartCoroutine(FadeInCanvasGroup(deathScreenCanvasGroup, deathContinueButton));
     }
 
     public void ShowWinScreen()
@@ -70,17 +73,15 @@ public class EndScreenFader : MonoBehaviour
             return;
         }
         // Hide death screen if it's somehow active
-        HideDeathScreen(false); // false means no fade, just immediate hide
+        HideDeathScreen(false);
 
         winScreenRoot.SetActive(true);
-        StartCoroutine(FadeInCanvasGroup(winScreenCanvasGroup));
+        StartCoroutine(FadeInCanvasGroup(winScreenCanvasGroup, winContinueButton));
     }
 
-    // --- Coroutine for Fading ---
 
-    private IEnumerator FadeInCanvasGroup(CanvasGroup targetCanvasGroup)
+    private IEnumerator FadeInCanvasGroup(CanvasGroup targetCanvasGroup, GameObject buttonToEnable)
     {
-        // Wait for the specified delay
         if (delayBeforeFade > 0)
         {
             yield return new WaitForSeconds(delayBeforeFade);
@@ -91,17 +92,40 @@ public class EndScreenFader : MonoBehaviour
         targetCanvasGroup.interactable = false; // Ensure not interactive during fade
         targetCanvasGroup.blocksRaycasts = false; // Ensure not blocking raycasts during fade
 
+        // Store the initial audio listener volume
+        float initialAudioVolume = AudioListener.volume;
+
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            targetCanvasGroup.alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
+            float fadeProgress = Mathf.Clamp01(elapsedTime / fadeDuration);
+
+            // Fade in the canvas group
+            targetCanvasGroup.alpha = fadeProgress;
+
+            // Fade out the AudioListener volume
+            AudioListener.volume = initialAudioVolume * (1f - fadeProgress);
+
             yield return null; // Wait for the next frame
         }
 
-        // Ensure it's fully opaque and interactive at the end
+        // Ensure canvas is fully opaque and interactive at the end
         targetCanvasGroup.alpha = 1f;
         targetCanvasGroup.interactable = true;
         targetCanvasGroup.blocksRaycasts = true;
+
+        // Ensure audio is fully muted
+        AudioListener.volume = 0f;
+
+        // Stop all active AudioSources in the scene
+        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+        foreach (AudioSource audioS in allAudioSources)
+        {
+            audioS.Stop();
+        }
+
+        // Setting up the UI
+        StartCoroutine(EnableObjectAfterDelay(buttonToEnable, delayToEnableButton));
     }
 
 
@@ -160,5 +184,12 @@ public class EndScreenFader : MonoBehaviour
 
         targetCanvasGroup.alpha = 0f;
         targetRoot.SetActive(false);
+    }
+
+    private IEnumerator EnableObjectAfterDelay(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (obj) obj.SetActive(true);
+        if (pauseMenuManager) pauseMenuManager.PauseTime();
     }
 }

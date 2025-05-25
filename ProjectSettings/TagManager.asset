@@ -58,6 +58,9 @@ TagManager:
   - name: BloodPuddles
     uniqueID: 727785603
     locked: 0
+  - name: Decorations
+    uniqueID: 3866659363
+    locked: 0
   - name: Items
     uniqueID: 3074402289
     locked: 0
