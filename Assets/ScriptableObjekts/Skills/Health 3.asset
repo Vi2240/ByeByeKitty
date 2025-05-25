@@ -20,7 +20,7 @@ MonoBehaviour:
   SkillName: Health 3
   overWriteDescription: 0
   SkillDescription: Health 3 increases health by 10%.
-  SkillIcon: {fileID: 0}
+  SkillIcon: {fileID: 8230488904728474184, guid: a5a7e1b6bb373b74886b124cf371f739, type: 3}
   SkillRequisit:
   - {fileID: 11400000, guid: 6386de9eeb91fb643aaa98fe3a3c82df, type: 2}
   skillTier: 3
